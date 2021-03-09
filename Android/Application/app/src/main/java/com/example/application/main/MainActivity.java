@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //공유하기
-        final Button giveButton = findViewById(R.id.activity_main_go_give_buttion);
+        final Button giveButton = findViewById(R.id.activity_main_go_send_buttion);
         giveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SendActivity.class);
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         });
         
         //공유받기
-        final Button takeButton = findViewById(R.id.activity_main_go_take_buttion);
+        final Button takeButton = findViewById(R.id.activity_main_go_receive_buttion);
         takeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SendActivity.class);

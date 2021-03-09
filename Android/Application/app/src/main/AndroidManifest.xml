@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
-        <activity android:name=".user.SignupActivity"></activity>
+        <activity android:name=".receive.ReceiveActivity"></activity>
+        <activity android:name=".user.SignupActivity" />
         <activity android:name=".send.SendActivity" />
         <activity android:name=".user.LoginActivity" />
         <activity android:name=".main.IntroActivity">

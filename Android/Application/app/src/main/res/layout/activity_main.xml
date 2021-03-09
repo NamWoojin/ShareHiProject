@@ -7,7 +7,7 @@
     tools:context=".main.MainActivity">
 
     <Button
-        android:id="@+id/activity_main_go_give_buttion"
+        android:id="@+id/activity_main_go_send_buttion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="공유하기"
@@ -16,12 +16,12 @@
         ></Button>
 
     <Button
-        android:id="@+id/activity_main_go_take_buttion"
+        android:id="@+id/activity_main_go_receive_buttion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="공유받기"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_main_go_give_buttion"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_go_send_buttion"
         ></Button>
     <Button
         android:id="@+id/activity_main_go_user_buttion"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:text="계정설정"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_main_go_take_buttion"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_go_receive_buttion"
         ></Button>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

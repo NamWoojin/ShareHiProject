@@ -1,4 +1,4 @@
-package com.example.application.user;
+package com.example.application.receive;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import com.example.application.R;
 
-public class SignupActivity extends AppCompatActivity {
+public class ReceiveActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_signup);
+        setContentView(R.layout.activity_receive);
     }
 }
