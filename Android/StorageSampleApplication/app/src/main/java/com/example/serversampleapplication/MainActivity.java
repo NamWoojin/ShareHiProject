@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity { // public class MainActivi
             //권한 허용되지 않았으면
            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
-        else {
-
-        }
         getDir(mRoot);
         lvFileControl.setOnItemClickListener(new OnItemClickListener() {
             @Override
