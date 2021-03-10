@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         //공유하기
         final Button giveButton = findViewById(R.id.activity_main_go_send_buttion);
         giveButton.setOnClickListener(new View.OnClickListener() {

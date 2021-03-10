@@ -18,7 +18,7 @@ public class IntroActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            boolean login = true;
+            boolean login = false;
             Intent intent;
             //로그인 성공
             if (login) {

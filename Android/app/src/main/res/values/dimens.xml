@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="action_bar_height">56dp</dimen>
+
+    <!--login-->
+    <dimen name="activity_login_logo_height">200dp</dimen>
+    <dimen name="activity_login_logo_marginHorizontal">80dp</dimen>
+
+    <dimen name="activity_login_textInputLayout_marginHorizontal">24dp</dimen>
+
+    <dimen name="activity_login_login_button_marginHorizontal">24dp</dimen>
+    <dimen name="activity_login_login_button_marginTop">24dp</dimen>
+    <dimen name="activity_login_login_button_paddingVertical">16dp</dimen>
+    <dimen name="activity_login_login_button_textSize">20dp</dimen>
+
+
 </resources>
