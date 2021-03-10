@@ -19,34 +19,46 @@
         </router-link>
       </div>
     </div>
-    <div v-show="mobileWidth" style="height: 60px;">
-      <router-link :to="{ name: 'Main'}" style="text-decoration: none; color: black;">
-        <img src="@/assets/logo/logo_transparent_black.png" style="height: 50px; margin: 5px 0;">
-      </router-link>
-      <i 
-        class="el-icon-menu"
-        style="font-size: 40px; position: absolute; left: 10px; top: 10px;"
-        @click="drawer = true"
-        v-show="!drawer"
-      ></i>
-      <i 
-        class="el-icon-close"
-        style="font-size: 40px; position: absolute; left: 10px; top: 10px;"
-        @click="drawer = false"
-        v-show="drawer"
-      ></i>
-      <div 
-        style="position: absolute; top:60px; left: 0px; background-color: grey; z-index: 10; width: 200px;"
-        v-show="drawer"
-
+    <div v-show="mobileWidth">
+      <v-app-bar>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <router-link :to="{ name: 'Main'}" style="text-decoration: none; color: black; display: block; margin: auto;">
+          <img src="@/assets/logo/logo_transparent_black.png" style="height: 50px;">
+        </router-link>
+      </v-app-bar>
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
       >
-        <p>item 1</p>
-        <p>item 2</p>
-        <p>item 3</p>
-        <p>item 4</p>
-        <p>item 5</p>
-      </div>
-      
+        <v-list-item>
+          <v-list-item-avatar>
+            <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title>John Leider</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-divider></v-divider>
+
+        <v-list dense>
+          <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            link
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
     </div>
   </div>
 </template>
@@ -58,7 +70,11 @@ export default {
   data() {
     return {
       width: window.innerWidth,
-      drawer: false,
+      drawer: null,
+      items: [
+        { title: 'Home', icon: 'mdi-view-dashboard' },
+        { title: 'About', icon: 'mdi-forum' },
+      ]
     }
   },
   mounted() {
@@ -71,7 +87,7 @@ export default {
   },
   computed: {
     mobileWidth() {
-      if (this.width <= 768) {
+      if (this.width <= 892) {
         return true
       } else {
         return false
@@ -89,6 +105,19 @@ export default {
     box-shadow: 0 0 10px 0 rgb(0 0 0 / 35%) !important;
     left: 0px;
     top: 0px;
+    z-index: 99;
   }
 
+  >>> .v-navigation-drawer {
+    height: unset !important;
+  }
+
+  >>> .v-app-bar {
+    background-color: #fff !important;
+    height: 60px !important;
+  }
+
+  >>> .v-sheet {
+    box-shadow: unset !important;
+  }
 </style>

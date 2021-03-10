@@ -1,13 +1,13 @@
 <template>
-  <el-container>
-    <el-header>
-      <Header />
-    </el-header>
-    
-    <el-container>
-      <router-view />
-    </el-container>
-  </el-container>
+  <v-app>
+    <Header />
+
+    <v-main>
+      <v-container>
+        <router-view />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
