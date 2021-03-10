@@ -1,5 +1,5 @@
 <template>
-  <el-carousel trigger="click" indicator-position="outside">
+  <el-carousel trigger="click" indicator-position="outside" style="z-index: -1;">
     <el-carousel-item v-for="item in 4" :key="item">
       <h3>{{ item }}</h3>
     </el-carousel-item>
