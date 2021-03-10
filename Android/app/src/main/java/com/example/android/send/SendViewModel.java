@@ -1,4 +1,4 @@
-package com.example.application.send;
+package com.example.android.send;
 
 import androidx.lifecycle.ViewModel;
 

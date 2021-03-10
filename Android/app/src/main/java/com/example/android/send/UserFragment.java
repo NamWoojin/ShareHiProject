@@ -1,14 +1,13 @@
-package com.example.application.send;
+package com.example.android.send;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.application.R;
+import androidx.fragment.app.Fragment;
+
+import com.example.android.R;
 
 public class UserFragment extends Fragment {
 

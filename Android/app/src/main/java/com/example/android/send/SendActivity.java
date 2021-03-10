@@ -1,17 +1,15 @@
-package com.example.application.send;
+package com.example.android.send;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-
-import com.example.application.R;
+import com.example.android.R;
 
 public class SendActivity extends AppCompatActivity {
 

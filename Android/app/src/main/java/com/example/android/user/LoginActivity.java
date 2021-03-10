@@ -1,10 +1,12 @@
-package com.example.application.user;
+package com.example.android.user;
+
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-
-import com.example.application.R;
+import com.example.android.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -12,5 +14,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
+
     }
 }
