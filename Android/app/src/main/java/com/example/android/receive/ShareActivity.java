@@ -1,10 +1,10 @@
-package com.example.application.receive;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.android.receive;
 
 import android.os.Bundle;
 
-import com.example.application.R;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.android.R;
 
 public class ShareActivity extends AppCompatActivity {
 

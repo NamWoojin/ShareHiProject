@@ -1,13 +1,13 @@
-package com.example.application.main;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.android.main;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.example.application.R;
-import com.example.application.user.LoginActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.android.R;
+import com.example.android.user.LoginActivity;
 
 public class IntroActivity extends AppCompatActivity {
 
