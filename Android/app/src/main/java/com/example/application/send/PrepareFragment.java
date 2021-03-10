@@ -37,11 +37,8 @@ public class PrepareFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_send_prepare, container, false);
         Button goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
 
-        goFolderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((SendActivity)getActivity()).replaceFragment(FolderFragment.newInstance());
-            }
+        goFolderButton.setOnClickListener(v -> {
+            ((SendActivity)getActivity()).replaceFragment(FolderFragment.newInstance(),true);
         });
 
         // Inflate the layout for this fragment

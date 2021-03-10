@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -20,7 +21,7 @@ public class SendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
-        replaceFragment(PrepareFragment.newInstance());
+        replaceFragment(PrepareFragment.newInstance(),true);
 
 
         //상단바 상세메뉴 여닫기
@@ -38,9 +39,12 @@ public class SendActivity extends AppCompatActivity {
     }
 
     //프래그먼트 화면이동
-    public void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment,boolean addToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.activity_send_fragment, fragment).commit();      // Fragment로 사용할 MainActivity내의 layout공간을 선택합니다.
+        fragmentTransaction.replace(R.id.activity_send_fragment, fragment);
+        if(!addToBackStack)  //뒤로가기 미적용
+            fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

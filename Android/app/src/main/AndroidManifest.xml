@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
-        <activity android:name=".receive.ReceiveActivity"></activity>
+        <activity android:name=".user.UserActivity"></activity>
+        <activity android:name=".receive.ShareActivity" />
+        <activity android:name=".send.ShareActivity" />
+        <activity android:name=".receive.ReceiveActivity" />
         <activity android:name=".user.SignupActivity" />
         <activity android:name=".send.SendActivity" />
         <activity android:name=".user.LoginActivity" />
