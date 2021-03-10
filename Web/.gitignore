@@ -1,23 +1,23 @@
-# Created by https://www.toptal.com/developers/gitignore/api/vue,vuejs
-# Edit at https://www.toptal.com/developers/gitignore?templates=vue,vuejs
+.DS_Store
+node_modules
+/dist
 
-### Vue ###
-# gitignore template for Vue.js projects
-#
-# Recommended template: Node.gitignore
 
-# TODO: where does this rule come from?
-docs/_book
+# local env files
+.env.local
+.env.*.local
 
-# TODO: where does this rule come from?
-test/
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-### Vuejs ###
-# Recommended template: Node.gitignore
-
-node_modules/
-dist/
-npm-debug.log
-yarn-error.log
-
-# End of https://www.toptal.com/developers/gitignore/api/vue,vuejs
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
