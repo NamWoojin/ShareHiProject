@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android.R;
 import com.example.android.user.LoginActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -16,12 +17,13 @@ public class IntroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_intro);
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            boolean login = false;
             Intent intent;
             //로그인 성공
-            if (login) {
+            if (mAuth.getCurrentUser() != null) {
                 intent = new Intent(IntroActivity.this, MainActivity.class);
             }
             //로그인 실패
@@ -29,9 +31,12 @@ public class IntroActivity extends AppCompatActivity {
                 intent = new Intent(IntroActivity.this, LoginActivity.class);
             }
             startActivity(intent);
+
             //화면 전환 animation 효과 적용
             overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+
+            //인트로로 다시 돌아오지 못하도록 끝내기
             finish();
-        },3000);
+        },2000);
     }
 }
