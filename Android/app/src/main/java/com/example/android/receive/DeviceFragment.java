@@ -16,7 +16,7 @@ public class DeviceFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static DeviceFragment newInstance(String param1, String param2) {
+    public static DeviceFragment newInstance() {
         DeviceFragment fragment = new DeviceFragment();
         return fragment;
     }

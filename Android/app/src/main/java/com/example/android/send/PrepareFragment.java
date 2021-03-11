@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import com.example.android.R;
+import com.example.android.main.BackgroundActivity;
 
 public class PrepareFragment extends Fragment {
 
@@ -37,7 +38,7 @@ public class PrepareFragment extends Fragment {
         Button goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
 
         goFolderButton.setOnClickListener(v -> {
-            ((SendActivity)getActivity()).replaceFragment(FolderFragment.newInstance(),true);
+            ((BackgroundActivity)getActivity()).replaceFragment(FolderFragment.newInstance(),true);
         });
 
         // Inflate the layout for this fragment
