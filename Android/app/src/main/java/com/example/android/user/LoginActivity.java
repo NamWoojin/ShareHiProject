@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         //로그인
         SignInButton signInButton = (SignInButton) findViewById(R.id.activity_login_google_button);
         TextView textView = (TextView) signInButton.getChildAt(0);
-        textView.setText("Google아이디로 계속하기");
+        textView.setText("Google 이메일로 로그인하기");
         signInButton.setOnClickListener(v -> signIn());
 
         //회원가입
