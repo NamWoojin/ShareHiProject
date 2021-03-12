@@ -77,21 +77,12 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_login_password_text_input_layout" />
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/activity_login_google_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_login_google_button_marginTop"
-            app:layout_constraintTop_toBottomOf="@id/activity_login_button"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginHorizontal="@dimen/activity_login_button_marginHorizontal"/>
-
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/activity_login_submenu_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_login_submenu_marginTop"
-            app:layout_constraintTop_toBottomOf="@id/activity_login_google_button"
+            app:layout_constraintTop_toBottomOf="@id/activity_login_button"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -120,6 +111,29 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include
+            android:id="@+id/activity_login_divider"
+            layout="@layout/content_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="@dimen/activity_login_google_button_marginTop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_login_submenu_layout"
+            />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/activity_login_google_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_login_google_button_marginTop"
+            app:layout_constraintTop_toBottomOf="@id/activity_login_divider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginHorizontal="@dimen/activity_login_button_marginHorizontal"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

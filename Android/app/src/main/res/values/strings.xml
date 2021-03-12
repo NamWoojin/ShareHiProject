@@ -15,6 +15,7 @@
     <string name="activity_signup_id">이메일</string>
     <string name="activity_signup_email_check_button">인증</string>
     <string name="activity_signup_password">비밀번호</string>
+    <string name="activity_signup_password_helper_text">특수기호 포함 8자리 이상 입력해주세요!</string>
     <string name="activity_signup_password_check">비밀번호 확인</string>
     <string name="activity_signup_button">회원가입</string>
 
