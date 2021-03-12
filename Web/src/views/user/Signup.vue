@@ -151,7 +151,7 @@ export default {
       return () => /.+@.+\..+/.test(this.form.email) || '이메일 형식으로 입력해주세요.'
     },
     required_password() {
-      return () => (this.form.password.length >= 8 && /[~!@#$%^&*()_+|<>?:{}]/.test(this.form.password)) || '비밀번호를 8자 이상 작성해주세요.'
+      return () => (this.form.password.length >= 8 && /[~!@#$%^&*()_+|<>?:{}]/.test(this.form.password)) || '비밀번호를 특수문자 포함 8자 이상 작성해주세요.'
     },
     required_passwordconfirm() {
       return () => (this.form.password === this.rePassword) || '비밀번호가 일치하지 않습니다.'
