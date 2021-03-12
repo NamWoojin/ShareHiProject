@@ -6,13 +6,28 @@
     <dimen name="activity_login_logo_height">200dp</dimen>
     <dimen name="activity_login_logo_marginHorizontal">80dp</dimen>
     <dimen name="activity_login_textInputLayout_marginHorizontal">24dp</dimen>
-    <dimen name="activity_login_login_button_marginHorizontal">24dp</dimen>
-    <dimen name="activity_login_login_button_marginTop">24dp</dimen>
-    <dimen name="activity_login_login_button_paddingVertical">16dp</dimen>
-    <dimen name="activity_login_login_button_textSize">20sp</dimen>
+    <dimen name="activity_login_button_marginHorizontal">24dp</dimen>
+    <dimen name="activity_login_button_marginTop">24dp</dimen>
+    <dimen name="activity_login_button_paddingVertical">16dp</dimen>
+    <dimen name="activity_login_button_textSize">20sp</dimen>
     <dimen name="activity_login_google_button_marginTop">24dp</dimen>
     <dimen name="activity_login_submenu_marginTop">24dp</dimen>
     <dimen name="activity_login_submenu_width">100dp</dimen>
     <dimen name="activity_login_submenu_textSize">16sp</dimen>
 
+    <!--sign up-->
+    <dimen name="activity_signup_logo_height">200dp</dimen>
+    <dimen name="activity_signup_logo_marginHorizontal">80dp</dimen>
+    <dimen name="activity_signup_textInputLayout_marginHorizontal">24dp</dimen>
+    <dimen name="activity_signup_email_check_button_marginStart">6dp</dimen>
+    <dimen name="activity_signup_email_check_button_marginVertical">8dp</dimen>
+    <dimen name="activity_signup_email_check_button_textSize">16sp</dimen>
+    <dimen name="activity_signup_button_marginHorizontal">24dp</dimen>
+    <dimen name="activity_signup_button_marginTop">24dp</dimen>
+    <dimen name="activity_signup_button_paddingVertical">16dp</dimen>
+    <dimen name="activity_signup_button_textSize">20sp</dimen>
+    <dimen name="activity_signup_google_button_marginTop">24dp</dimen>
+    <dimen name="activity_signup_submenu_marginTop">24dp</dimen>
+    <dimen name="activity_signup_submenu_width">100dp</dimen>
+    <dimen name="activity_signup_submenu_textSize">16sp</dimen>
 </resources>

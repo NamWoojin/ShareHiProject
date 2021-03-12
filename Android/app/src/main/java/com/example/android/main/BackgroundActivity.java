@@ -30,17 +30,14 @@ public class BackgroundActivity extends AppCompatActivity {
         String page = intent.getStringExtra("page");
         switch (page){
             case "send":
-                Log.i("TAG", "공유하기");
                 replaceFragment(PrepareFragment.newInstance(),true);
                 actionBarTextView.setText("공유하기");
                 break;
             case "receive":
-                Log.i("TAG", "공유받기");
                 replaceFragment(DeviceFragment.newInstance(),true);
                 actionBarTextView.setText("공유받기");
                 break;
             case "user":
-                Log.i("TAG", "계정설정");
                 replaceFragment(SettingFragment.newInstance(),true);
                 actionBarTextView.setText("계정설정");
                 break;
