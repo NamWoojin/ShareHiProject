@@ -1,6 +1,6 @@
 pipeline {
   agent none
-  option { skipDefaultCheckout(false) }
+  options { skipDefaultCheckout(false) }
   stages {
     stage('Docker Build') {
       agent any
