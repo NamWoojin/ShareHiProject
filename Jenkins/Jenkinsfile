@@ -24,7 +24,7 @@ pipeline {
     stage('Docker run') {
       agent any
       steps {
-        sh 'docker run -d --name field-pjt-back field-pjt-back:latest' 
+        sh 'docker run -d -p 8080:3000 --name field-pjt-back field-pjt-back:latest' 
       }
     }
   }
