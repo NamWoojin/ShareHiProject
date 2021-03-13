@@ -5,9 +5,6 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
-        sh 'ls -al'
-	sh 'pwd'
-	sh 'docker -v'
         sh 'docker build -t field-pjt-back:latest ../Field/Backend'
       }
     }
@@ -26,7 +23,7 @@ pipeline {
     stage('Docker run') {
       agent any
       steps {
-        sh 'docker run -d -p 8080:3000 --name field-pjt-back field-pjt-back:latest' 
+        sh 'docker run -d -p 8080:8080 --name field-pjt-back field-pjt-back:latest' 
       }
     }
   }
