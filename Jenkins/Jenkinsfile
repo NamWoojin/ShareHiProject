@@ -1,10 +1,30 @@
 pipeline {
-    agent any
-    stages {
-        stage('hello buildtiger') {
-            step {
-                echo 'hello buildtiger'
-            }
-        }
+  agent none
+  options { skipDefaultCheckout(true) }
+  stages {
+    stage('Docker Build') {
+      agnet any
+      step {
+        sh 'docker build -t field-pjt-back:latest ./Backend'
+      }
     }
+  
+    stage('Docker Container rm') {
+      agent any 
+      step {
+        sh 'docker ps -f name=field-pjt-back -q | xargs --no-run-if-empty docker container stop'
+        sh 'docker container ls -a -name=field-pjt-back -q | xargs -r docker container rm'
+
+        sh 'docker ps -a -f "status=exited" -q | xargs -r docker container rm'
+        sh 'docker rmi $(docker images -f "dangling=true" -q)'
+      }
+    }
+    
+    stage('Docker run') {
+      agent any
+      steps {
+        sh 'docker run -d --name field-pjt-back field-pjt-back:latest' 
+      }
+    }
+  }
 }
