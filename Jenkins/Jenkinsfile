@@ -5,7 +5,8 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t field-pjt-back:latest ../Field/Backend'
+        sh 'docker build -t field-pjt-back:latest ../Backend'
+        sh 'docker built -t field-pjt-front:lates ./Web'
       }
     }
   
@@ -14,6 +15,9 @@ pipeline {
       steps {
         sh 'docker ps -f name=field-pjt-back -q | xargs --no-run-if-empty docker container stop'
         sh 'docker container ls -a -name=field-pjt-back -q | xargs -r docker container rm'
+
+        sh 'docker ps -f name=field-pjt-front -q | xargs --no-run-if-empty docker container stop'
+        sh 'docker container ls -a -name=field-pjt-front -q | xargs -r docker container rm'
 
         sh 'docker ps -a -f "status=exited" -q | xargs -r docker container rm'
         sh 'docker images -f "dangling=true" -q | xargs -r docker rmi'
@@ -24,6 +28,7 @@ pipeline {
       agent any
       steps {
         sh 'docker run -d -p 8080:8080 --name field-pjt-back field-pjt-back:latest' 
+        sh 'docker run -d -p 80:80 --name field-pjt-front field-pjt-front:latest'
       }
     }
   }
