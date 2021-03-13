@@ -6,7 +6,7 @@ pipeline {
       agent any
       steps {
         sh 'docker build -t field-pjt-back:latest ./Backend'
-        sh 'docker built -t field-pjt-front:lates ./Web'
+        sh 'docker build -t field-pjt-front:lates ./Web'
       }
     }
   
