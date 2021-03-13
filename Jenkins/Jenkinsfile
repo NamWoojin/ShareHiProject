@@ -4,6 +4,7 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
+        sh 'pwd'
         sh 'docker build -t field-pjt-back:latest ./Backend'
       }
     }
