@@ -17,7 +17,7 @@ pipeline {
         sh 'docker container ls -a -name=field-pjt-back -q | xargs -r docker container rm'
 
         sh 'docker ps -a -f "status=exited" -q | xargs -r docker container rm'
-        sh 'docker rmi $(docker images -f "dangling=true" -q)'
+        sh 'docker images -f "dangling=true" -q | xargs -r docker rmi'
       }
     }
     
