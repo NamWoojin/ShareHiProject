@@ -51,6 +51,3 @@ Distributed under the MIT license. See `LICENSE` for more information.
 [travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
 -->
-
-[pjt-logo] : https://lab.ssafy.com/s04-webmobile1-sub2/s04p12d103/images/logo.png
-[wiki]: https://lab.ssafy.com/s04-webmobile1-sub2/s04p12d103/wiki
