@@ -34,7 +34,7 @@ pipeline {
         sh 'docker run -d --name field-pjt-front \
             -p 80:80 \
             -p 443:443 \
-            -v /volumes/web_home:/volumes
+            -v /volumes/web_home:/volumes \
             --network field-network \
             field-pjt-front:latest'
       }
