@@ -35,6 +35,7 @@ pipeline {
             -p 80:80 \
             -p 443:443 \
             -v /volumes/web_home:/volumes \
+            -v /volumes/web_home/log:/var/log/nginx/host.access.log \
             --network field-network \
             field-pjt-front:latest'
       }
