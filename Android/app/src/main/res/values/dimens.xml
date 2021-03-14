@@ -3,9 +3,11 @@
     <dimen name="action_bar_height">56dp</dimen>
 
     <!--login-->
-    <dimen name="activity_login_logo_height">200dp</dimen>
+    <dimen name="activity_login_logo_height">150dp</dimen>
+    <dimen name="activity_login_layout_height">400dp</dimen>
     <dimen name="activity_login_logo_marginHorizontal">80dp</dimen>
     <dimen name="activity_login_textInputLayout_marginHorizontal">24dp</dimen>
+    <dimen name="activity_login_textInputLayout_height">60dp</dimen>
     <dimen name="activity_login_button_marginHorizontal">24dp</dimen>
     <dimen name="activity_login_button_marginTop">24dp</dimen>
     <dimen name="activity_login_button_paddingVertical">16dp</dimen>
@@ -16,9 +18,11 @@
     <dimen name="activity_login_submenu_textSize">16sp</dimen>
 
     <!--sign up-->
-    <dimen name="activity_signup_logo_height">200dp</dimen>
+    <dimen name="activity_signup_logo_height">150dp</dimen>
+    <dimen name="activity_signup_layout_height">450dp</dimen>
     <dimen name="activity_signup_logo_marginHorizontal">80dp</dimen>
     <dimen name="activity_signup_textInputLayout_marginHorizontal">24dp</dimen>
+    <dimen name="activity_signup_textInputLayout_height">60dp</dimen>
     <dimen name="activity_signup_email_check_button_marginStart">6dp</dimen>
     <dimen name="activity_signup_email_check_button_marginVertical">8dp</dimen>
     <dimen name="activity_signup_email_check_button_textSize">16sp</dimen>
