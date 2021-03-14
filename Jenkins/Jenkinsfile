@@ -27,8 +27,16 @@ pipeline {
     stage('Docker run') {
       agent any
       steps {
-        sh 'docker run -d -p 8080:8080 --name field-pjt-back field-pjt-back:latest' 
-        sh 'docker run -d -p 80:80 --name field-pjt-front field-pjt-front:latest'
+        sh 'docker run -d --name field-pjt-back \
+            -p 8080:8080 \
+            --network field-network \
+            field-pjt-back:latest' 
+        sh 'docker run -d --name field-pjt-front \
+            -p 80:80 \
+            -p 443:443 \
+            -v /volumes/web_home:/volumes
+            --network field-network \
+            field-pjt-front:latest'
       }
     }
   }
