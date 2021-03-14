@@ -28,7 +28,6 @@ pipeline {
       agent any
       steps {
         sh 'docker run -d --name field-pjt-back \
-            -p 8080:8080 \
             --network field-network \
             field-pjt-back:latest' 
         sh 'docker run -d --name field-pjt-front \
