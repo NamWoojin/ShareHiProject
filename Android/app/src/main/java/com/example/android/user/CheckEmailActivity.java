@@ -23,11 +23,11 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class CheckEmailActivity extends AppCompatActivity {
 
-    TextView infoTextView;
-    TextView timeTextView;
-    TextInputEditText checkTextInputEditText;
-    Button cancelButton;
-    Button okButton;
+    private TextView infoTextView;
+    private TextView timeTextView;
+    private TextInputEditText checkTextInputEditText;
+    private Button cancelButton;
+    private Button okButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +63,8 @@ public class CheckEmailActivity extends AppCompatActivity {
         };
         countDownTimer.start();
 
+        //확인 버튼 입력 가능 여부 처리(인증번호 입력해야 확인버튼 누를 수 있도록)
         checkTextInputEditText.addTextChangedListener(checkInputWatcher);
-        Log.i("TAG", "onCreate: "+checkTextInputEditText.getText().toString().length());
         canOK(checkTextInputEditText.getText().toString());
 
         //취소 버튼 클릭 시
@@ -94,6 +94,7 @@ public class CheckEmailActivity extends AppCompatActivity {
         }
     };
 
+    //확인 버튼 누를 수 있는지 확인
     private void canOK(String text){
         if (text.length() > 0) {
             okButton.setClickable(true);
