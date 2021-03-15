@@ -1,8 +1,8 @@
 'use strict';
 
-
-var swaggerJsdoc = require("swagger-jsdoc");
-var swaggerUi = require("swagger-ui-express");
+//import swaggerJsdoc from "swagger-jsdoc"
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const options = {
 //swagger문서 설정
@@ -20,6 +20,12 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
+
+//var test = function() {
+//    console.log('Hello');
+//}
+
+//module.exports = test
 
 module.exports = {
     swaggerUi,
