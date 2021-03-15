@@ -13,10 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "esm": "^3.2.25",
     "express": "^4.17.1"
   },
   "devDependencies": {
-    "swagger-jsdoc": "^7.0.0-rc.6",
+    "swagger-jsdoc": "6.x",
     "swagger-ui-express": "^4.1.6"
   }
 }
