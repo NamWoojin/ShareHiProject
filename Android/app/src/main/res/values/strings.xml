@@ -14,9 +14,12 @@
     <string name="activity_signup_id">이메일</string>
     <string name="activity_signup_email_check_button">인증</string>
     <string name="activity_signup_password">비밀번호</string>
-    <string name="activity_signup_password_helper_text">특수기호 포함 8자리 이상 입력해주세요!</string>
     <string name="activity_signup_password_check">비밀번호 확인</string>
     <string name="activity_signup_button">회원가입</string>
+    <string name="activity_signup_name_error">20자 이하로 입력해주세요</string>
+    <string name="activity_signup_email_error">이메일 형식에 맞게 입력해주세요</string>
+    <string name="activity_signup_password_error">특수문자 포함 8자 이상 입력해주세요</string>
+    <string name="activity_signup_password_check_error">비밀번호가 일치하지 않아요</string>
 
     <!--check email-->
     <string name="activity_check_email_textInputLayout_hint">인증번호</string>

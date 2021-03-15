@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         emailTextInputEditText.addTextChangedListener(checkInputWatcher);
         passwordTextInputEditText.addTextChangedListener(checkInputWatcher);
         canLogin();
-        
+
 
         //구글 로그인 버튼 문구 변경
         TextView textView = (TextView) googleSignInButton.getChildAt(0);
