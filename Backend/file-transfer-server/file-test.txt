@@ -1,0 +1,41 @@
+<<메모리에 임시적으로 HEADER를 저장할 수 있다면 - 파일에는 SEGMENT들만 APPEND하고,
+    헤더는 메모리에 저장 후 검사>>
+<<만약 파일에 저장해야한다면>>
+1. 파일 포멧
+	<<HEADER OR MEMORY>>
+	1. FILE_SIZE (long - 8 * 1byte정도?)
+	2. FILE_SEGMENT_NUMBER
+	3. FILE_LSAT_SUCCESS_SEGMENT(일반적인 경우)
+	OR, FILE_SUCCESS_SEGMENT_NUMBER(만약 파일 내부에서 배열로 성공한 분할된 
+	파일을 배열로 저장할 수 있을 경우)
+
+	<<FILE NAME OR MEMORY>>
+	4. FILE_NAME(최대 길이 255 * 1byte?)
+
+	<<FILE SEGMENT>>
+	5.SEGMENT PART 1...(16KB?)
+
+	6.SEGMENT PART 2...
+
+	...
+
+2. 그렇다면 알아야 할 것
+	<<HEADER를 만들 경우>>
+	1. 파일 중간부분 수정하는 방법
+	2. 파일 포인트 위치를 조정하기 위한 각 영역 정확한 위치 포착하기
+	3. 각각의 BINARY SEGMENT 전송이 성공적으로 완료되면 HEADER에 완성 여부 체크
+	-> SLIDING WINDOW를 활용하여 LAST_SGEMENT 성공 여부를 판단?
+	4. BINARY SEGMENTS들이 모두 성공하면 원본 파일로 변환
+
+3. 기능들
+	1. 파일 내부에 PART 나누는 방법 - SEGMENT
+	2. 파일 중간 수정 방법 - 일부 SEGMENT 실패시
+
+4. 생길 수 있는 이슈들
+	1. 만약, 중간에 TCP연결이 예기치 않게 끊기면??(IP가 바뀐다면?) - P2P인 경우,
+	IP가 바뀌게 되면 다시 연결할 방법이 없다. 따라서 릴레이 서버를 두고, 한 디바이스의
+	IP가 바뀌면, 릴레이 서버와 다시 TCP 연결을 시도함으로써 해결
+	2. 이어받기? - 다운로드 하는 클라이언트에서 성공한 SEGMENT에 대한 정보를 릴레이
+	서버에게 제공하여, 필요한 SEGMENT만 받을 수 있음
+	3. 완료 게이지 바 - SEGMENT완성 비율에 따른 퍼센티지를 파일 업로드 디바이스,
+	파일 다운로드 디바이스 모두에게 전달
