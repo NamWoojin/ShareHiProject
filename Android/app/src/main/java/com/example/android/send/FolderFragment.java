@@ -9,7 +9,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import com.example.android.R;
-import com.example.android.main.BackgroundActivity;
+import com.example.android.main.BackdropActivity;
 
 public class FolderFragment extends Fragment {
 
@@ -37,7 +37,7 @@ public class FolderFragment extends Fragment {
         Button folderSelectButton = (Button) view.findViewById(R.id.fragment_folder_select_button);
 
         folderSelectButton.setOnClickListener(v -> {
-            ((BackgroundActivity)getActivity()).replaceFragment(PrepareFragment.newInstance(),false);
+            ((BackdropActivity)getActivity()).replaceFragment(PrepareFragment.newInstance(),false);
         });
 
         return view;

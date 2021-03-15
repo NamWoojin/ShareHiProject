@@ -15,4 +15,14 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="popupTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_2</item>
+        <item name="colorPrimaryVariant">@color/green_3</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

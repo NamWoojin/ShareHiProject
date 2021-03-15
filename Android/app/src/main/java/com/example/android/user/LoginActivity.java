@@ -1,7 +1,11 @@
 package com.example.android.user;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +21,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +33,13 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth = null;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
+
+    private TextInputEditText emailTextInputEditText;
+    private TextInputEditText passwordTextInputEditText;
+    private Button loginButton;
+    private SignInButton googleSignInButton;
+    private TextView signUpTextView;
+    private TextView findPasswordTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,27 +54,67 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        //로그인
-        SignInButton signInButton = (SignInButton) findViewById(R.id.activity_login_google_button);
-        TextView textView = (TextView) signInButton.getChildAt(0);
+        emailTextInputEditText = (TextInputEditText)findViewById(R.id.activity_login_email_text_input_edit_text);
+        passwordTextInputEditText = (TextInputEditText)findViewById(R.id.activity_login_password_text_input_edit_text);
+        loginButton = (Button)findViewById(R.id.activity_login_button);
+        googleSignInButton = (SignInButton) findViewById(R.id.activity_login_google_button);
+        signUpTextView = (TextView)findViewById(R.id.activity_login_signup_text_view);
+        findPasswordTextView = (TextView)findViewById(R.id.activity_login_find_password_text_view);
+
+        //로그인 버튼 입력 가능 여부 처리(이메일, 비밀번호 전부 입력해야 버튼 누를 수 있도록)
+        emailTextInputEditText.addTextChangedListener(checkInputWatcher);
+        passwordTextInputEditText.addTextChangedListener(checkInputWatcher);
+        canLogin();
+        
+
+        //구글 로그인 버튼 문구 변경
+        TextView textView = (TextView) googleSignInButton.getChildAt(0);
         textView.setText("Google 이메일로 로그인하기");
-        signInButton.setOnClickListener(v -> signIn());
+        googleSignInButton.setOnClickListener(v -> signIn());
 
         //회원가입
-        TextView signUpTextView = (TextView)findViewById(R.id.activity_login_signup_text_view);
         signUpTextView.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this,SignupActivity.class);
             startActivity(intent);
         });
 
         //비밀번호 찾기
-        TextView findPasswordTextView = (TextView)findViewById(R.id.activity_login_find_password_text_view);
         findPasswordTextView.setOnClickListener(v -> {
             //웹으로 이동
         });
 
     }
 
+
+    TextWatcher checkInputWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            canLogin();
+        }
+    };
+
+    //로그인 버튼 누를 수 있는지 확인
+    private void canLogin(){
+        String email = emailTextInputEditText.getText().toString();
+        String password = passwordTextInputEditText.getText().toString();
+        if (email.length() > 0 && password.length() > 0) {
+            loginButton.setClickable(true);
+            loginButton.setBackgroundColor(Color.rgb(58,197,105));
+        } else {
+            loginButton.setClickable(false);
+            loginButton.setBackgroundColor(Color.rgb(218,219,219));
+        }
+    }
 
     
     @Override
@@ -109,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
         if (user != null) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             //다시 돌아오지 않도록 끝내기
             finish();
         }
