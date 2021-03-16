@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="action_bar_height">56dp</dimen>
+
 
     <!--login-->
     <dimen name="activity_login_logo_height">150dp</dimen>
@@ -52,5 +52,14 @@
     <dimen name="activity_main_button_width">300dp</dimen>
     <dimen name="activity_main_button_textsize">25sp</dimen>
     <dimen name="activity_main_button_height">100dp</dimen>
+
+    <!--backdrop-->
+    <dimen name="activity_backdrop_action_bar_height">56dp</dimen>
+    <dimen name="activity_backdrop_menu_icon_marginStart">16dp</dimen>
+    <dimen name="activity_backdrop_menu_icon_marginTop">16dp</dimen>
+    <dimen name="activity_backdrop_menu_text_marginStart">32dp</dimen>
+    <dimen name="activity_backdrop_menu_text_textSize">20sp</dimen>
+    <dimen name="activity_backdrop_action_bar_detail_margin">16dp</dimen>
+    <dimen name="activity_backdrop_action_bar_detail_button_paddingVertical">10dp</dimen>
 
 </resources>
