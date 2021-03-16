@@ -6,36 +6,68 @@
       <div>
         <v-container>
           <v-row>
-            <v-col cols="4">
+            <v-col cols="3">
               <el-tree
                 style="border: 1px solid black; border-radius: 5px;"
+                :key="componentKey"
                 :data="data"
+                :default-expanded-keys="[0]"
                 node-key="id"
                 :props="defaultProps"
                 @node-click="nodeClick"
               >
               </el-tree>
             </v-col>
-            <v-col cols="8">
-              <div v-if="node.folder" style="display: flex; flex-wrap: wrap;">
-                <div v-for="child in node.folder" :key="child.id" @contextmenu="openMenu($event)" @click="clickOuter">
+            <v-col cols="9" style="border: 1px solid black; border-radius: 5px; margin-top: 12px;" @contextmenu="openMenu($event)" @click="clickOuter">
+              <div v-if="node.folder && node.folder.length > 0" style="display: flex; flex-wrap: wrap;">
+                <div v-for="child in node.folder" :key="child.id">
                   <div style="margin: 50px;">
                     
                       <div @click="selectItem(child)" @contextmenu="selectRightclick(child);openMenu($event)">
-                        <div v-if="child.folder">
-                          <div id="inner" class="box" :class="{selectBox: selectitem.includes(child)}" style="background-color: lightyellow">ThisIsFolder<br />{{child.label}}</div>
+                        <div v-if="child.folder" @dblclick="openFolder(child)">
+                          <div :class="{selectBox: selectitem.includes(child)}">
+                            <div class="box">
+                              <img
+                                id="inner"
+                                src="@/assets/folder.png"
+                                width="100px"
+                                height="100px"
+                              />
+                            </div>
+                            <span id="inner">{{child.label}}</span>
+                          </div>
                         </div>
                         <div v-else>
-                          <div id="inner" class="box" :class="{selectBox: selectitem.includes(child)}" style="background-color: lightgreen">ThisIsFile<br />{{child.label}}</div>
+                          <div :class="{selectBox: selectitem.includes(child)}">
+                            <div class="box">
+                              <img
+                                id="inner"
+                                src="@/assets/file.png"
+                                width="100px"
+                                height="100px"
+                              />
+                            </div>
+                            <span id="inner">{{child.label}}</span>
+                          </div>
                         </div>
                       </div>
                     
                   </div>
                 </div>
               </div>
+              <div v-else>
+                <div>
+                  이 폴더는 비어 있습니다.
+                </div>
+              </div>
               <ul id="right-click-menu" ref="right" tabindex="-1" v-if="viewMenu" @blur="closeMenu" :style="{top: top, left: left}">
-                <li>Upload new File</li>
-                <li v-if="selectitem.length > 0" @click="remove">Remove these Items</li>
+                <div v-if="selectitem.length > 0">
+                  <li  @click="remove">Remove these Items</li>
+                </div>
+                <div v-else>
+                  <li @click="createNewFolder">New Folder</li>
+                  <li>Upload new File</li>
+                </div>
               </ul>
             </v-col>
           </v-row>
@@ -50,54 +82,46 @@ export default {
   name: 'FileBrowser',
   data() {
     return {
+      componentKey: 0,
       selectitem: [],
-      data: [{
-        id: 1,
-        label: 'Level one 1',
+      data: 
+      [{
+        id: 0,
+        label: 'root',
         folder: [{
-          id: 4,
-          label: 'Level two 1-1',
+          label: '새 폴더',
           folder: [{
-            id: 9,
-            label: 'Level three 1-1-1'
-          }, {
-            id: 10,
-            label: 'Level three 1-1-2'
-          }, {
-            id: 110,
-            label: 'Level three 1-1-3'
-          }, {
-            id: 111,
-            label: 'Level three 1-1-4'
-          }, {
-            id: 112,
-            label: 'Level three 1-1-5'
-          }, {
-            id: 113,
-            label: 'Level three 1-1-6'
-          }, {
-            id: 114,
-            label: 'Level three 1-1-7'
-          }, {
-            id: 115,
-            label: 'Level three 1-1-8'
-          }, {
-            id: 116,
-            label: 'Level three 1-1-9'
-          }, {
-            id: 117,
-            label: 'Level three 1-1-10'
+            label: '새 폴더 (1)',
+            folder: [{
+              label: '파일0'
+            }, {
+              label: '파일1'
+            }, {
+              label: '파일2'
+            }, {
+              label: '파일3'
+            }, {
+              label: '파일4'
+            }, {
+              label: '파일5'
+            }, {
+              label: '파일6'
+            }, {
+              label: '파일7'
+            }, {
+              label: '파일8'
+            }, {
+              label: '파일9'
+            }]
+          },
+          {
+            label: '파일0',
           }]
-        },
+        }, 
         {
-          id: 16,
-          label: 'Level two 1-2',
+          label: '다른파일'
+        }],
 
-        }]
-      }, 
-      {
-        id: 11,
-        label: 'Level one 4'
       }],
       defaultProps: {
         children: 'folder',
@@ -117,11 +141,6 @@ export default {
       }
     },
     setMenu: function(top, left) {
-      // let largestHeight = window.innerHeight - this.$$right.offsetHeight - 25;
-      // let largestWidth = window.innerWidth - this.$$right.offsetWidth - 25;
-      
-      // if (top > largestHeight) top = largestHeight;
-      // if (left > largestWidth) left = largestWidth;
       this.top = top-60 + 'px';
       this.left = left + 'px';
     },
@@ -164,7 +183,43 @@ export default {
       }
       this.selectitem = [];
       this.viewMenu = false;
+    },
+    openFolder(c) {
+      this.node = c;
+      this.selectitem = [];
+    },
+    checkFolder: function(folderName) {
+      for(let i=0; i<this.node.folder.length; i++) {
+        if(this.node.folder[i].label == folderName) return false
+      }
+      return true
+    },
+    createNewFolder() {
+      let label = '새 폴더'
+      
+      if (!this.checkFolder(label)) {
+        let number = 1
+        console.log(label + ' (' + number + ')')
+        while(!this.checkFolder(label + ' (' + number + ')')) {
+          number++
+        }
+        label = label + ' (' + number + ')'
+      }
+      
+      this.node.folder.push(
+        {
+          label: label,
+          folder: [
+
+          ]
+        }
+      )
+      this.componentKey++
+      this.viewMenu = false
     }
+  },
+  mounted() {
+    this.node = this.data[0]
   }
 };
 </script>
@@ -204,7 +259,7 @@ export default {
   }
 
   .selectBox {
-    
-    border: 4px solid black;
+    background-color: lightskyblue;
+    border: 2px solid black;
   }
 </style>
