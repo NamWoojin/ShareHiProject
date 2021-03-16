@@ -10,17 +10,21 @@ import com.example.android.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Button sendButton;
+    private Button userButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sendButton = findViewById(R.id.activity_main_go_send_button);
+        userButton = findViewById(R.id.activity_main_go_user_button);
 
         Intent intent = new Intent(MainActivity.this, BackdropActivity.class);
 
         //공유하기
-        final Button giveButton = findViewById(R.id.activity_main_go_send_button);
-        giveButton.setOnClickListener(v -> {
+        sendButton.setOnClickListener(v -> {
             intent.putExtra("page","send");
             startActivity(intent);
         });
@@ -33,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 //        });
         
         //계정 설정
-        final Button userButton = findViewById(R.id.activity_main_go_user_button);
         userButton.setOnClickListener(v -> {
             intent.putExtra("page","user");
             startActivity(intent);

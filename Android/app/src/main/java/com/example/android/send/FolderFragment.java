@@ -37,7 +37,7 @@ public class FolderFragment extends Fragment {
         Button folderSelectButton = (Button) view.findViewById(R.id.fragment_folder_select_button);
 
         folderSelectButton.setOnClickListener(v -> {
-            ((BackdropActivity)getActivity()).replaceFragment(PrepareFragment.newInstance(),false);
+            ((BackdropActivity)getActivity()).replaceFragment(PrepareFragment.newInstance());
         });
 
         return view;
