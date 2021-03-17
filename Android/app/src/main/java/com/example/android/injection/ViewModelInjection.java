@@ -10,7 +10,7 @@ public class ViewModelInjection {
         // No instance
     }
 
-    public static GoogleLoginExecutor provideLoginUsecaseExecutor(Activity activity) {
+    public static GoogleLoginExecutor provideGoogleLoginExecutor(Activity activity) {
         return new GoogleLoginExecutorImpl(activity);
     }
 }

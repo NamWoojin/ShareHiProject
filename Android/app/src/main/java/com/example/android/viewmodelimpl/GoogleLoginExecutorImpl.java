@@ -14,20 +14,18 @@ public class GoogleLoginExecutorImpl implements GoogleLoginExecutor {
     private static final int RC_SIGN_IN = 9001;
 
     public GoogleLoginExecutorImpl(Activity activity) {
-        // [START configure_signin]
+
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // [END configure_signin]
 
-        // [START build_client]
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
-        // [END build_client]
     }
 
+    //SignInIntent 반환
     @Override
     public Intent getSignInIntent() {
         return mGoogleSignInClient.getSignInIntent();

@@ -6,7 +6,6 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.android.R;
 import com.example.android.injection.ViewInjection;
@@ -16,8 +15,6 @@ import com.example.android.view.LoginView;
 import com.example.android.viewmodel.UserViewModel;
 import com.example.android.viewmodelimpl.UserViewModelImpl;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 
 public class LoginActivity extends AppCompatActivity {
     //로그인 코드
@@ -34,9 +31,11 @@ public class LoginActivity extends AppCompatActivity {
         if(viewModelFactory == null){
             viewModelFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication());
         }
+        //ViewModel생성
         mUserViewModel = new ViewModelProvider(this,viewModelFactory).get(UserViewModelImpl.class);
         mUserViewModel.setParentContext(this);
 
+        //UserViewModel에 GoogleExecutor, ToastView, LoginView의존성 주입
         injectViewModel(mUserViewModel);
         injectView(mUserViewModel);
 
@@ -58,16 +57,14 @@ public class LoginActivity extends AppCompatActivity {
 //            //웹으로 이동
 //        });
 
-
-
-
     }
 
-
+    //viewModel에 GoogleLoginExecutor의존성 주입
     private void injectViewModel(UserViewModel viewModel) {
-        viewModel.setGoogleLoginExecutor(ViewModelInjection.provideLoginUsecaseExecutor(this));
+        viewModel.setGoogleLoginExecutor(ViewModelInjection.provideGoogleLoginExecutor(this));
     }
 
+    //viewModel에 ToastView, LoginView의존성 주입
     private void injectView(UserViewModel viewModel) {
         viewModel.setToastView(ViewInjection.provideToastView());
 
@@ -76,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
+    //구글 로그인 결과 반환
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -84,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         updateUI(mUserViewModel.onActivityResult(requestCode, resultCode, data));
     }
 
+    //구글 로그인 결과에 따른 화면 전환
     private void updateUI(GoogleSignInAccount account) { //update ui code here
         if (account != null) {
             Intent intent = new Intent(this, MainActivity.class);

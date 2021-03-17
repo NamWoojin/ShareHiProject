@@ -76,6 +76,7 @@ public class UserViewModelImpl extends ViewModel implements UserViewModel {
         }
     }
 
+    //구글 로그인 요청에 따른 반환(mActivityRef에서 여기로 전달. 여기서는 LoginActivity)
     @Override
     public GoogleSignInAccount onActivityResult(int requestCode, int resultCode, Intent data) {
 

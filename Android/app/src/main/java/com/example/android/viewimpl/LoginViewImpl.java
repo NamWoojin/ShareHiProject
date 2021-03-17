@@ -36,18 +36,17 @@ public class LoginViewImpl implements LoginView {
         mMainView = view;
         mLifecycleOwner = lifecycleOwner;
 
-        emailTextInputEditText = (TextInputEditText) mMainView.findViewById(R.id.activity_login_email_text_input_edit_text);
-        passwordTextInputEditText = (TextInputEditText) mMainView.findViewById(R.id.activity_login_password_text_input_edit_text);
-        loginButton = (Button) mMainView.findViewById(R.id.activity_login_button);
-        googleSignInButton = (SignInButton)  mMainView.findViewById(R.id.activity_login_google_button);
-        signUpTextView = (TextView) mMainView.findViewById(R.id.activity_login_signup_text_view);
-        findPasswordTextView = (TextView) mMainView.findViewById(R.id.activity_login_find_password_text_view);
+        emailTextInputEditText = mMainView.findViewById(R.id.activity_login_email_text_input_edit_text);
+        passwordTextInputEditText = mMainView.findViewById(R.id.activity_login_password_text_input_edit_text);
+        loginButton = mMainView.findViewById(R.id.activity_login_button);
+        googleSignInButton = mMainView.findViewById(R.id.activity_login_google_button);
+        signUpTextView = mMainView.findViewById(R.id.activity_login_signup_text_view);
+        findPasswordTextView = mMainView.findViewById(R.id.activity_login_find_password_text_view);
 
         //로그인 버튼 입력 가능 여부 처리(이메일, 비밀번호 전부 입력해야 버튼 누를 수 있도록)
         emailTextInputEditText.addTextChangedListener(checkInputWatcher);
         passwordTextInputEditText.addTextChangedListener(checkInputWatcher);
         canLogin();
-
 
 
         //구글 로그인 버튼
@@ -61,6 +60,7 @@ public class LoginViewImpl implements LoginView {
 
     }
 
+    //EditText 변화에 따른 TextWatcher
     TextWatcher checkInputWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -79,15 +79,15 @@ public class LoginViewImpl implements LoginView {
     };
 
     //로그인 버튼 누를 수 있는지 확인
-    private void canLogin(){
+    private void canLogin() {
         String email = emailTextInputEditText.getText().toString();
         String password = passwordTextInputEditText.getText().toString();
         if (email.length() > 0 && password.length() > 0) {
             loginButton.setClickable(true);
-            loginButton.setBackgroundColor(Color.rgb(58,197,105));
+            loginButton.setBackgroundColor(Color.rgb(58, 197, 105));
         } else {
             loginButton.setClickable(false);
-            loginButton.setBackgroundColor(Color.rgb(218,219,219));
+            loginButton.setBackgroundColor(Color.rgb(218, 219, 219));
         }
     }
 
