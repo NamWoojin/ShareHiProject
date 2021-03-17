@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: 'AdComponent',
+  name: 'UserSidebar',
   data() {
     return {
       slides: [
