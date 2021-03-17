@@ -43,11 +43,13 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_signup);
 
+        //TextInputLayout 찾기
         nameTextInputLayout = (TextInputLayout) findViewById(R.id.activity_signup_name_text_input_layout);
         emailTextInputLayout= (TextInputLayout) findViewById(R.id.activity_signup_email_text_input_layout);
         passwordTextInputLayout= (TextInputLayout) findViewById(R.id.activity_signup_password_text_input_layout);
         passwordCheckTextInputLayout = (TextInputLayout) findViewById(R.id.activity_signup_password_check_text_input_layout);;
 
+        //TextInputEditText 찾기
         nameTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_name_text_input_edit_text);
         emailTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_email_text_input_edit_text);
         passwordTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_password_text_input_edit_text);
@@ -55,17 +57,19 @@ public class SignupActivity extends AppCompatActivity {
         signupButton = (Button) findViewById(R.id.activity_signup_button);
         emailCheckButton = (Button) findViewById(R.id.activity_signup_email_check_image_view);
 
+        //TextChangedListenr 지정
         nameTextInputEditText.addTextChangedListener(nameTextWatcher);
         emailTextInputEditText.addTextChangedListener(emailTextWatcher);
         passwordTextInputEditText.addTextChangedListener(passwordTextWatcher);
         passwordCheckTextInputEditText.addTextChangedListener(passwordCheckTextWatcher);
         canSignup();
 
+        //구글 버튼 text변경
         googleSignInButton = (SignInButton) findViewById(R.id.activity_signup_google_button);
         TextView textView = (TextView) googleSignInButton.getChildAt(0);
         textView.setText("Google 이메일로 가입하기");
 
-
+        //이메일 인증 버튼 클릭
         emailCheckButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, CheckEmailActivity.class);
             intent.putExtra("email", emailTextInputEditText.getText().toString());
@@ -231,5 +235,7 @@ public class SignupActivity extends AppCompatActivity {
             signupButton.setBackgroundColor(Color.rgb(218,219,219));
         }
     }
+
+
 
 }
