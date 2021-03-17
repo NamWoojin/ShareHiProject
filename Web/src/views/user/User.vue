@@ -2,7 +2,7 @@
   <div style="height: 100%;">
     <div class="flex-root">
       <div class="ad-banner" v-show="width > 960">
-        <AdComponent />
+        <UserSidebar />
       </div>
       <div class="Container-form Container-root" style="margin: auto">
         <router-view />
@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import AdComponent from '../../components/user/AdComponent.vue';
+import UserSidebar from '../../components/user/UserSidebar.vue';
 export default {
-  components: { AdComponent },
+  components: { UserSidebar },
   name: 'User',
   data() {
     return {
