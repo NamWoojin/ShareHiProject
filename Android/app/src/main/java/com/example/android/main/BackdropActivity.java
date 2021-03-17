@@ -18,7 +18,7 @@ import com.example.android.R;
 import com.example.android.send.PrepareFragment;
 import com.example.android.user.SettingFragment;
 
-public class BackdropActivity extends AppCompatActivity {
+public class BackdropActivity extends AppCompatActivity{
 
     private static final String TAG = "BACKDROP_ACTIVITY";
 

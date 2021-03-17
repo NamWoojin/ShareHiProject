@@ -13,7 +13,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.android.R;
 import com.example.android.user.LoginActivity;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -53,12 +54,12 @@ public class IntroActivity extends AppCompatActivity {
 
 
     private void startIntro() {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             Intent intent;
             //로그인 성공
-            if (mAuth.getCurrentUser() != null) {
+            if (account != null) {
                 intent = new Intent(IntroActivity.this, MainActivity.class);
             }
             //로그인 실패

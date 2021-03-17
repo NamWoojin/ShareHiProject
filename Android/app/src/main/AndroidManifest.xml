@@ -18,6 +18,7 @@
         <activity android:name=".receive.ShareActivity" />
         <activity android:name=".send.ShareActivity" />
         <activity android:name=".user.SignupActivity" />
+        <activity android:name=".user.GoogleLoginActivity" />
         <activity android:name=".user.LoginActivity" />
         <activity android:name=".main.IntroActivity">
             <intent-filter>
