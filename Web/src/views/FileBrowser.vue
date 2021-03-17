@@ -65,8 +65,12 @@
                 </div>
               </div>
               <ul id="right-click-menu" ref="right" tabindex="-1" v-if="viewMenu" @blur="closeMenu" :style="{top: top, left: left}">
-                <div v-if="selectitem.length > 0">
-                  <li  @click="remove">Remove these Items</li>
+                <div v-if="selectitem.length > 1">
+                  <li @click="remove">Remove these Items</li>
+                </div>
+                <div v-else-if="selectitem.length == 1">
+                  <li @click="remove">Remove these Items</li>
+                  <li id="inner" @click="editName">edit name</li>
                 </div>
                 <div v-else>
                   <li @click="createNewFolder">New Folder</li>
@@ -220,7 +224,29 @@ export default {
       )
       this.componentKey++
       this.viewMenu = false
-    }
+    },
+    editName() {
+      this.viewMenu = false
+      this.$prompt('Please edit filename', 'Edit', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        inputValue: this.selectitem[0].label
+      })
+        .then((value) => {
+          this.selectitem[0].label = value.value;
+          this.$message({
+            type: 'success',
+            message: '수정되었습니다.'
+          });
+      },
+      )
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '취소되었습니다.'
+          });       
+      });
+    },
   },
   mounted() {
     this.node = this.data[0]
