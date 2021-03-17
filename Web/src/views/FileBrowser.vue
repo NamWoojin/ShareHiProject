@@ -23,7 +23,11 @@
                 <div v-for="child in node.folder" :key="child.id">
                   <div style="margin: 50px;">
                     
-                      <div @click="selectItem(child)" @contextmenu="selectRightclick(child);openMenu($event)">
+                      <div 
+                        @click="selectItem(child)" 
+                        @contextmenu="selectRightclick(child);openMenu($event)"
+                        class="boxitem"
+                      >
                         <div v-if="child.folder" @dblclick="openFolder(child)">
                           <div :class="{selectBox: selectitem.includes(child)}">
                             <div class="box">
@@ -261,5 +265,9 @@ export default {
   .selectBox {
     background-color: lightskyblue;
     border: 2px solid black;
+  }
+
+  .boxitem:hover {
+    background-color: lightskyblue;
   }
 </style>
