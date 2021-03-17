@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%;">
     <div class="flex-root">
-      <div class="ad-banner" v-show="width > 960">
+      <div class="banner" v-show="width > 960">
         <UserSidebar />
       </div>
       <div class="Container-form Container-root" style="margin: auto">
@@ -40,7 +40,7 @@ export default {
     height: 100%;
   }
 
-  .ad-banner {
+  .banner {
     z-index: 100;
     position: relative;
     min-width: 400px;
