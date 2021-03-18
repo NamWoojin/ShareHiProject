@@ -11,6 +11,11 @@ document.body.appendChild(shadowElement);
 const style = document.createElement("style")
 style.textContent = 
 `
+* {
+  box-sizing: border-box;
+  margin : 0;
+  padding : 0;
+}
 #app {
   position: fixed;
   z-index: 900000000;
@@ -79,6 +84,41 @@ style.textContent =
 }
 .login-container > * {
   width : 80%;
+  margin-bottom : 10px;
+}
+.logo-image {
+  position : absolute;
+  top: 20%;
+  width: 200px;
+}
+.login-email-input {
+  min-height : 40px;
+  padding-left : 5px;
+}
+.login-email-input::placeholder {
+  padding-left: 10px;
+}
+.login-password-input {
+  min-height : 40px;
+  padding-left : 5px;
+}
+.login-password-input::placeholder {
+  padding-left: 10px;
+}
+.login-btn {
+  border : none;
+  outline : none;
+  min-height : 40px;
+  background-color : #3ac569;
+  color : white;
+  cursor : pointer;
+}
+.login-btn-box {
+  display : flex;
+  justify-content : space-around; 
+}
+.new-tab-link {
+  cursor: pointer;
 }
 `
 shadowElement.shadowRoot.appendChild(style)
