@@ -15,6 +15,7 @@ style.textContent =
   box-sizing: border-box;
   margin : 0;
   padding : 0;
+  font-size : 16px;
 }
 #app {
   position: fixed;
@@ -41,11 +42,13 @@ style.textContent =
   width: 400px;
   height: 100%;
   background-color:white;
+  overflow-y:scroll;
 }
 .nav {
   display: flex;
   justify-content: space-around;
-  background-color: rgba(0,0,0,0.2);
+  background-color : #3ac569;
+  padding : 5px;
 }
 .nav-item {
     position: relative;
@@ -62,18 +65,60 @@ style.textContent =
 .nav-item-last {
   right: 0;
 }
-.show {
-  display: block;
+.nav-item-btn {
+  border : none;
+  outline : none;
+  color : white;
+  cursor : pointer;
+  background : none;
+}
+.nav-item:hover .nav-item-content {
+  display : block;
 }
 .nav-item-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    animation: rotateMenu 500ms ease-in-out forwards;
-    transform-origin: top center;
+  color: black;
+  width: max-content;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  animation: rotateMenu 500ms ease-in-out forwards;
+  transform-origin: top center;
 }
-
+.directory ul {
+  margin-left : 10px;
+  list-style-type: none;
+}
+.directory li {
+  margin-left : 10px;
+  list-style-type: none;
+}
+.dir::before {
+  content : '📁';
+}
+.file::before {
+  content : '📄';
+}
+.directory a {
+  text-decoration: none;
+}
+.dir {
+  width : 100%;
+  line-height : 30px;
+}
+.dir:hover {
+  background-color : yellow;
+}
+.file {
+  width : 100%;
+  line-height : 30px;
+}
+.file:hover {
+  background-color : yellow;
+}
+.closed {
+  height : 0;
+  display : none;
+}
 .login-container {
   width: 100%;
   height: 100%;
