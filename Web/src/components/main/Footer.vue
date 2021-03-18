@@ -1,5 +1,5 @@
 <template>
-  <div style="">
+  <div style="position: fixed; left: 0; bottom: 0; width: 100%;">
     <el-row>
       <el-col :span="24"><el-divider /></el-col>
       <el-row style="width: 75%; margin: 0px auto;">
