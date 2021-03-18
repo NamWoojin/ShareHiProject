@@ -5,7 +5,7 @@
     android:layout_width="@dimen/activity_user_check_width"
     android:layout_height="@dimen/activity_user_check_height"
     android:layout_gravity="center"
-    tools:context=".user.CheckEmailActivity">
+    tools:context=".ui.user.CheckEmailActivity">
     <TextView
         android:id="@+id/activity_check_email_info_textView"
         android:layout_width="match_parent"
