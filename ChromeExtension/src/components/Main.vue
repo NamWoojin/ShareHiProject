@@ -2,7 +2,7 @@
   <div>
     <nav class="nav">
       <div class="nav-item" >
-        <button @click="onClickNavItem" class="nav-item-btn">알림</button>
+        <button class="nav-item-btn">알림</button>
         <div v-if="true" class="nav-item-content">
             <a href="#">Alert item1</a>
             <a href="#">Alert item2</a>
@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="nav-item" >
-        <button @click="onClickNavItem" class="nav-item-btn">디바이스</button>
+        <button class="nav-item-btn">디바이스</button>
         <div v-if="true" class="nav-item-content">
             <a href="#">Device1</a>
             <a href="#">Device2</a>
@@ -26,15 +26,86 @@
         </div>
       </div>
       <div class="nav-item" >
-        <button @click="onClickNavItem" class="nav-item-btn">+</button>
+        <button class="nav-item-btn">더 보기</button>
         <div class="nav-item-content nav-item-last">
+            <a href="#" @click="onClickOpenAllDir">모든 폴더 열기</a>
+            <a href="#" @click="onClickCloseAllDir">모든 폴더 닫기</a>
             <a href="#">계정설정</a>
             <a href="#" @click="onClickLogout">로그아웃</a>
         </div>
       </div>
     </nav>
     <div class="directory">
-      장치를 연결해주세요
+      <a href="#" class="dir">root</a>
+      <ul>
+        <li>
+          <a href="#" class="dir">폴더1</a>
+          <ul>
+            <li>
+              <a href="#" class="dir">폴더1-1</a>
+              <ul>
+                <li><a href="#" class="dir">폴더1-1-1</a></li>
+                <li><a href="#" class="dir">폴더1-1-2</a></li>
+                <li><a href="#" class="file">파일1-1-1</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#" class="dir">폴더1-2</a>                
+              <ul>
+                <li><a href="#" class="dir">폴더1-2-1</a></li>
+                <li><a href="#" class="dir">폴더1-2-2</a></li>
+                <li><a href="#" class="file">파일1-2-1</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="file">파일1-1</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" class="dir">폴더2</a>
+          <ul>
+            <li><a href="#" class="dir">폴더2-1</a></li>
+            <li><a href="#" class="dir">폴더2-2</a></li>
+            <li><a href="#" class="file">파일2-1</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" class="dir">폴더3</a>
+          <ul>
+            <li><a href="#" class="dir">폴더3-1</a></li>
+            <li><a href="#" class="dir">폴더3-2</a></li>
+            <li><a href="#" class="file">파일3-1</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" class="dir">폴더4</a>
+          <ul>
+            <li>
+              <a href="#" class="dir">폴더4-1</a>
+              <ul>
+                <li>
+                  <a href="#" class="dir">폴더4-1-1</a>
+                  <ul>
+                    <li><a href="#" class="dir">폴더4-1-1-1</a></li>
+                    <li><a href="#" class="dir">폴더4-1-1-2</a></li>
+                    <li><a href="#" class="dir">폴더4-1-1-3</a></li>
+                  </ul>
+                </li> 
+                <li><a href="#" class="dir">폴더4-1-2</a></li> 
+                <li><a href="#" class="dir">폴더4-1-3</a></li> 
+                <li><a href="#" class="file">파일4-1-1</a></li> 
+                <li><a href="#" class="file">파일4-1-2</a></li> 
+                <li><a href="#" class="file">파일4-1-3</a></li> 
+                <li><a href="#" class="file">파일4-1-4</a></li> 
+              </ul>
+            </li>
+            <li><a href="#" class="dir">폴더4-2</a></li>
+            <li><a href="#" class="file">파일4-1</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" class="file">파일1</a>
+        </li>
+      </ul>  
     </div>
   </div>
 </template>
@@ -42,34 +113,48 @@
 <script>
 export default {
   name: "Main",
+  data() {
+    return {
+    }
+  },
   methods : {
-    onClickNavItem(e) {
-      const clickedNavItemContent = e.target.nextSibling
-      const navItemContents = document.querySelectorAll('.nav-item-content')
-      for (let idx = 0; idx<navItemContents.length; idx++ ) {
-        if (clickedNavItemContent !== navItemContents[idx]) {
-          navItemContents[idx].classList.remove('show')
-        }
-      }
-      clickedNavItemContent.classList.toggle('show')
-    },
     onClickLogout() {
       alert("logout")
       this.$emit("onClickLogout",false)
+    },
+    onClickOpenAllDir() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      const uls = directory.querySelectorAll('ul')
+      for (let idx=0; idx<uls.length; idx++) {
+        uls[idx].classList.remove('closed')
+      } 
+    },
+    onClickCloseAllDir() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      const uls = directory.querySelectorAll('ul')
+      for (let idx=0; idx<uls.length; idx++) {
+        uls[idx].classList.add('closed')
+      } 
     }
   },
   mounted() {
-    window.addEventListener('click', (e)=>{
-      const navItemContents = document.querySelectorAll('.nav-item-content')
-      if (e.target.nextSibling && e.target.nextSibling.classList.contains("nav-item-content")) {
-        return
+    const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+
+    const uls = directory.querySelectorAll('ul')
+    for (let idx=0; idx<uls.length; idx++) {
+      uls[idx].classList.add('closed')
+    } 
+
+    const dirs = directory.querySelectorAll('.dir')
+    for (let idx=0; idx<dirs.length; idx++) {
+      const ul = dirs[idx].nextElementSibling
+      if (ul) {
+        dirs[idx].addEventListener('click', () => {
+          ul.classList.toggle('closed')
+        })
       }
-      else {
-        for (let idx = 0; idx<navItemContents.length; idx++ ) {
-          navItemContents[idx].classList.remove('show')
-        }
-      }
-    })
+    }
+
   }
 };
 </script>
