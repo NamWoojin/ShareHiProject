@@ -36,7 +36,7 @@ style.textContent =
 }
 
 .sidebar {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   width: 400px;
