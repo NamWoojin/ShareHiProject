@@ -29,4 +29,3 @@ sendBlob('./img/sample.mp4');
 setPath('./img/', 'sample2', '.mp4');
 //대용량 파일 받기
 // call back 안댐...
-
