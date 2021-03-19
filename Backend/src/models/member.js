@@ -1,11 +1,18 @@
 'use strict';
 
+class Member {
 
-conn.connect();
+}
 
-conn.query('select * from member', function(err, results, fields) {
-    if(err) {
-        console.log(err);
-    }
-    console.log(results);
-});
+module.exports = Member;
+
+const pool = require('../config/db_connect');
+
+pool((err, connection) => {
+    connection.query('select * from member', function(err, results) {
+        if(err) {
+            console.log(err);
+        }
+        console.log(results);
+    });
+})
