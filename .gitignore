@@ -164,7 +164,7 @@ yarn-error.log
 *.class
 
 # Generated files
-bin/
+
 gen/
 out/
 
