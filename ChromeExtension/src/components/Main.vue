@@ -36,38 +36,38 @@
       </div>
     </nav>
     <div class="directory">
-      <a href="#" class="dir">root</a>
+      <div class="dir">root</div>
       <ul>
         <li>
-          <a href="#" class="dir">폴더1</a>
+          <div class="dir">폴더1</div>
           <ul>
             <li>
-              <a href="#" class="dir">폴더1-2</a>                
+              <div class="dir">폴더1-2</div>                
               <ul>
                 <li>
-                  <a href="#" class="dir">폴더1-2-1</a>
+                  <div class="dir">폴더1-2-1</div>
                   <ul>
 
                   </ul>
                 </li>
                 <li>
-                  <a href="#" class="dir">폴더1-2-2</a>
+                  <div class="dir">폴더1-2-2</div>
                   <ul>
 
                   </ul>
                 </li>
                 <li>
-                  <a href="#" class="file">파일1-2-1</a>
+                  <div class="file">파일1-2-1</div>
                 </li>
               </ul>
             </li>
             <li>
-              <a href="#" class="file">파일1-1</a>
+              <div class="file">파일1-1</div>
             </li>
           </ul>
         </li>
         <li>
-          <a href="#" class="file">파일1</a>
+          <div class="file">파일1</div>
         </li>
       </ul>  
     </div>
@@ -143,18 +143,8 @@ export default {
       deleteMenu.setAttribute('class','context-menu-content')
       deleteMenu.innerText = '삭제하기'
       deleteMenu.addEventListener('click', (e) => {
-        if (confirm("정말 삭제하시겠어요?")) {
-          const ul = target.nextElementSibling
-          if (ul) {
-            ul.innerHTML = '';
-            ul.remove()
-          }
-          target.remove()
-          this.deleteContextMenu()
-        }
-        else {
-          this.deleteContextMenu()
-        }
+        this.createModal('정말 삭제하시겠어요?',target,0)
+        this.deleteContextMenu()
       })
       return deleteMenu
     },
@@ -163,7 +153,7 @@ export default {
       reNameMenu.setAttribute('class','context-menu-content')
       reNameMenu.innerText = '이름변경'
       reNameMenu.addEventListener('click', (e) => {
-        console.log(e,target)
+        this.createModal('변경할 이름을 입력하세요',target,1)
         this.deleteContextMenu()
       })
       return reNameMenu
@@ -187,6 +177,69 @@ export default {
       if (contextMenu) {
         contextMenu.remove()
       }
+    },
+    createModal(message,target=null,type=null) {
+      const modalObj = {
+        'nameInput' : document.createElement('input'),
+      }
+      const overlay = document.querySelector('#shadowElement').shadowRoot.querySelector('.overlay')
+      const modalOverlay = document.createElement('div')
+      modalOverlay.setAttribute('class','modal-overlay')
+      const modal = document.createElement('div')
+      modal.setAttribute('class','modal')
+
+      const messageContainer = document.createElement('div')
+      messageContainer.innerText = message
+      modal.appendChild(messageContainer)
+
+      if (type === 1) {
+        modalObj.nameInput.setAttribute('class','modal-input')
+        modalObj.nameInput.placeholder = '이름을 입력하세요'
+        modalObj.nameInput.value = target.innerText
+        modal.appendChild(modalObj.nameInput)
+      }
+
+      const btnContainer = document.createElement('div')
+      btnContainer.setAttribute('class','btn-container')
+
+      const confirmBtn = document.createElement('div')
+      confirmBtn.innerText = "확인"
+      confirmBtn.setAttribute('class','confirm-btn')
+      confirmBtn.addEventListener('click', ()=>{
+
+        if (type === 0) { // 파일 및 폴더 삭제
+          const ul = target.nextElementSibling
+          if (ul) {
+            ul.remove()
+          }
+          target.remove()
+        }
+        else if (type === 1) { // 파일 및 폴더 이름 변경
+          target.innerText = modalObj.nameInput.value
+        }
+        modalOverlay.remove()
+        modal.remove()
+      })
+        
+      btnContainer.appendChild(confirmBtn)
+
+      const cancelBtn = document.createElement('div')
+      cancelBtn.innerText = "취소"
+      cancelBtn.setAttribute('class','cancel-btn')
+      cancelBtn.addEventListener('click',() => {
+        modalOverlay.remove()
+        modal.remove()
+      })
+      btnContainer.appendChild(cancelBtn)
+
+      modal.appendChild(btnContainer)
+
+      modalOverlay.addEventListener('click',()=>{
+        modalOverlay.remove()
+        modal.remove()
+      })
+      overlay.appendChild(modalOverlay)
+      overlay.appendChild(modal)
     },
     createContextMenu(x,y,target,targetType) {
       const overlay = document.querySelector('#shadowElement').shadowRoot.querySelector('.overlay')

@@ -104,16 +104,18 @@ style.textContent =
 .dir {
   width : 100%;
   line-height : 30px;
+  cursor : pointer;
 }
 .dir:hover {
-  background-color : yellow;
+  background-color : rgba(0,0,0,0.2);
 }
 .file {
   width : 100%;
   line-height : 30px;
+  cursor : pointer;
 }
 .file:hover {
-  background-color : yellow;
+  background-color : rgba(0,0,0,0.2);
 }
 .closed {
   height : 0;
@@ -191,6 +193,55 @@ style.textContent =
 .context-menu-content:hover {
   color : #3ac569;
   font-weight : bold;
+}
+.modal-overlay {
+  position : fixed;
+  top : 0;
+  left : 0;
+  width : 100vw;
+  height : 100vh;
+  z-index : 900000000;
+  background-color : rgba(0,0,0,0.2);
+}
+.modal {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top : auto;
+  margin-bottom : auto;
+  left: 0;
+  right: 0;
+  top : 0;
+  bottom : 0;
+  z-index : 900000000;
+  background-color : white;
+  box-shadow : 0px 0px 5px 1px rgb(0 0 0 / 20%);
+  border-radius : 15px;
+  display : flex;
+  flex-direction : column;
+  padding : 20px;
+  height : fit-content;
+  width : fit-content;
+}
+.btn-container {
+  margin-top : 15px;
+  display : flex;
+  justify-content : space-around;
+}
+.confirm-btn {
+  background-color : #3ac569;
+  cursor : pointer;
+  padding: 2px 10px;
+  border-radius: 5px;
+  color: white;
+  box-shadow: 0px 0px 0px 0.5px rgb(0 0 0 / 20%);
+}
+.cancel-btn {
+  background-color : white;
+  cursor : pointer;
+  padding: 2px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 0px 0.5px rgb(0 0 0 / 20%);
 }
 `
 shadowElement.shadowRoot.appendChild(style)
