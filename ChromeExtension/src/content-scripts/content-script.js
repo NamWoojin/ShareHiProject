@@ -165,6 +165,33 @@ style.textContent =
 .new-tab-link {
   cursor: pointer;
 }
+.context-menu-overlay {
+  position : fixed;
+  top : 0;
+  left : 0;
+  width : 100vw;
+  height : 100vh;
+  z-index : 900000000;
+}
+.context-menu {
+  background-color : white;
+  position : absolute;
+  width : auto;
+  height : auto;
+  box-shadow : 0px 0px 5px 1px rgb(0 0 0 / 20%);
+  z-index : 900000000;
+  display : flex;
+  flex-direction: column;
+  padding : 5px;
+}
+.context-menu-content {
+  margin : 5px;
+  cursor : pointer;
+}
+.context-menu-content:hover {
+  color : #3ac569;
+  font-weight : bold;
+}
 `
 shadowElement.shadowRoot.appendChild(style)
 const hello = document.createElement('div');
