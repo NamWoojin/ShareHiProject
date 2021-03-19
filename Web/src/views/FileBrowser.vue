@@ -1,78 +1,134 @@
 <template>
   <div>
-    <router-link :to="{ name: 'Storage' }">
-      <el-button type="danger" icon="el-icon-back" circle></el-button>
-    </router-link>
-      <div>
-        <v-container>
-          <v-row>
-            <v-col cols="3">
-              <el-tree
-                style="border: 1px solid black; border-radius: 5px;"
-                :key="componentKey"
-                :data="data"
-                :default-expanded-keys="[0]"
-                node-key="id"
-                :props="defaultProps"
-                @node-click="nodeClick"
-              >
-              </el-tree>
-            </v-col>
-            <v-col cols="9" style="border: 1px solid black; border-radius: 5px; margin-top: 12px;" @contextmenu="openMenu($event)" @click="clickOuter">
-              <div v-if="node.folder && node.folder.length > 0" style="display: flex; flex-wrap: wrap;">
-                <div v-for="child in node.folder" :key="child.id">
-                  <div style="margin: 50px;">
+    <div>
+      <v-container>
+        <v-row>
+          <v-col cols="12" style="border: 1px solid black; border-radius: 5px; margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between">
+              <router-link :to="{ name: 'Storage' }">
+                <el-button icon="el-icon-back" circle></el-button>
+              </router-link>
+              <div>
+                <v-btn elevation="2" class="navicon" @click="createNewFolder">
+                  <img
+                    src="@/assets/folder.png"
+                    class="navicon"
+                  />
+                </v-btn>
                     
-                      <div @click="selectItem(child)" @contextmenu="selectRightclick(child);openMenu($event)">
-                        <div v-if="child.folder" @dblclick="openFolder(child)">
-                          <div :class="{selectBox: selectitem.includes(child)}">
-                            <div class="box">
-                              <img
-                                id="inner"
-                                src="@/assets/folder.png"
-                                width="100px"
-                                height="100px"
-                              />
-                            </div>
-                            <span id="inner">{{child.label}}</span>
+                <v-btn class="navicon" @click="uploadFile">
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large color="success" style="margin-top: 5px !important">mdi-plus</v-icon>
+                  </div>
+                </v-btn>
+                <v-btn 
+                  class="navicon" 
+                  @click="remove"
+                  :disabled="selectitem.length == 0"
+                >
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large color="red" style="margin-top: 5px !important">mdi-close</v-icon>
+                  </div>
+                </v-btn>
+                <v-btn 
+                  class="navicon" 
+                  @click="editName"
+                  :disabled="selectitem.length != 1"
+                >
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large color="black" style="margin-top: 5px !important">mdi-pencil-plus-outline</v-icon>
+                  </div>
+                </v-btn>
+                <!-- <v-btn class="navicon" disabled>
+                  <div style="width: 50px; height: 50px;">
+                    <p style="margin-top: 15px;">복사</p>
+                  </div>
+                </v-btn>
+                
+                <v-btn class="navicon" disabled>
+                  <div style="width: 50px; height: 50px;">
+                    <p style="margin-top: 15px;">잘라내기</p>
+                  </div>
+                </v-btn> -->
+              </div>
+
+              
+            </div>
+          </v-col>
+          <v-col cols="2" style="padding: 0 20px 0 0">
+            <el-tree
+              style="border: 1px solid black; border-radius: 5px;"
+              :key="componentKey"
+              :data="data"
+              :default-expanded-keys="[0]"
+              node-key="id"
+              :props="defaultProps"
+              @node-click="nodeClick"
+            >
+            </el-tree>
+          </v-col>
+          <v-col cols="10" style="border: 1px solid black; border-radius: 5px;" @contextmenu="openMenu($event)" @click="clickOuter">
+            <div v-if="node.folder && node.folder.length > 0" style="display: flex; flex-wrap: wrap;" id="outter">
+              <div v-for="child in node.folder" :key="child.id" id="outter">
+                <div style="margin: 20px;">
+                  
+                    <div 
+                      @click="selectItem(child)" 
+                      @contextmenu="selectRightclick(child);openMenu($event)"
+                      class="boxitem"
+                    >
+                      <div v-if="child.folder" @dblclick="openFolder(child)">
+                        <div :class="{selectBox: selectitem.includes(child)}">
+                          <div class="box">
+                            <img
+                              src="@/assets/folder.png"
+                              width="100px"
+                              height="100px"
+                            />
                           </div>
-                        </div>
-                        <div v-else>
-                          <div :class="{selectBox: selectitem.includes(child)}">
-                            <div class="box">
-                              <img
-                                id="inner"
-                                src="@/assets/file.png"
-                                width="100px"
-                                height="100px"
-                              />
-                            </div>
-                            <span id="inner">{{child.label}}</span>
-                          </div>
+                          <span style="display:inline-block; width: 100px;">{{child.label}}</span>
                         </div>
                       </div>
-                    
-                  </div>
+                      <div v-else>
+                        <div :class="{selectBox: selectitem.includes(child)}">
+                          <div class="box">
+                            <img
+                              src="@/assets/file.png"
+                              width="100px"
+                              height="100px"
+                            />
+                          </div>
+                          <span style="display:inline-block; width: 100px;">{{child.label}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  
                 </div>
+              </div>
+            </div>
+            <div v-else>
+              <div>
+                이 폴더는 비어 있습니다.
+              </div>
+            </div>
+            <v-file-input multiple v-model="fileList" id="fileinput" style="display: none;" />
+            <ul id="right-click-menu" ref="right" tabindex="-1" v-if="viewMenu" @blur="closeMenu" :style="{top: top, left: left}">
+              <div v-if="selectitem.length > 1">
+                <li @click="remove">삭제</li>
+              </div>
+              <div v-else-if="selectitem.length == 1">
+                <li @click="remove">삭제</li>
+                <li @click="editName">이름변경</li>
               </div>
               <div v-else>
-                <div>
-                  이 폴더는 비어 있습니다.
-                </div>
+                <li @click="createNewFolder">새 폴더</li>
+                <li @click="uploadFile">파일 업로드</li>
               </div>
-              <ul id="right-click-menu" ref="right" tabindex="-1" v-if="viewMenu" @blur="closeMenu" :style="{top: top, left: left}">
-                <div v-if="selectitem.length > 0">
-                  <li  @click="remove">Remove these Items</li>
-                </div>
-                <div v-else>
-                  <li @click="createNewFolder">New Folder</li>
-                  <li>Upload new File</li>
-                </div>
-              </ul>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
+            </ul>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
   </div>
 </template>
 
@@ -131,6 +187,7 @@ export default {
     viewMenu: false,
     top: '0px',
     left: '0px',
+    fileList: null,
     };
   },
   methods: {
@@ -172,17 +229,35 @@ export default {
       }
     },
     clickOuter(e) {
-      if (!(e.target.id == 'inner')) {
+      if (e.target.id == 'outter') {
         this.selectitem = [];
       }
     },
     remove() {
-      for(let i=0; i<this.selectitem.length; i++) {
-        let idx = this.node.folder.indexOf(this.selectitem[i])
-        if (idx > -1) this.node.folder.splice(idx, 1)
-      }
-      this.selectitem = [];
       this.viewMenu = false;
+      this.$confirm('정말로 삭제하시겠습니까?', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      })
+        .then(() => {
+          for(let i=0; i<this.selectitem.length; i++) {
+            let idx = this.node.folder.indexOf(this.selectitem[i])
+            if (idx > -1) this.node.folder.splice(idx, 1)
+          }
+          this.selectitem = [];
+          this.$message({
+            type: 'success',
+            message: '삭제되었습니다.'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '취소되었습니다.'
+          })
+        })
+      
     },
     openFolder(c) {
       this.node = c;
@@ -216,10 +291,73 @@ export default {
       )
       this.componentKey++
       this.viewMenu = false
-    }
+    },
+    editName() {
+      this.viewMenu = false
+      this.$prompt('Please edit filename', 'Edit', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        inputValue: this.selectitem[0].label
+      })
+        .then((value) => {
+          if (this.selectitem[0].label == value.value) {
+            this.$message({
+              type: 'info',
+              message: '변경된 내용이 없습니다.'
+            })
+          } else if (this.checkFolder(value.value)) {
+            this.selectitem[0].label = value.value;
+            this.$message({
+              type: 'success',
+              message: '수정되었습니다.'
+            });
+          } else {
+            this.$message({
+              type: 'info',
+              message: '동일한 이름이 있습니다.'
+            })
+          }
+      },
+      )
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '취소되었습니다.'
+          });       
+      });
+    },
+    uploadFile() {
+      this.viewMenu = false
+      document.getElementById('fileinput').click()
+    },
   },
   mounted() {
     this.node = this.data[0]
+  },
+  watch: {
+    fileList: function () {
+      if (this.fileList) {
+        let cnt = 0;
+        for(let i=0; i<this.fileList.length; i++) {
+          if (this.checkFolder(this.fileList[i].name)) {
+            this.node.folder.push({
+              label: this.fileList[i].name
+            })
+            cnt++
+          } else {
+            this.$message({
+              type: 'info',
+              message: this.fileList[i].name + '은 이미 있는 파일입니다.'
+            })
+          }
+        }
+        this.$message({
+          type: 'success',
+          message: cnt + '개의 파일이 추가되었습니다.'
+        })
+        this.fileList = null;
+      }
+    }
   }
 };
 </script>
@@ -239,14 +377,15 @@ export default {
     margin: 0;
     padding: 0;
     position: absolute;
-    width: 250px;
+    width: 200px;
     z-index: 999999;
 }
 
   #right-click-menu li {
-      border-bottom: 1px solid #E0E0E0;
-      margin: 0;
-      padding: 5px 35px;
+    text-align: left;
+    border-bottom: 1px solid #E0E0E0;
+    margin: 0;
+    padding: 5px 35px;
   }
 
   #right-click-menu li:last-child {
@@ -262,4 +401,19 @@ export default {
     background-color: lightskyblue;
     border: 2px solid black;
   }
+
+  .boxitem:hover {
+    background-color: lightskyblue;
+  }
+
+  .navicon {
+    width: 50px !important;
+    height: 50px !important;
+    padding: 0;
+    margin: 0 10px;
+  }
+
+  /* .navicon > .v-btn__content {
+    
+  } */
 </style>
