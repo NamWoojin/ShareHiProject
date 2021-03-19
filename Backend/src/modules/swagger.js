@@ -16,7 +16,7 @@ const options = {
         basePath: '/'
     },
 //swagger api가 존재하는 곳 입니다.
-    apis: ['./controllers/*.js']
+    apis: ['../routes/user/*.js']
 };
 
 const specs = swaggerJsdoc(options);

@@ -2,10 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-const controller = require('./user.ctrl');
+const UserController = require('./user.ctrl');
 
-/* GET users listing. */
-router.get('/signup', controller.signup);
-router.get('/login', controller.login);
+router.post('/signup', UserController.signup);
+router.delete('/signout', UserController.signout);
+router.get('/getUser/:userId', UserController.getUser);
+router.get('/checkEmail', UserController.checkEmail);
+router.put('/update', UserController.update);
+router.put('/updatePassword', UserController.updatePassword);
 
 module.exports = router;
