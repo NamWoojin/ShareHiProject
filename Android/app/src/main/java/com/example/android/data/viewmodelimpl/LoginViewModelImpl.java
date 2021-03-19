@@ -2,10 +2,14 @@ package com.example.android.data.viewmodelimpl;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
+import com.example.android.data.connection.RetrofitClient;
+import com.example.android.data.model.LoginRepository;
+import com.example.android.data.model.entity.User;
 import com.example.android.data.view.LoginView;
 import com.example.android.data.view.ToastView;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
@@ -19,10 +23,20 @@ import com.google.android.gms.tasks.Task;
 
 import java.lang.ref.WeakReference;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
+    private static final String TAG = "LoginViewModelImpl";
     private static final int REQ_CODE_SIGN_IN = 1;
+    private static final int REQ_CODE_GOOGLE_SIGN_IN = 2;
+
     private WeakReference<Activity> mActivityRef;
+
+    //Model
+    private LoginRepository mLoginRepository;
 
     //View
     private ToastView mToastView;
@@ -36,11 +50,13 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         mActivityRef = new WeakReference<>(parentContext);
     }
 
+    //TaostView 지정
     @Override
     public void setToastView(ToastView view) {
         mToastView = view;
     }
 
+    //View 지정
     @Override
     public void setLoginView(LoginView view) {
         view.setActionListener(this);
@@ -56,13 +72,27 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
     @Override
     public void onRenderToast(String msg) {
-
+        if (mActivityRef.get() != null) {
+            mToastView.render(mActivityRef.get().getApplicationContext(), msg);
+        }
     }
 
     //로그인 요청
     @Override
-    public void onRequestedSignIn() {
+    public void onRequestedSignIn(String email, String password) {
+        Call<String> doLogin = RetrofitClient.getLoginApiService().Login(new User(email,password));
+        doLogin.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                mToastView.render(mActivityRef.get().getApplicationContext(),"로그인되었습니다");
+            }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG, "onRequestedSignIn: "+t );
+                mToastView.render(mActivityRef.get().getApplicationContext(),"로그인에 실패했습니다.");
+            }
+        });
     }
 
     //구글 로그인 요청
@@ -70,7 +100,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     public void onRequestedGoogleSignIn() {
         Intent signInIntent = mGoogleLoginExecutor.getSignInIntent();
         if (mActivityRef.get() != null) {
-            mActivityRef.get().startActivityForResult(signInIntent, REQ_CODE_SIGN_IN);
+            mActivityRef.get().startActivityForResult(signInIntent, REQ_CODE_GOOGLE_SIGN_IN);
         }
     }
 
@@ -91,7 +121,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQ_CODE_SIGN_IN) {
+        if (requestCode == REQ_CODE_GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 //로그인 성공

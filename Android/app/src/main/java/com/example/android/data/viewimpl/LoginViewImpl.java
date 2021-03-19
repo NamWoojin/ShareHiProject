@@ -46,6 +46,7 @@ public class LoginViewImpl implements LoginView {
         passwordTextInputEditText.addTextChangedListener(checkInputWatcher);
         canLogin();
 
+        loginButton.setOnClickListener(v -> mActionListener.onRequestedSignIn(emailTextInputEditText.getText().toString(),passwordTextInputEditText.getText().toString()));
 
         //구글 로그인 버튼
         SignInButton googleSignInButton = mMainView.findViewById(R.id.activity_login_google_button);

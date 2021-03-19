@@ -5,4 +5,5 @@ public class ModelInjection {
     private ModelInjection() {
         // No instance
     }
+
 }

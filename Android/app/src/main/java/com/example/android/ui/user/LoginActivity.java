@@ -1,6 +1,7 @@
 package com.example.android.ui.user;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.android.R;
+import com.example.android.data.injection.ModelInjection;
 import com.example.android.data.injection.ViewInjection;
 import com.example.android.data.injection.ViewModelInjection;
 import com.example.android.data.view.LoginView;
