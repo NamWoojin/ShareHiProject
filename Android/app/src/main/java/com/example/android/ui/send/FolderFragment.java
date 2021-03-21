@@ -1,4 +1,4 @@
-package com.example.android.send;
+package com.example.android.ui.send;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import com.example.android.R;
-import com.example.android.main.BackdropActivity;
+import com.example.android.ui.main.BackdropActivity;
 
 public class FolderFragment extends Fragment {
 

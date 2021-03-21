@@ -1,4 +1,4 @@
-package com.example.android.main;
+package com.example.android.ui.main;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -8,17 +8,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.R;
-import com.example.android.send.PrepareFragment;
-import com.example.android.user.SettingFragment;
+import com.example.android.ui.send.PrepareFragment;
+import com.example.android.ui.user.SettingFragment;
 
-public class BackdropActivity extends AppCompatActivity {
+public class BackdropActivity extends AppCompatActivity{
 
     private static final String TAG = "BACKDROP_ACTIVITY";
 

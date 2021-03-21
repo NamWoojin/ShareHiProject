@@ -1,17 +1,17 @@
-package com.example.android.user;
+package com.example.android.data.viewimpl;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.android.R;
+import com.example.android.data.view.SignUpView;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -19,9 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SignupActivity extends AppCompatActivity {
-
-    private final int CHECK_EMAIL = 1;
+public class SignUpViewImpl implements SignUpView {
 
     private TextInputLayout nameTextInputLayout;
     private TextInputLayout emailTextInputLayout;
@@ -36,59 +34,57 @@ public class SignupActivity extends AppCompatActivity {
     private Button emailCheckButton;
     private SignInButton googleSignInButton;
 
-    private boolean isNameOK = false, isEmailOK = false, isPasswordOK = false, isPasswordCheckOK = false;
+    private boolean isNameOK = false, isEmailOK = false, isCheckedEmail = false, isPasswordOK = false, isPasswordCheckOK = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_signup);
+    private View mMainView;
+    private SignUpView.ActionListener mActionListener;
+    private LifecycleOwner mLifecycleOwner;
+
+    public SignUpViewImpl(View view, LifecycleOwner lifecycleOwner){
+        mMainView = view;
+        mLifecycleOwner = lifecycleOwner;
 
         //TextInputLayout 찾기
-        nameTextInputLayout = (TextInputLayout) findViewById(R.id.activity_signup_name_text_input_layout);
-        emailTextInputLayout= (TextInputLayout) findViewById(R.id.activity_signup_email_text_input_layout);
-        passwordTextInputLayout= (TextInputLayout) findViewById(R.id.activity_signup_password_text_input_layout);
-        passwordCheckTextInputLayout = (TextInputLayout) findViewById(R.id.activity_signup_password_check_text_input_layout);;
+        nameTextInputLayout = mMainView.findViewById(R.id.activity_signup_name_text_input_layout);
+        emailTextInputLayout= mMainView.findViewById(R.id.activity_signup_email_text_input_layout);
+        passwordTextInputLayout= mMainView.findViewById(R.id.activity_signup_password_text_input_layout);
+        passwordCheckTextInputLayout =  mMainView.findViewById(R.id.activity_signup_password_check_text_input_layout);;
 
         //TextInputEditText 찾기
-        nameTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_name_text_input_edit_text);
-        emailTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_email_text_input_edit_text);
-        passwordTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_password_text_input_edit_text);
-        passwordCheckTextInputEditText = (TextInputEditText) findViewById(R.id.activity_signup_password_check_text_input_edit_text);
-        signupButton = (Button) findViewById(R.id.activity_signup_button);
-        emailCheckButton = (Button) findViewById(R.id.activity_signup_email_check_image_view);
+        nameTextInputEditText = mMainView.findViewById(R.id.activity_signup_name_text_input_edit_text);
+        emailTextInputEditText = mMainView.findViewById(R.id.activity_signup_email_text_input_edit_text);
+        passwordTextInputEditText = mMainView.findViewById(R.id.activity_signup_password_text_input_edit_text);
+        passwordCheckTextInputEditText = mMainView.findViewById(R.id.activity_signup_password_check_text_input_edit_text);
+        signupButton = mMainView.findViewById(R.id.activity_signup_button);
+        emailCheckButton = mMainView.findViewById(R.id.activity_signup_email_check_image_view);
 
         //TextChangedListenr 지정
         nameTextInputEditText.addTextChangedListener(nameTextWatcher);
         emailTextInputEditText.addTextChangedListener(emailTextWatcher);
         passwordTextInputEditText.addTextChangedListener(passwordTextWatcher);
         passwordCheckTextInputEditText.addTextChangedListener(passwordCheckTextWatcher);
+        canCheckEmail();
         canSignup();
 
-        //구글 버튼 text변경
-        googleSignInButton = (SignInButton) findViewById(R.id.activity_signup_google_button);
+        //회원가입 버튼 클릭
+        signupButton.setOnClickListener(v -> mActionListener.onRequestedSignUp(nameTextInputEditText.getText().toString(),emailTextInputEditText.getText().toString(),passwordTextInputEditText.getText().toString()));
+
+        //구글 버튼 text변경, 이벤트 추가
+        googleSignInButton = mMainView.findViewById(R.id.activity_signup_google_button);
+        googleSignInButton.setSize(SignInButton.SIZE_STANDARD);
         TextView textView = (TextView) googleSignInButton.getChildAt(0);
         textView.setText("Google 이메일로 가입하기");
+        googleSignInButton.setOnClickListener(v -> mActionListener.onRequestedGoogleSignIn());
 
         //이메일 인증 버튼 클릭
         emailCheckButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CheckEmailActivity.class);
-            intent.putExtra("email", emailTextInputEditText.getText().toString());
-            startActivityForResult(intent, CHECK_EMAIL);
+            mActionListener.onRenderCheckEmail(emailTextInputEditText.getText().toString());
         });
     }
 
-    //CheckEmailActivity 종료 시 불러오는 메소드
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHECK_EMAIL) {
-            //이메일 인증
-            if (resultCode == RESULT_OK) {
-                //이메일 인증 성공
-            } else {
-                //이메일 인증 실패
-            }
-        }
+    public void setActionListener(SignUpView.ActionListener actionListener) {
+        mActionListener = actionListener;
     }
 
     //이름 체크
@@ -107,7 +103,7 @@ public class SignupActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             if(s.length() > 20){
                 //이름 길이 제한 초과
-                nameTextInputLayout.setError(getString(R.string.activity_signup_name_error));
+                nameTextInputLayout.setError(mMainView.getContext().getString(R.string.activity_signup_name_error));
                 isNameOK = false;
             }
             else if(s.length() > 0){
@@ -150,9 +146,16 @@ public class SignupActivity extends AppCompatActivity {
                 isEmailOK = false;
             }else{
                 //이메일 형식 불일치
-                emailTextInputLayout.setError(getString(R.string.activity_signup_email_error));
+                emailTextInputLayout.setError(mMainView.getContext().getString(R.string.activity_signup_email_error));
                 isEmailOK = false;
             }
+
+            if(isCheckedEmail){
+                //이메일 변경 시 재인증 필요
+                isCheckedEmail = false;
+            }
+
+            canCheckEmail();
             canSignup();
         }
     };
@@ -184,7 +187,7 @@ public class SignupActivity extends AppCompatActivity {
                 isPasswordOK = false;
             }else{
                 //비밀번호 형식 불일치
-                passwordTextInputLayout.setError(getString(R.string.activity_signup_password_error));
+                passwordTextInputLayout.setError(mMainView.getContext().getString(R.string.activity_signup_password_error));
                 isPasswordOK = false;
             }
             canSignup();
@@ -211,7 +214,7 @@ public class SignupActivity extends AppCompatActivity {
                     passwordCheckTextInputLayout.setError(null);
                     isPasswordCheckOK = true;
                 }else{
-                    passwordCheckTextInputLayout.setError(getString(R.string.activity_signup_password_check_error));
+                    passwordCheckTextInputLayout.setError(mMainView.getContext().getString(R.string.activity_signup_password_check_error));
                     isPasswordCheckOK = false;
                 }
             }else{
@@ -222,10 +225,22 @@ public class SignupActivity extends AppCompatActivity {
         }
     };
 
+    //이메일 인증 가능한지 확인
+    private void canCheckEmail(){
+        if(isEmailOK){
+            //이메일 인증 가능
+            emailCheckButton.setClickable(true);
+            emailCheckButton.setBackgroundColor(Color.rgb(58,197,105));
+        }else{
+            //이메일 인증 불가
+            emailCheckButton.setClickable(false);
+            emailCheckButton.setBackgroundColor(Color.rgb(218,219,219));
+        }
+    }
 
     //회원가입 버튼 누를 수 있는지 확인
     private void canSignup() {
-        if(isNameOK && isEmailOK && isPasswordOK && isPasswordCheckOK){
+        if(isNameOK && isEmailOK && isCheckedEmail && isPasswordOK && isPasswordCheckOK){
             //회원가입 가능
             signupButton.setClickable(true);
             signupButton.setBackgroundColor(Color.rgb(58,197,105));
@@ -235,7 +250,5 @@ public class SignupActivity extends AppCompatActivity {
             signupButton.setBackgroundColor(Color.rgb(218,219,219));
         }
     }
-
-
 
 }

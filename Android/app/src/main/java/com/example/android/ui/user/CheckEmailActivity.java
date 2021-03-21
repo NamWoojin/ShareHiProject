@@ -1,4 +1,4 @@
-package com.example.android.user;
+package com.example.android.ui.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;

@@ -1,4 +1,4 @@
-package com.example.android.send;
+package com.example.android.ui.receive;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,14 +9,15 @@ import androidx.fragment.app.Fragment;
 
 import com.example.android.R;
 
-public class UserFragment extends Fragment {
+public class DeviceFragment extends Fragment {
 
-    public UserFragment() {
+
+    public DeviceFragment() {
         // Required empty public constructor
     }
 
-    public static UserFragment newInstance(String param1, String param2) {
-        UserFragment fragment = new UserFragment();
+    public static DeviceFragment newInstance() {
+        DeviceFragment fragment = new DeviceFragment();
         return fragment;
     }
 
@@ -29,6 +30,6 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_send_user, container, false);
+        return inflater.inflate(R.layout.fragment_receive_device, container, false);
     }
 }

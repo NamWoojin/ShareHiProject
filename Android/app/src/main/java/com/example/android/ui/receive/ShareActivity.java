@@ -1,4 +1,4 @@
-package com.example.android.send;
+package com.example.android.ui.receive;
 
 import android.os.Bundle;
 
@@ -11,6 +11,6 @@ public class ShareActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_share);
+        setContentView(R.layout.activity_receive_share);
     }
 }
