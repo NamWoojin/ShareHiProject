@@ -117,7 +117,7 @@ const requireEmailAuth = async (req, res) => {
         console.log('Error ' + err);
       });
       redis.set(member.mem_email, authNum);
-      redis.expire(member.mem_email, 10000);
+      redis.expire(member.mem_email, 180);
       redis.quit();
       res.status(200);
     }
