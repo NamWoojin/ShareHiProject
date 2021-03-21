@@ -3,13 +3,12 @@ package com.example.android.data.viewmodel;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.example.android.ui.view.SignUpView;
-import com.example.android.ui.view.ToastView;
-
-public interface SignUpViewModel extends SignUpView.ActionListener{
+public interface SignUpViewModel{
     void setParentContext(Activity parentContext);
-    void setToastView(ToastView view);
-    void setSignUpView(SignUpView view);
     void setGoogleLoginExecutor(GoogleLoginExecutor executor);
     void onActivityResult(int requestCode, int resultCode, Intent data);
+    void onRequestedGoogleSignIn();
+    void onRenderCheckEmail(String email);
+    void onRequestedSignIn(String email, String password);
+    public void onRequestedSignUp(String name, String email, String password);
 }

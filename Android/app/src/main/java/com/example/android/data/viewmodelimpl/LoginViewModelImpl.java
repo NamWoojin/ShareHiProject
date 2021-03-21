@@ -3,6 +3,7 @@ package com.example.android.data.viewmodelimpl;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -11,8 +12,6 @@ import com.example.android.R;
 import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.UserRepository;
 import com.example.android.data.model.entity.User;
-import com.example.android.ui.view.LoginView;
-import com.example.android.ui.view.ToastView;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.ui.main.MainActivity;
@@ -36,14 +35,8 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
     private WeakReference<Activity> mActivityRef;
 
-    //Model
-    private UserRepository mLoginRepository;
-
-    //View
-    private ToastView mToastView;
-
     //LiveData
-    private MutableLiveData<String> currentEmail;
+    public static MutableLiveData<User> userLiveData;
 
     //GoogleLoginExecutor
     private GoogleLoginExecutor mGoogleLoginExecutor;
@@ -54,24 +47,13 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         mActivityRef = new WeakReference<>(parentContext);
     }
 
-    //TaostView 지정
-    @Override
-    public void setToastView(ToastView view) {
-        mToastView = view;
-    }
-
-    //View 지정
-    @Override
-    public void setLoginView(LoginView view) {
-        view.setActionListener(this);
-    }
-
     //LiveData 반환
-    public MutableLiveData<String> getCurrentEmail() {
-        if (currentEmail == null) {
-            currentEmail = new MutableLiveData<String>();
+    @Override
+    public MutableLiveData<User> getuserLiveData() {
+        if (userLiveData == null) {
+            userLiveData = new MutableLiveData<User>(new User());
         }
-        return currentEmail;
+        return userLiveData;
     }
 
     //GoogleLoginExecutor지정
@@ -81,28 +63,22 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     }
 
 
-    @Override
-    public void onRenderToast(String msg) {
-        if (mActivityRef.get() != null) {
-            mToastView.render(mActivityRef.get().getApplicationContext(), msg);
-        }
-    }
-
     //로그인 요청
     @Override
-    public void onRequestedSignIn(String email, String password) {
-        Call<String> doLogin = RetrofitClient.getUserApiService().Login(new User(email, password));
+    public void onRequestedSignIn(User user) {
+        Log.i(TAG, "onRequestedSignIn: "+user.toString());
+        Call<String> doLogin = RetrofitClient.getUserApiService().Login(user);
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                mToastView.render(mActivityRef.get().getApplicationContext(), "환영합니다!");
+                Toast.makeText(mActivityRef.get(), "환영합니다!", Toast.LENGTH_SHORT).show();
                 updateUI();
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e(TAG, "onRequestedSignIn: " + t);
-                mToastView.render(mActivityRef.get().getApplicationContext(), "로그인에 실패했습니다.");
+                Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -142,11 +118,11 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                     updateUI();
                 } else {
                     //로그인 실패
-                    mToastView.render(mActivityRef.get(), "로그인에 실패했습니다.");
+                    Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) {
                 //로그인 실패
-                mToastView.render(mActivityRef.get(), "로그인에 실패했습니다.");
+                Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -3,16 +3,15 @@ package com.example.android.data.viewmodelimpl;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
 import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.entity.User;
-import com.example.android.ui.view.ToastView;
 import com.example.android.ui.main.MainActivity;
 import com.example.android.ui.user.CheckEmailActivity;
-import com.example.android.ui.view.SignUpView;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -35,8 +34,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private static final int REQ_CODE_CHECK_EMAIL = 2;
     private WeakReference<Activity> mActivityRef;
 
-    //View
-    private ToastView mToastView;
 
     //LiveData
     private GoogleLoginExecutor mGoogleLoginExecutor;
@@ -44,16 +41,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     @Override
     public void setParentContext(Activity parentContext) {
         mActivityRef = new WeakReference<>(parentContext);
-    }
-
-    @Override
-    public void setToastView(ToastView view) {
-        mToastView = view;
-    }
-
-    @Override
-    public void setSignUpView(SignUpView view) {
-        view.setActionListener(this);
     }
 
     @Override
@@ -68,14 +55,14 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                mToastView.render(mActivityRef.get().getApplicationContext(), "환영합니다!");
+                Toast.makeText(mActivityRef.get(), "환영합니다!", Toast.LENGTH_SHORT).show();
                 updateUI();
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e(TAG, "onRequestedSignIn: " + t);
-                mToastView.render(mActivityRef.get().getApplicationContext(), "로그인에 실패했습니다.");
+                Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -87,7 +74,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                mToastView.render(mActivityRef.get().getApplicationContext(), "회원가입에 성공했습니다.");
+                Toast.makeText(mActivityRef.get(), "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
                 //로그인 시도
                 onRequestedSignIn(email, password);
             }
@@ -95,7 +82,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e(TAG, "onRequestedSignIn: " + t);
-                mToastView.render(mActivityRef.get().getApplicationContext(), "회원가입에 실패했습니다.");
+                Toast.makeText(mActivityRef.get(), "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -110,13 +97,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         }
     }
 
-
-    @Override
-    public void onRenderToast(String msg) {
-        if (mActivityRef.get() != null) {
-            mToastView.render(mActivityRef.get().getApplicationContext(), msg);
-        }
-    }
 
     //이메일 인증 Activity 열기
     @Override
@@ -140,11 +120,11 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                     updateUI();
                 }else{
                     //로그인 실패
-                    mToastView.render(mActivityRef.get(), "로그인에 실패했습니다.");
+                    Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) {
                 //로그인 실패
-                mToastView.render(mActivityRef.get(), "로그인에 실패했습니다.");
+                Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQ_CODE_CHECK_EMAIL) {
             //이메일 인증

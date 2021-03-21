@@ -1,9 +1,9 @@
 package com.example.android.data.model.entity;
 
 public class User {
-    String name;
-    String email;
-    String password;
+    private String name;
+    private String email;
+    private String password;
 
     public User() {
     }
@@ -23,16 +23,16 @@ public class User {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public String getPassword() {
         return password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setEmail(String email) {
