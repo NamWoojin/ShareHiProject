@@ -14,12 +14,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.R;
+import com.example.android.data.viewmodel.LoginViewModel;
+import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.ui.send.PrepareFragment;
 import com.example.android.ui.user.SettingFragment;
 
 public class BackdropActivity extends AppCompatActivity{
 
     private static final String TAG = "BACKDROP_ACTIVITY";
+
+    private SendViewModel mSendViewModel;
 
     private TextView actionBarTextView;
     private View frameLayout;

@@ -3,8 +3,8 @@ package com.example.android.data.viewmodel;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.example.android.data.view.LoginView;
-import com.example.android.data.view.ToastView;
+import com.example.android.ui.view.LoginView;
+import com.example.android.ui.view.ToastView;
 
 public interface LoginViewModel extends LoginView.ActionListener {
 

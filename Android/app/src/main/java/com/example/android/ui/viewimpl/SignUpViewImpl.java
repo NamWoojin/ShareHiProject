@@ -1,6 +1,5 @@
-package com.example.android.data.viewimpl;
+package com.example.android.ui.viewimpl;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.android.R;
-import com.example.android.data.view.SignUpView;
+import com.example.android.ui.view.SignUpView;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;

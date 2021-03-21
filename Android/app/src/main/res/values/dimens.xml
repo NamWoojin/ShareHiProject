@@ -62,4 +62,13 @@
     <dimen name="activity_backdrop_action_bar_detail_margin">16dp</dimen>
     <dimen name="activity_backdrop_action_bar_detail_button_paddingVertical">10dp</dimen>
 
+    <!--prepare-->
+    <dimen name="fragment_prepare_TextView_textSize">18sp</dimen>
+    <dimen name="fragment_prepare_TextView_marginTop">24dp</dimen>
+    <dimen name="fragment_prepare_TextView_marginStart">16dp</dimen>
+    <dimen name="fragment_prepare_element_marginTop">8dp</dimen>
+    <dimen name="fragment_prepare_go_share_Button_margin">12dp</dimen>
+    <dimen name="fragment_prepare_go_share_Button_paddingVertical">16dp</dimen>
+    <dimen name="fragment_prepare_go_share_Button_textSize">18sp</dimen>
+
 </resources>

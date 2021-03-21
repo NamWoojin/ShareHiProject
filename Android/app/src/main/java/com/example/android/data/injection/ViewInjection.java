@@ -4,12 +4,12 @@ import android.view.View;
 
 import androidx.lifecycle.LifecycleOwner;
 
-import com.example.android.data.view.LoginView;
-import com.example.android.data.view.SignUpView;
-import com.example.android.data.view.ToastView;
-import com.example.android.data.viewimpl.LoginViewImpl;
-import com.example.android.data.viewimpl.SignUpViewImpl;
-import com.example.android.data.viewimpl.ToastViewImpl;
+import com.example.android.ui.view.LoginView;
+import com.example.android.ui.view.SignUpView;
+import com.example.android.ui.view.ToastView;
+import com.example.android.ui.viewimpl.LoginViewImpl;
+import com.example.android.ui.viewimpl.SignUpViewImpl;
+import com.example.android.ui.viewimpl.ToastViewImpl;
 
 public class ViewInjection {
     private ViewInjection() {

@@ -3,9 +3,8 @@ package com.example.android.data.viewmodel;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.example.android.data.view.SignUpView;
-import com.example.android.data.view.ToastView;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.example.android.ui.view.SignUpView;
+import com.example.android.ui.view.ToastView;
 
 public interface SignUpViewModel extends SignUpView.ActionListener{
     void setParentContext(Activity parentContext);

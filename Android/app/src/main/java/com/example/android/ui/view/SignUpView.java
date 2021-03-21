@@ -1,7 +1,7 @@
-package com.example.android.data.view;
+package com.example.android.ui.view;
 
-import com.example.android.data.view.action.OnRenderToastAction;
-import com.example.android.data.view.action.OnRequestSignUpAction;
+import com.example.android.ui.view.action.OnRenderToastAction;
+import com.example.android.ui.view.action.OnRequestSignUpAction;
 
 public interface SignUpView {
     //사용할 ActionListener 초기화

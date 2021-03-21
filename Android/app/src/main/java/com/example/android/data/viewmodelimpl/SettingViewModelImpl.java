@@ -3,15 +3,12 @@ package com.example.android.data.viewmodelimpl;
 import android.app.Activity;
 import android.content.Intent;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 
-import com.example.android.data.view.SettingView;
-import com.example.android.data.view.ToastView;
+import com.example.android.ui.view.SettingView;
+import com.example.android.ui.view.ToastView;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SettingViewModel;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.lang.ref.WeakReference;
 

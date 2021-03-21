@@ -1,4 +1,4 @@
-package com.example.android.data.view;
+package com.example.android.ui.view;
 
 import android.content.Context;
 

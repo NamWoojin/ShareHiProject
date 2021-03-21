@@ -9,17 +9,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.android.R;
 import com.example.android.data.injection.ViewInjection;
 import com.example.android.data.injection.ViewModelInjection;
-import com.example.android.data.view.LoginView;
-import com.example.android.data.view.SignUpView;
-import com.example.android.data.viewmodel.LoginViewModel;
-import com.example.android.ui.main.MainActivity;
+import com.example.android.ui.view.SignUpView;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private ViewModelProvider.AndroidViewModelFactory viewModelFactory;
     private SignUpViewModel mSignUpViewModel;
 
     @Override
@@ -27,11 +22,8 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_signup);
 
-        if(viewModelFactory == null){
-            viewModelFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication());
-        }
         //ViewModel생성
-        mSignUpViewModel = new ViewModelProvider(this,viewModelFactory).get(SignUpViewModelImpl.class);
+        mSignUpViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SignUpViewModelImpl.class);
         mSignUpViewModel.setParentContext(this);
 
         //UserViewModel에 GoogleExecutor, ToastView, LoginView의존성 주입

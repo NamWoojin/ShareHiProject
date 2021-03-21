@@ -1,4 +1,4 @@
-package com.example.android.data.viewimpl;
+package com.example.android.ui.viewimpl;
 
 import android.graphics.Color;
 import android.text.Editable;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.android.R;
-import com.example.android.data.view.LoginView;
+import com.example.android.ui.view.LoginView;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.textfield.TextInputEditText;
 

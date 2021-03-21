@@ -1,4 +1,4 @@
-package com.example.android.data.viewimpl;
+package com.example.android.ui.viewimpl;
 
 import android.view.View;
 import android.widget.Button;
@@ -6,8 +6,7 @@ import android.widget.Button;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.android.R;
-import com.example.android.data.view.LoginView;
-import com.example.android.data.view.SettingView;
+import com.example.android.ui.view.SettingView;
 
 public class SettingViewImpl implements SettingView {
 
