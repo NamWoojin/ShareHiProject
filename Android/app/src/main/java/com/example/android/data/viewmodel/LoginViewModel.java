@@ -3,10 +3,8 @@ package com.example.android.data.viewmodel;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.example.android.data.model.LoginRepository;
 import com.example.android.data.view.LoginView;
 import com.example.android.data.view.ToastView;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public interface LoginViewModel extends LoginView.ActionListener {
 

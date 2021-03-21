@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
 import com.example.android.data.connection.RetrofitClient;
-import com.example.android.data.model.LoginRepository;
+import com.example.android.data.model.UserRepository;
 import com.example.android.data.model.entity.User;
 import com.example.android.data.view.LoginView;
 import com.example.android.data.view.ToastView;
@@ -36,12 +37,15 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private WeakReference<Activity> mActivityRef;
 
     //Model
-    private LoginRepository mLoginRepository;
+    private UserRepository mLoginRepository;
 
     //View
     private ToastView mToastView;
 
     //LiveData
+    private MutableLiveData<String> currentEmail;
+
+    //GoogleLoginExecutor
     private GoogleLoginExecutor mGoogleLoginExecutor;
 
     //activity지정
@@ -62,6 +66,13 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         view.setActionListener(this);
     }
 
+    //LiveData 반환
+    public MutableLiveData<String> getCurrentEmail() {
+        if (currentEmail == null) {
+            currentEmail = new MutableLiveData<String>();
+        }
+        return currentEmail;
+    }
 
     //GoogleLoginExecutor지정
     @Override
@@ -80,17 +91,18 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     //로그인 요청
     @Override
     public void onRequestedSignIn(String email, String password) {
-        Call<String> doLogin = RetrofitClient.getLoginApiService().Login(new User(email,password));
+        Call<String> doLogin = RetrofitClient.getUserApiService().Login(new User(email, password));
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                mToastView.render(mActivityRef.get().getApplicationContext(),"로그인되었습니다");
+                mToastView.render(mActivityRef.get().getApplicationContext(), "환영합니다!");
+                updateUI();
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.e(TAG, "onRequestedSignIn: "+t );
-                mToastView.render(mActivityRef.get().getApplicationContext(),"로그인에 실패했습니다.");
+                Log.e(TAG, "onRequestedSignIn: " + t);
+                mToastView.render(mActivityRef.get().getApplicationContext(), "로그인에 실패했습니다.");
             }
         });
     }
@@ -126,25 +138,25 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
             try {
                 //로그인 성공
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                updateUI(account);
+                if (account != null) {
+                    updateUI();
+                } else {
+                    //로그인 실패
+                    mToastView.render(mActivityRef.get(), "로그인에 실패했습니다.");
+                }
             } catch (ApiException e) {
                 //로그인 실패
-                mToastView.render(mActivityRef.get(),"로그인에 실패했습니다.");
+                mToastView.render(mActivityRef.get(), "로그인에 실패했습니다.");
             }
         }
     }
 
-    //구글 로그인 결과에 따른 화면 전환
-    private void updateUI(GoogleSignInAccount account) { //update ui code here
-        if (account != null) {
-            Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
-            mActivityRef.get().startActivity(intent);
-            mActivityRef.get().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-            //다시 돌아오지 않도록 끝내기
-            mActivityRef.get().finish();
-        }
-        else{
-            mToastView.render(mActivityRef.get(),"로그인에 실패했습니다.");
-        }
+    //화면 전환
+    private void updateUI() { //update ui code here
+        Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
+        mActivityRef.get().startActivity(intent);
+        mActivityRef.get().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        //다시 돌아오지 않도록 끝내기
+        mActivityRef.get().finish();
     }
 }

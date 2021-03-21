@@ -34,7 +34,7 @@ public class SignUpViewImpl implements SignUpView {
     private Button emailCheckButton;
     private SignInButton googleSignInButton;
 
-    private boolean isNameOK = false, isEmailOK = false, isPasswordOK = false, isPasswordCheckOK = false;
+    private boolean isNameOK = false, isEmailOK = false, isCheckedEmail = false, isPasswordOK = false, isPasswordCheckOK = false;
 
     private View mMainView;
     private SignUpView.ActionListener mActionListener;
@@ -63,9 +63,13 @@ public class SignUpViewImpl implements SignUpView {
         emailTextInputEditText.addTextChangedListener(emailTextWatcher);
         passwordTextInputEditText.addTextChangedListener(passwordTextWatcher);
         passwordCheckTextInputEditText.addTextChangedListener(passwordCheckTextWatcher);
+        canCheckEmail();
         canSignup();
 
-        //구글 버튼 text변경
+        //회원가입 버튼 클릭
+        signupButton.setOnClickListener(v -> mActionListener.onRequestedSignUp(nameTextInputEditText.getText().toString(),emailTextInputEditText.getText().toString(),passwordTextInputEditText.getText().toString()));
+
+        //구글 버튼 text변경, 이벤트 추가
         googleSignInButton = mMainView.findViewById(R.id.activity_signup_google_button);
         googleSignInButton.setSize(SignInButton.SIZE_STANDARD);
         TextView textView = (TextView) googleSignInButton.getChildAt(0);
@@ -145,6 +149,13 @@ public class SignUpViewImpl implements SignUpView {
                 emailTextInputLayout.setError(mMainView.getContext().getString(R.string.activity_signup_email_error));
                 isEmailOK = false;
             }
+
+            if(isCheckedEmail){
+                //이메일 변경 시 재인증 필요
+                isCheckedEmail = false;
+            }
+
+            canCheckEmail();
             canSignup();
         }
     };
@@ -214,10 +225,22 @@ public class SignUpViewImpl implements SignUpView {
         }
     };
 
+    //이메일 인증 가능한지 확인
+    private void canCheckEmail(){
+        if(isEmailOK){
+            //이메일 인증 가능
+            emailCheckButton.setClickable(true);
+            emailCheckButton.setBackgroundColor(Color.rgb(58,197,105));
+        }else{
+            //이메일 인증 불가
+            emailCheckButton.setClickable(false);
+            emailCheckButton.setBackgroundColor(Color.rgb(218,219,219));
+        }
+    }
 
     //회원가입 버튼 누를 수 있는지 확인
     private void canSignup() {
-        if(isNameOK && isEmailOK && isPasswordOK && isPasswordCheckOK){
+        if(isNameOK && isEmailOK && isCheckedEmail && isPasswordOK && isPasswordCheckOK){
             //회원가입 가능
             signupButton.setClickable(true);
             signupButton.setBackgroundColor(Color.rgb(58,197,105));

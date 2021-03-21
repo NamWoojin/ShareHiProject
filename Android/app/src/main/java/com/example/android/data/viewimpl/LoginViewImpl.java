@@ -46,6 +46,7 @@ public class LoginViewImpl implements LoginView {
         passwordTextInputEditText.addTextChangedListener(checkInputWatcher);
         canLogin();
 
+        //로그인 버튼
         loginButton.setOnClickListener(v -> mActionListener.onRequestedSignIn(emailTextInputEditText.getText().toString(),passwordTextInputEditText.getText().toString()));
 
         //구글 로그인 버튼
@@ -56,11 +57,9 @@ public class LoginViewImpl implements LoginView {
         TextView textView = (TextView) googleSignInButton.getChildAt(0);
         textView.setText("Google 이메일로 로그인하기");
 
-        googleSignInButton.setOnClickListener(v -> {
 
-        });
 
-        //회원가입
+        //회원가입 이동
         signUpTextView.setOnClickListener(v -> {
             mActionListener.onRenderSignUp();
         });
