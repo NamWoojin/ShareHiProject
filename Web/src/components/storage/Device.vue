@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link :to="{ name: 'FileBrowser' }">
-      <el-image :src="squareUrl"></el-image>
+      <v-img width="150px" height="150px" :src="squareUrl"></v-img>
     </router-link>
     
   </div>
@@ -12,7 +12,7 @@ export default {
   name: 'Device',
   data () {
     return {
-      squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+      squareUrl: "https://logodix.com/logo/14982.png",
     }
   }
 }
