@@ -2,7 +2,7 @@
   <div>
     <h2>MyDevice</h2>
     현재 접속중인 Device 목록들을 보여주고, Device 클릭 시 Browser 페이지로 이동
-    <div style="margin-top: 2rem;">
+    <div style="margin-top: 2rem; display: flex;">
       <Device />
     </div>
   </div>
