@@ -6,12 +6,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
 import com.example.android.data.connection.RetrofitClient;
-import com.example.android.data.model.UserRepository;
-import com.example.android.data.model.entity.User;
+import com.example.android.data.model.dto.LoginDTO;
+import com.example.android.data.model.dto.SignUpDTO;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.ui.main.MainActivity;
@@ -36,10 +37,33 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private WeakReference<Activity> mActivityRef;
 
     //LiveData
-    public static MutableLiveData<User> userLiveData;
+    private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> passwordLiveData = new MutableLiveData<>();
 
     //GoogleLoginExecutor
     private GoogleLoginExecutor mGoogleLoginExecutor;
+
+    //LiveData
+    @Override
+    public MutableLiveData<String> getEmailLivedata() {
+        return emailLiveData;
+    }
+
+    @Override
+    public void setEmailLivedata(MutableLiveData<String> emailLivedata) {
+        this.emailLiveData = emailLivedata;
+    }
+
+    @Override
+    public MutableLiveData<String> getPasswordLivedata() {
+        return passwordLiveData;
+    }
+
+    @Override
+    public void setPasswordLivedata(MutableLiveData<String> passwordLivedata) {
+        this.passwordLiveData = passwordLivedata;
+    }
+
 
     //activity지정
     @Override
@@ -47,14 +71,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         mActivityRef = new WeakReference<>(parentContext);
     }
 
-    //LiveData 반환
-    @Override
-    public MutableLiveData<User> getuserLiveData() {
-        if (userLiveData == null) {
-            userLiveData = new MutableLiveData<User>(new User());
-        }
-        return userLiveData;
-    }
 
     //GoogleLoginExecutor지정
     @Override
@@ -62,17 +78,16 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         mGoogleLoginExecutor = executor;
     }
 
-
     //로그인 요청
     @Override
-    public void onRequestedSignIn(User user) {
-        Log.i(TAG, "onRequestedSignIn: "+user.toString());
-        Call<String> doLogin = RetrofitClient.getUserApiService().Login(user);
+    public void onRequestedSignIn() {
+        Call<String> doLogin = RetrofitClient.getUserApiService().Login(new LoginDTO(emailLiveData.getValue(),passwordLiveData.getValue()));
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+//                Log.i(TAG, "onResponse: "+ new Gson().toJson(response.body()));
                 Toast.makeText(mActivityRef.get(), "환영합니다!", Toast.LENGTH_SHORT).show();
-                updateUI();
+//                updateUI();
             }
 
             @Override

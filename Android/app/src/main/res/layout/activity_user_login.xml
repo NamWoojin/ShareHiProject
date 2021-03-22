@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="user"
-            type="com.example.android.data.model.entity.User" />
+            name="viewModel"
+            type="com.example.android.data.viewmodel.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -53,10 +53,10 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_login_email_text_input_edit_text"
-                    android:text="@={user.email}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:text="@={viewModel.emailLivedata}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -72,10 +72,10 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_login_password_text_input_edit_text"
-                    android:text="@={user.password}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:text="@={viewModel.passwordLivedata}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -89,7 +89,9 @@
                 app:layout_constraintBottom_toTopOf="@id/activity_login_submenu_layout"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_login_password_text_input_layout" />
+                app:layout_constraintTop_toBottomOf="@id/activity_login_password_text_input_layout"
+                android:onClick="@{() -> viewModel.onRequestedSignIn()}"
+                />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/activity_login_submenu_layout"
@@ -112,7 +114,8 @@
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@id/activity_login_find_password_text_view"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:onClick="@{() -> viewModel.onRenderSignUp()}"/>
 
                 <TextView
                     android:id="@+id/activity_login_find_password_text_view"
@@ -124,7 +127,8 @@
                     android:textStyle="bold"
                     app:layout_constraintLeft_toRightOf="@id/activity_login_signup_text_view"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:onClick="@{() -> viewModel.onMoveFindPassword()}"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <include
@@ -146,7 +150,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_login_divider" />
+                app:layout_constraintTop_toBottomOf="@id/activity_login_divider"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

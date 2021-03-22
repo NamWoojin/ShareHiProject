@@ -9,9 +9,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient{
     //local
-    private static final String BASE_URL = "http://10.0.2.2:9999/";
+//    private static final String BASE_URL = "http://10.0.2.2:9999/";
     //public
-    //private static final String BASE_URL = "http://j4f001.p.ssafy.io/";
+    private static final String BASE_URL = "http://j4f001.p.ssafy.io/api/";
 
     public static UserRepository getUserApiService(){
         return getInstance().create(UserRepository.class);

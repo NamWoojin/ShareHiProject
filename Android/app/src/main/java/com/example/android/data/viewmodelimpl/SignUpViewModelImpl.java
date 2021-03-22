@@ -5,11 +5,17 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
 import com.example.android.data.connection.RetrofitClient;
+import com.example.android.data.model.dto.LoginDTO;
+import com.example.android.data.model.dto.SignUpDTO;
 import com.example.android.data.model.entity.User;
+import com.example.android.data.model.entity.getUser;
 import com.example.android.ui.main.MainActivity;
 import com.example.android.ui.user.CheckEmailActivity;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
@@ -18,9 +24,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,9 +43,112 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private static final int REQ_CODE_CHECK_EMAIL = 2;
     private WeakReference<Activity> mActivityRef;
 
-
     //LiveData
+    private MutableLiveData<String> nameLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> passwordLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> checkPasswordLiveData = new MutableLiveData<>();
+
+    private MutableLiveData<Boolean> isOKName = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> isOKEmail = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> isOKPassword = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> isOKCheckPassword = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> isOKCheckEmail = new MutableLiveData<>(false);
+
+    //Executor
     private GoogleLoginExecutor mGoogleLoginExecutor;
+
+
+    //LiveData Getter & Setter
+    @Override
+    public MutableLiveData<String> getNameLiveData() {
+        return nameLiveData;
+    }
+
+    @Override
+    public void setNameLiveData(MutableLiveData<String> nameLiveData) {
+        this.nameLiveData = nameLiveData;
+    }
+
+    @Override
+    public MutableLiveData<String> getEmailLiveData() {
+        return emailLiveData;
+    }
+
+    @Override
+    public void setEmailLiveData(MutableLiveData<String> emailLiveData) {
+        this.emailLiveData = emailLiveData;
+    }
+
+    @Override
+    public MutableLiveData<String> getPasswordLiveData() {
+        return passwordLiveData;
+    }
+
+    @Override
+    public void setPasswordLiveData(MutableLiveData<String> passwordLiveData) {
+        this.passwordLiveData = passwordLiveData;
+    }
+
+    @Override
+    public MutableLiveData<String> getCheckPasswordLiveData() {
+        return checkPasswordLiveData;
+    }
+
+    @Override
+    public void setCheckPasswordLiveData(MutableLiveData<String> checkPasswordLiveData) {
+        this.checkPasswordLiveData = checkPasswordLiveData;
+    }
+
+    @Override
+    public MutableLiveData<Boolean> getIsOKName() {
+        return isOKName;
+    }
+
+    @Override
+    public void setIsOKName(MutableLiveData<Boolean> isOKName) {
+        this.isOKName = isOKName;
+    }
+
+    @Override
+    public MutableLiveData<Boolean> getIsOKEmail() {
+        return isOKEmail;
+    }
+
+    @Override
+    public void setIsOKEmail(MutableLiveData<Boolean> isOKEmail) {
+        this.isOKEmail = isOKEmail;
+    }
+
+    @Override
+    public MutableLiveData<Boolean> getIsOKPassword() {
+        return isOKPassword;
+    }
+
+    @Override
+    public void setIsOKPassword(MutableLiveData<Boolean> isOKPassword) {
+        this.isOKPassword = isOKPassword;
+    }
+
+    @Override
+    public MutableLiveData<Boolean> getIsOKCheckPassword() {
+        return isOKCheckPassword;
+    }
+
+    @Override
+    public void setIsOKCheckPassword(MutableLiveData<Boolean> isOKCheckPassword) {
+        this.isOKCheckPassword = isOKCheckPassword;
+    }
+
+    @Override
+    public MutableLiveData<Boolean> getIsOKCheckEmail() {
+        return isOKCheckEmail;
+    }
+
+    @Override
+    public void setIsOKCheckEmail(MutableLiveData<Boolean> isOKCheckEmail) {
+        this.isOKCheckEmail = isOKCheckEmail;
+    }
 
     @Override
     public void setParentContext(Activity parentContext) {
@@ -48,10 +160,36 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         mGoogleLoginExecutor = executor;
     }
 
+    @Override
+    public int canSignUp() {
+        int result = 0;
+        if(!isOKName.getValue()){
+            result = 1;
+        }
+        else if(!isOKEmail.getValue()){
+            result = 2;
+        }
+        else if(!isOKCheckEmail.getValue()){
+            result = 3;
+        }
+        else if(!isOKPassword.getValue()){
+            result = 4;
+        }
+        else if(!isOKCheckPassword.getValue()){
+            result = 5;
+        }
+
+        return result;
+//        return 0;
+    }
+
+
+
     //로그인 시도
     @Override
-    public void onRequestedSignIn(String email, String password) {
-        Call<String> doLogin = RetrofitClient.getUserApiService().Login(new User(email, password));
+    public void onRequestedSignIn() {
+        LoginDTO loginDTO = new LoginDTO(emailLiveData.getValue(), passwordLiveData.getValue());
+        Call<String> doLogin = RetrofitClient.getUserApiService().Login(loginDTO);
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -69,14 +207,40 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
 
     //회원가입 요청
     @Override
-    public void onRequestedSignUp(String name, String email, String password) {
-        Call<String> doLogin = RetrofitClient.getUserApiService().SignUp(new User(name, email, password));
+    public void onRequestedSignUp() {
+//        Call<ResponseBody> doLogin = RetrofitClient.getUserApiService().getUser(10);
+//        doLogin.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+////                response.code() : 200
+////                response.message() : OK
+//                Log.i(TAG, "onResponse: "+new Gson().toJson(response.code()));
+////                Toast.makeText(mActivityRef.get(), response.body().toString(), Toast.LENGTH_SHORT).show();
+//
+//                Toast.makeText(mActivityRef.get(), "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
+//                //로그인 시도
+////                onRequestedSignIn();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.e(TAG, "onRequestedSignIn: " + t);
+//                Toast.makeText(mActivityRef.get(), "통신에 실패했습니다.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+        User user = new User(nameLiveData.getValue(), emailLiveData.getValue(), passwordLiveData.getValue());
+        Call<String> doLogin = RetrofitClient.getUserApiService().SignUp(user);
         doLogin.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+//                response.code() : 200
+//                response.message() : OK
+                Log.i(TAG, "onResponse: "+new Gson().toJson(response.body()));
+
                 Toast.makeText(mActivityRef.get(), "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
                 //로그인 시도
-                onRequestedSignIn(email, password);
+//                onRequestedSignIn();
             }
 
             @Override
@@ -100,9 +264,9 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
 
     //이메일 인증 Activity 열기
     @Override
-    public void onRenderCheckEmail(String email) {
+    public void onRenderCheckEmail() {
         Intent intent = new Intent(mActivityRef.get(), CheckEmailActivity.class);
-        intent.putExtra("email", email);
+        intent.putExtra("email", emailLiveData.getValue());
         mActivityRef.get().startActivityForResult(intent, REQ_CODE_CHECK_EMAIL);
     }
 
@@ -118,7 +282,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 if (account != null) {
                     updateUI();
-                }else{
+                } else {
                     //로그인 실패
                     Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -130,8 +294,10 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
             //이메일 인증
             if (resultCode == RESULT_OK) {
                 //이메일 인증 성공
+                isOKCheckEmail.setValue(true);
             } else {
                 //이메일 인증 실패
+                isOKCheckEmail.setValue(false);
             }
         }
     }

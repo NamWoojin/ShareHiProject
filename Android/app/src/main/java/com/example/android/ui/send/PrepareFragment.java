@@ -58,7 +58,7 @@ public class PrepareFragment extends Fragment {
         Button goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
 
         goFolderButton.setOnClickListener(v -> {
-            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance());
+            setChildFragment(FolderFragment.newInstance());
         });
 
         // Inflate the layout for this fragment

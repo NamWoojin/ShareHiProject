@@ -20,6 +20,11 @@
     <string name="activity_signup_email_error">이메일 형식에 맞게 입력해주세요</string>
     <string name="activity_signup_password_error">특수문자 포함 8자 이상 입력해주세요</string>
     <string name="activity_signup_password_check_error">비밀번호가 일치하지 않아요</string>
+    <string name="activity_signup_name_notOK">이름을 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_email_notOK">이메일을 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_email_check_notOK">이메일을 인증해주세요</string>
+    <string name="activity_signup_password_notOK">비밀번호 확인을 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_password_check_notOK">비밀번호를 조건에 맞게 입력해주세요</string>
 
     <!--check email-->
     <string name="activity_check_email_textInputLayout_hint">인증번호</string>

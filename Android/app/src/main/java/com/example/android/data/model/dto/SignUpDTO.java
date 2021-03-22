@@ -1,15 +1,15 @@
-package com.example.android.data.model.entity;
+package com.example.android.data.model.dto;
 
-public class User {
+public class SignUpDTO {
     private String mem_name;
     private String mem_email;
     private String mem_password;
 
-    public User() {
+    public SignUpDTO() {
     }
 
 
-    public User(String mem_name, String mem_email, String mem_password) {
+    public SignUpDTO(String mem_name, String mem_email, String mem_password) {
         this.mem_name = mem_name;
         this.mem_email = mem_email;
         this.mem_password = mem_password;
