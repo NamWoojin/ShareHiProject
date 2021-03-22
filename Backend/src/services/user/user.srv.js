@@ -1,9 +1,9 @@
 'use strict';
 
-const pool = require('../../config/db_connect');
-const UserQuery = require('../../models/member');
-const transport = require('../../config/mail.transport');
-const redis = require('../../config/redis.emailAuth');
+const pool = require('../../config/db/db_connect');
+const UserQuery = require('../../models/user/member');
+const transport = require('../../config/mail/mail.transport');
+const redis = require('../../config/redis/redis.emailAuth');
 
 const signup = async (req, res) => {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>singup');
@@ -13,17 +13,17 @@ const signup = async (req, res) => {
   await pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
     if (err) {
       console.log(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     } else if (result.length == 0) {
       pool.query(UserQuery.signup, member, function (err, result) {
         if (err) {
           console.log(err);
-          res.status(500).send(err);
+          res.status(500).json(err);
         }
-        res.status(200).send('SUCCESS');
+        res.status(200).json('SUCCESS');
       });
     } else {
-      res.status(200).send('DUPLICATION');
+      res.status(200).json('DUPLICATION');
     }
   });
 };
@@ -34,17 +34,17 @@ const signout = async (req, res) => {
   await pool.query(UserQuery.getUser, member['memId'], async function (err, result) {
     if (err) {
       console.log(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     } else if (result.length == 0) {
-      res.status(200).send('FAIL');
+      res.status(200).json('FAIL');
     } else {
       await pool.query(UserQuery.signout, member['memId'], function (err, result) {
         if (err) {
           console.log(err);
-          res.status(500).send(err);
+          res.status(500).json(err);
         }
         // console.log('>>>success signout');
-        res.status(200).send('SUCCESS');
+        res.status(200).json('SUCCESS');
       });
     }
     // return res.json(result);
@@ -57,10 +57,10 @@ const getUser = async (req, res) => {
   await pool.query(UserQuery.getUser, member['memId'], function (err, result) {
     if (err) {
       console.log(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     } else if (result.length == 0) {
-      return res.status(500).send('FAIL');
-    } else return res.status(200).json(result);
+      return res.status(500).json('FAIL');
+    } else return res.status(200).json({result});
   });
 };
 
@@ -72,17 +72,17 @@ const checkEmail = async (req, res) => {
   await pool.query(UserQuery.checkEmail, member.memEmail, function (err, result) {
     if (err) {
       console.log(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     } else if (result.length == 0) {
-      res.status(200).send('SUCCESS');
+      res.status(200).json('SUCCESS');
     } else {
-      res.status(500).send('FAIL');
+      res.status(500).json('FAIL');
     }
   });
 };
 
 const update = async (req, res) => {
-  res.send('회원정보수정.');
+  res.json('회원정보수정.');
 };
 
 
@@ -94,13 +94,13 @@ const checkPassword = async(req, res) => {
   await pool.query(UserQuery.checkPassword, member.mem_id, function (err, result) {
     if (err) {
       console.log(err);
-      return res.status(500).send(err);
+      return res.status(500).json(err);
     } else if (result.length == 0) {
-      return res.status(500).send('FAIL');
+      return res.status(500).json('FAIL');
     } else if(result[0].mem_password == member.mem_password) {
-      return res.status(200).send('SUCCESS');
+      return res.status(200).json('SUCCESS');
     } else {
-      return res.status(200).send('DIF_PW');
+      return res.status(200).json('DIF_PW');
 
     }
   });
@@ -113,11 +113,11 @@ const updatePassword = async (req, res) => {
   await pool.query(UserQuery.updatePassword, [member.mem_password, member.mem_id], function (err, result) {
     if (err) {
       console.log(err);
-      return res.status(500).send(err);
+      return res.status(500).json(err);
     } else if (result.affectedRows == 0) {
-      return res.status(500).send('FAIL');
+      return res.status(500).json('FAIL');
     } else if(result.affectedRows ==1) {
-      return res.status(200).send('SUCCESS');
+      return res.status(200).json('SUCCESS');
     } 
   });
 };
@@ -141,7 +141,7 @@ const requireEmailAuth = async (req, res) => {
   await transport.sendMail(mailOptions, (err) => {
     if (err) {
       console.log(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     } else {
       redis.on('error', function (err) {
         console.log('Error ' + err);
@@ -149,7 +149,7 @@ const requireEmailAuth = async (req, res) => {
       redis.set(member.mem_email, authNum);
       redis.expire(member.mem_email, 180);
       redis.quit();
-      res.status(200).send('SUCCESS');
+      res.status(200).json('SUCCESS');
     }
     transport.close();
   });
@@ -168,11 +168,11 @@ const checkEmailAuth = async (req, res) => {
     if (err) {
       throw err;
     } else if (!value) {
-      res.status(500).send('TIMEOUT');
+      res.status(500).json('TIMEOUT');
      } else if (value != member.authNum) {
-      res.status(200).send('DIF_AUTHNUM');
+      res.status(200).json('DIF_AUTHNUM');
     } else if (value === member.authNum) {
-      res.status(200).send('SUCCESS');
+      res.status(200).json('SUCCESS');
     }
   });
 };
