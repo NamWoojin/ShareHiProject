@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{positions}}
     <div id="window" class="small-window">
       <v-container>
         <v-row>
@@ -237,8 +238,15 @@ export default {
       }
     },
     setMenu: function(top, left) {
-      this.top = top-60 + 'px';
-      this.left = left + 'px';
+      if (!this.browsersize) {
+        let el = document.getElementById('window')
+        this.top = top-60 - el.offsetTop + 'px';
+        this.left = left - el.offsetLeft + 'px';
+      } else {
+        this.top = top-60 + 'px';
+        this.left = left + 'px';
+      }
+      
     },
 
     closeMenu() {
