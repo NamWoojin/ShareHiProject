@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{positions}}
     <div id="window" class="small-window">
       <v-container>
         <v-row>
