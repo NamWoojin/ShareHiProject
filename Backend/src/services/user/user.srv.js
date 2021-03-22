@@ -4,6 +4,7 @@ const pool = require('../../config/db/db_connect');
 const UserQuery = require('../../models/user/member');
 const transport = require('../../config/mail/mail.transport');
 const redis = require('../../config/redis/redis.emailAuth');
+// const redis = require('redis');
 
 const signup = async (req, res) => {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>singup');
@@ -143,12 +144,11 @@ const requireEmailAuth = async (req, res) => {
       console.log(err);
       res.status(500).json(err);
     } else {
-      redis.on('error', function (err) {
-        console.log('Error ' + err);
-      });
+      // redis.on('error', async function (err) {
+      //   console.log('Error ' + err);
+      // });
       redis.set(member.mem_email, authNum);
       redis.expire(member.mem_email, 180);
-      redis.quit();
       res.status(200).json('SUCCESS');
     }
     transport.close();
@@ -161,10 +161,11 @@ const checkEmailAuth = async (req, res) => {
   // console.log(member.mem_email);
   // console.log(member.authNum);
 
-  redis.on('error', async function (err) {
-    console.log('Error ' + err);
-  });
-  await redis.get(member.mem_email, function (err, value) {
+  // redis.on('error', async function (err) {
+  //   console.log('Error ' + err);
+  // });
+  // redis.createClient(redisConfig).get(member.mem_email, function (err, value) {
+  redis.get(member.mem_email, function (err, value) {  
     if (err) {
       throw err;
     } else if (!value) {
