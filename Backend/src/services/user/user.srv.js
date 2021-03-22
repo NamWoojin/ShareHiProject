@@ -60,7 +60,7 @@ const getUser = async (req, res) => {
       res.status(500).json(err);
     } else if (result.length == 0) {
       return res.status(500).json('FAIL');
-    } else return res.status(200).json({result});
+    } else return res.status(200).json(result);
   });
 };
 
