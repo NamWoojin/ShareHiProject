@@ -1,12 +1,16 @@
 // 다음 작업 : express-generator를 활용한 구조화
 // 지금은 일단 모듈화
 
+// Redis 사용 전, 임시 저장
+let socketForWeb;
+let socketForAndroid;
+//////////////////////////
+
 let config = {
   host: 'localhost',
 };
 
 const net = require('net');
-
 const http = require('http');
 const fs = require('fs');
 const socketio = require('socket.io');
@@ -23,12 +27,15 @@ server.listen(8765, () => {
 let io = socketio(server);
 
 io.sockets.on('connection', (socket) => {
+  socketForWeb = socket;
+
   socket.on('message', (data) => {
-    console.log(data);
-    writeData(socket, 'message', data);
+    console.log('------ writing to Android: ---------');
+    writeData(socketForAndroid, 'message', data);
+    console.log('------------------------------------');
   });
   socket.on('blob', (data) => {
-    writeData(socket, 'blob', data);
+    writeData(socketForAndroid, 'blob', data);
   });
 });
 
@@ -37,11 +44,11 @@ let writeData = function (socket, id, data) {
 };
 
 var andServer = net.createServer(function (client) {
+  socketForAndroid = client;
+
   client.on('data', function (data) {
-    console.log('------ writing to client: ---------');
-    andWriteData(client, data);
-    console.log(data);
-    console.log('...........................');
+    console.log('------ writing to Web: ---------');
+    andWriteData(socketForWeb, data);
   });
 
   client.on('end', function () {
@@ -70,5 +77,7 @@ andServer.listen(8888, function () {
 });
 
 var andWriteData = function (socket, data) {
+  console.log('socket : ' + socket);
+  console.log('data : ' + data);
   var success = !socket.write(data);
 };

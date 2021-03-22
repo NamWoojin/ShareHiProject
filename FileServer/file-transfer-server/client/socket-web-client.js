@@ -18,6 +18,7 @@ let config = {
   downLoadSize: 0,
   downLoadTotalSize: 0,
 };
+
 let socket = '';
 
 let getConnection = function () {
@@ -37,14 +38,11 @@ let getConnection = function () {
   socket.on('message', recvMessageData);
   socket.on('blob', recvBlob);
 };
-//getConnection();
 
 let sendData = (id, data) => {
   socket.emit(id, data);
   console.log('서버로 데이터를 전송하였습니다.');
 };
-
-//sendData('message', 'hello man~');
 
 let recvMessageData = (data) => {
   console.log('서버에서 데이터를 받아 리턴합니다');
