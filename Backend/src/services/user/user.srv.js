@@ -174,6 +174,7 @@ const checkEmailAuth = async (req, res) => {
       res.status(200).json('DIF_AUTHNUM');
     } else if (value === member.authNum) {
       res.status(200).json('SUCCESS');
+      redis.del(member.mem_email);
     }
   });
 };
