@@ -1,9 +1,18 @@
 <template>
   <div>
-    <div>
+    <div id="window" class="small-window">
       <v-container>
         <v-row>
-          <v-col cols="12" style="border: 1px solid black; border-radius: 5px; margin: 10px 0;">
+          <v-col cols="12" style="border: 1px solid black; margin: -1px 0 0;">
+            <div id="windowheader" :class="{ cursor: !browsersize }" style="display: flex; justify-content: flex-end" @mousedown="dragMouseDown">
+              <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
+              <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
+
+              <v-icon style="cursor: pointer;" @click="$router.push({ name: 'MyDevice' })">mdi-close</v-icon>
+              
+            </div>
+          </v-col>
+          <v-col cols="12" style="border: 1px solid black; margin: -1px 0;">
             <div style="display: flex; justify-content: space-between">
               <router-link :to="{ name: 'Storage' }">
                 <el-button icon="el-icon-back" circle></el-button>
@@ -16,6 +25,14 @@
                   />
                 </v-btn>
                     
+                <v-btn class="navicon" @click="downloadFile"
+                  :disabled="selectitem.length != 1"
+                >
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large style="margin-top: 5px !important">mdi-download</v-icon>
+                  </div>
+                </v-btn>
+
                 <v-btn class="navicon" @click="uploadFile">
                   <div style="width: 50px; height: 50px;">
                     <v-icon x-large color="success" style="margin-top: 5px !important">mdi-plus</v-icon>
@@ -36,7 +53,7 @@
                   :disabled="selectitem.length != 1"
                 >
                   <div style="width: 50px; height: 50px;">
-                    <v-icon x-large color="black" style="margin-top: 5px !important">mdi-pencil-plus-outline</v-icon>
+                    <v-icon x-large color="black" style="margin-top: 5px !important">mdi-folder-edit-outline</v-icon>
                   </div>
                 </v-btn>
                 <!-- <v-btn class="navicon" disabled>
@@ -55,10 +72,11 @@
               
             </div>
           </v-col>
-          <v-col cols="2" style="padding: 0 20px 0 0">
+          <v-col
+            cols="2"
+            style="border: 1px solid black; margin: 0;"
+          >
             <el-tree
-              style="border: 1px solid black; border-radius: 5px;"
-              :key="componentKey"
               :data="data"
               :default-expanded-keys="[0]"
               node-key="id"
@@ -67,7 +85,7 @@
             >
             </el-tree>
           </v-col>
-          <v-col cols="10" style="border: 1px solid black; border-radius: 5px;" @contextmenu="openMenu($event)" @click="clickOuter">
+          <v-col cols="10" style="border: 1px solid black; border-left-style: none;" @contextmenu="openMenu($event)" @click="clickOuter">
             <div v-if="node.folder && node.folder.length > 0" style="display: flex; flex-wrap: wrap;" id="outter">
               <div v-for="child in node.folder" :key="child.id" id="outter">
                 <div style="margin: 20px;">
@@ -134,10 +152,18 @@
 
 <script>
 
+
+
 export default {
   name: 'FileBrowser',
   data() {
     return {
+      positions: {
+        clientX: undefined,
+        clientY: undefined,
+        movementX: 0,
+        movementY: 0
+      },
       componentKey: 0,
       selectitem: [],
       data: 
@@ -188,9 +214,30 @@ export default {
     top: '0px',
     left: '0px',
     fileList: null,
+    browsersize: false,
     };
   },
   methods: {
+    dragMouseDown(event) {
+      event.preventDefault()
+      this.positions.clientX = event.clientX
+      this.positions.clientY = event.clientY
+      document.onmousemove = this.elementDrag
+      document.onmouseup = this.closeDragElement
+    },
+    elementDrag(event) {
+      event.preventDefault()
+      this.positions.movementX = this.positions.clientX - event.clientX
+      this.positions.movementY = this.positions.clientY - event.clientY
+      this.positions.clientX = event.clientX
+      this.positions.clientY = event.clientY
+      document.getElementById('window').style.top = (document.getElementById('window').offsetTop - this.positions.movementY) + 'px'
+      document.getElementById('window').style.left = (document.getElementById('window').offsetLeft - this.positions.movementX) + 'px'
+    },
+    closeDragElement() {
+      document.onmouseup = null
+      document.onmousemove = null
+    },
     nodeClick(node) {
       if (node.folder) {
         this.node = node
@@ -198,8 +245,15 @@ export default {
       }
     },
     setMenu: function(top, left) {
-      this.top = top-60 + 'px';
-      this.left = left + 'px';
+      if (!this.browsersize) {
+        let el = document.getElementById('window')
+        this.top = top-60 - el.offsetTop + 'px';
+        this.left = left - el.offsetLeft + 'px';
+      } else {
+        this.top = top-60 + 'px';
+        this.left = left + 'px';
+      }
+      
     },
 
     closeMenu() {
@@ -274,7 +328,6 @@ export default {
       
       if (!this.checkFolder(label)) {
         let number = 1
-        console.log(label + ' (' + number + ')')
         while(!this.checkFolder(label + ' (' + number + ')')) {
           number++
         }
@@ -330,9 +383,17 @@ export default {
       this.viewMenu = false
       document.getElementById('fileinput').click()
     },
+    resize() {
+      this.browsersize = !this.browsersize
+      document.getElementById('window').classList.toggle('small-window')
+      document.getElementById('window').classList.toggle('max-window')
+    },
+    downloadFile() {
+      console.log('this is downloadFile')
+    }
   },
   mounted() {
-    this.node = this.data[0]
+    this.node = this.data[0];
   },
   watch: {
     fileList: function () {
@@ -351,10 +412,12 @@ export default {
             })
           }
         }
-        this.$message({
-          type: 'success',
-          message: cnt + '개의 파일이 추가되었습니다.'
-        })
+        if (cnt > 0) {
+          this.$message({
+            type: 'success',
+            message: cnt + '개의 파일이 추가되었습니다.'
+          })
+        }
         this.fileList = null;
       }
     }
@@ -416,4 +479,28 @@ export default {
   /* .navicon > .v-btn__content {
     
   } */
+
+  .small-window {
+    position: absolute;
+    width: 50%;
+    margin: auto;
+  }
+
+  .cursor {
+    cursor: move;
+  }
+
+  .max-window {
+    width: 100%;
+  }
+
+  #window {
+    
+    z-index: 9;
+  }
+
+  #windowheader {
+    
+    z-index: 10;
+  }
 </style>

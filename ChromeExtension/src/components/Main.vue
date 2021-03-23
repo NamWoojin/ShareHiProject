@@ -4,10 +4,10 @@
       <div class="nav-item" >
         <button class="nav-item-btn">알림</button>
         <div v-if="true" class="nav-item-content">
-            <a href="#">Alert item1</a>
-            <a href="#">Alert item2</a>
-            <a href="#">Alert item3</a>
-            <a href="#">Alert item4</a>
+          <a href="#">Alert item1</a>
+          <a href="#">Alert item2</a>
+          <a href="#">Alert item3</a>
+          <a href="#">Alert item4</a>
         </div>
         <div v-else>
           알림이 없습니다
@@ -16,10 +16,10 @@
       <div class="nav-item" >
         <button class="nav-item-btn">디바이스</button>
         <div v-if="true" class="nav-item-content">
-            <a href="#">Device1</a>
-            <a href="#">Device2</a>
-            <a href="#">Device3</a>
-            <a href="#">Device4</a>
+          <a href="#">Device1</a>
+          <a href="#">Device2</a>
+          <a href="#">Device3</a>
+          <a href="#">Device4</a>
         </div>
         <div v-else>
           알림이 없습니다
@@ -28,10 +28,10 @@
       <div class="nav-item" >
         <button class="nav-item-btn">더 보기</button>
         <div class="nav-item-content nav-item-last">
-            <a href="#" @click="onClickOpenAllDir">모든 폴더 열기</a>
-            <a href="#" @click="onClickCloseAllDir">모든 폴더 닫기</a>
-            <a href="#">계정설정</a>
-            <a href="#" @click="onClickLogout">로그아웃</a>
+          <a href="#" @click="onClickOpenAllDir">모든 폴더 열기</a>
+          <a href="#" @click="onClickCloseAllDir">모든 폴더 닫기</a>
+          <a href="#">계정설정</a>
+          <a href="#" @click="onClickLogout">로그아웃</a>
         </div>
       </div>
     </nav>
@@ -128,16 +128,6 @@ export default {
         })
       }
     },
-    setUploadMenu(target) {
-      const uploadMenu = document.createElement('div')
-      uploadMenu.setAttribute('class','context-menu-content')
-      uploadMenu.innerText = '파일추가'
-      uploadMenu.addEventListener('click', (e) => {
-        console.log(e,target)
-        this.deleteContextMenu()
-      })
-      return uploadMenu
-    },
     setDeleteMenu(target) {
       const deleteMenu = document.createElement('div')
       deleteMenu.setAttribute('class','context-menu-content')
@@ -157,6 +147,16 @@ export default {
         this.deleteContextMenu()
       })
       return reNameMenu
+    },
+    setUploadMenu(target) {
+      const uploadMenu = document.createElement('div')
+      uploadMenu.setAttribute('class','context-menu-content')
+      uploadMenu.innerText = '파일추가'
+      uploadMenu.addEventListener('click', (e) => {
+        this.createModal('업로드할 파일을 선택하세요',target,2)
+        this.deleteContextMenu()
+      })
+      return uploadMenu
     },
     setDownloadMenu(target) {
       const downloadMenu = document.createElement('div')
@@ -199,6 +199,12 @@ export default {
         modal.appendChild(modalObj.nameInput)
       }
 
+      if (type === 2) {
+        modalObj.nameInput.setAttribute('class','modal-input')
+        modalObj.nameInput.type = 'file'
+        modal.appendChild(modalObj.nameInput)
+      }
+
       const btnContainer = document.createElement('div')
       btnContainer.setAttribute('class','btn-container')
 
@@ -206,7 +212,7 @@ export default {
       confirmBtn.innerText = "확인"
       confirmBtn.setAttribute('class','confirm-btn')
       confirmBtn.addEventListener('click', ()=>{
-
+      
         if (type === 0) { // 파일 및 폴더 삭제
           const ul = target.nextElementSibling
           if (ul) {
@@ -215,7 +221,43 @@ export default {
           target.remove()
         }
         else if (type === 1) { // 파일 및 폴더 이름 변경
+          // target의 현재 디렉토리에 중복 이름이 있는지 확인 
+          const targetDirectory = target.parentNode.parentNode
+          const targetClassName = target.className
+          const ChildNodes = targetDirectory.children
+          for (let i=0; i<ChildNodes.length;i++) {
+            const child = ChildNodes[i].querySelector('div')
+            if (child !== target && targetClassName === child.className && child.innerText === modalObj.nameInput.value)  {
+              alert('같은 이름이 있습니다.')      
+              return       
+            }
+          }
           target.innerText = modalObj.nameInput.value
+        }
+
+        else if (type === 2) { // 파일 업로드
+          if (!modalObj.nameInput.files.length) {
+            alert('파일을 선택해주세요')
+            return
+            }
+            
+          // 파일 전송
+          // let formData = new FormData()
+          // formData.append("data",modalObj.nameInput.files[0])
+
+          const fileName = modalObj.nameInput.value
+          const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
+          const ul = target.nextElementSibling
+          const li = document.createElement('li')
+          const liDiv = document.createElement('div')
+          liDiv.setAttribute('class','file')
+          liDiv.innerText = fileNameWithoutPath
+          liDiv.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            this.createContextMenu(e.clientX,e.clientY,e.target,'file');
+          })
+          li.appendChild(liDiv)
+          ul.appendChild(li) 
         }
         modalOverlay.remove()
         modal.remove()
@@ -269,7 +311,6 @@ export default {
       }
       overlay.appendChild(contextMenuOverlay)
       overlay.appendChild(contextMenu)
-      console.log(x,y,target)
     }
   },
   mounted() {
