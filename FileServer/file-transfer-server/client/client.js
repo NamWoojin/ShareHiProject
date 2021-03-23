@@ -19,7 +19,7 @@ let client = require('./socket-web-client.js');
 client.getConnection();
 console.log('connected');
 // 메시지 한번 보내보기 : messag
-client.sendData('message', 'hi~!!!!!!!!!!!!!!');
+client.sendData('message', '1123123123');
 //데이터 한번 받아보기(서버에서 실행하기)
 // call back 아직 안댐....
 //전송할 파일 이름 선택하기

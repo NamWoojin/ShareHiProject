@@ -34,6 +34,7 @@ io.sockets.on('connection', (socket) => {
   socket.on('message', (data) => {
     console.log('------ writing to Android: ---------');
     console.log(data);
+    console.log('socketForAndroid : ' + socketForAndroid);
     writeData(socketForAndroid, 'message', data);
     console.log('------------------------------------');
   });
@@ -43,6 +44,7 @@ io.sockets.on('connection', (socket) => {
 });
 
 let writeData = function (socket, id, data) {
+  console.log('socket : ' + socket);
   socket.write(data);
 };
 

@@ -43,6 +43,7 @@ style.textContent =
   height: 100%;
   background-color:white;
   overflow-y:scroll;
+  overflow-x: scroll;
 }
 .nav {
   display: flex;
@@ -51,16 +52,16 @@ style.textContent =
   padding : 5px;
 }
 .nav-item {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 .nav-item-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 100px;
-    overflow: auto;
-    box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.1);
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 0px;
+  overflow: auto;
+  box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.1);
 }
 .nav-item-last {
   right: 0;
@@ -84,6 +85,9 @@ style.textContent =
   animation: rotateMenu 500ms ease-in-out forwards;
   transform-origin: top center;
 }
+.nav-item-content a:hover {
+  background-color : rgba(0,0,0,0.2);
+}
 .directory ul {
   margin-left : 10px;
   list-style-type: none;
@@ -104,16 +108,20 @@ style.textContent =
 .dir {
   width : 100%;
   line-height : 30px;
+  cursor : pointer;
+  white-space: nowrap;
 }
 .dir:hover {
-  background-color : yellow;
+  background-color : rgba(0,0,0,0.2);
 }
 .file {
   width : 100%;
   line-height : 30px;
+  cursor : pointer;
+  white-space: nowrap;
 }
 .file:hover {
-  background-color : yellow;
+  background-color : rgba(0,0,0,0.2);
 }
 .closed {
   height : 0;
@@ -164,6 +172,85 @@ style.textContent =
 }
 .new-tab-link {
   cursor: pointer;
+}
+.context-menu-overlay {
+  position : fixed;
+  top : 0;
+  left : 0;
+  width : 100vw;
+  height : 100vh;
+  z-index : 900000000;
+}
+.context-menu {
+  background-color : white;
+  position : absolute;
+  width : auto;
+  height : auto;
+  box-shadow : 0px 0px 5px 1px rgb(0 0 0 / 20%);
+  z-index : 900000000;
+  display : flex;
+  flex-direction: column;
+  padding : 5px;
+}
+.context-menu-content {
+  margin : 5px;
+  cursor : pointer;
+}
+.context-menu-content:hover {
+  color : #3ac569;
+  font-weight : bold;
+}
+.modal-overlay {
+  position : fixed;
+  top : 0;
+  left : 0;
+  width : 100vw;
+  height : 100vh;
+  z-index : 900000000;
+  background-color : rgba(0,0,0,0.2);
+}
+.modal {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top : auto;
+  margin-bottom : auto;
+  left: 0;
+  right: 0;
+  top : 0;
+  bottom : 0;
+  z-index : 900000000;
+  background-color : white;
+  box-shadow : 0px 0px 5px 1px rgb(0 0 0 / 20%);
+  border-radius : 15px;
+  display : flex;
+  flex-direction : column;
+  padding : 20px;
+  height : fit-content;
+  width : fit-content;
+}
+.modal-input {
+  margin-top: 15px;
+}
+.btn-container {
+  margin-top : 15px;
+  display : flex;
+  justify-content : space-around;
+}
+.confirm-btn {
+  background-color : #3ac569;
+  cursor : pointer;
+  padding: 2px 10px;
+  border-radius: 5px;
+  color: white;
+  box-shadow: 0px 0px 0px 0.5px rgb(0 0 0 / 20%);
+}
+.cancel-btn {
+  background-color : white;
+  cursor : pointer;
+  padding: 2px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 0px 0.5px rgb(0 0 0 / 20%);
 }
 `
 shadowElement.shadowRoot.appendChild(style)

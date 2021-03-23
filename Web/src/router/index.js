@@ -4,6 +4,15 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '*',
+    redirect: "/404"
+  },
+  {
+    path: "/404",
+    name: "notFound",
+    component: () => import('../views/NotFound.vue'),
+  },
   // user
   {
     path: '/user',
