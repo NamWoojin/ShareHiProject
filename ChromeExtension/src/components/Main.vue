@@ -236,9 +236,17 @@ export default {
         }
 
         else if (type === 2) { // 파일 업로드
+          if (!modalObj.nameInput.files.length) {
+            alert('파일을 선택해주세요')
+            return
+            }
+            
+          // 파일 전송
+          // let formData = new FormData()
+          // formData.append("data",modalObj.nameInput.files[0])
+
           const fileName = modalObj.nameInput.value
           const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
-
           const ul = target.nextElementSibling
           const li = document.createElement('li')
           const liDiv = document.createElement('div')
