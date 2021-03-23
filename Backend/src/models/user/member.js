@@ -5,8 +5,8 @@ const signout = 'delete from member where mem_id=?';
 const getUser = 'select * from member where mem_id=?';
 const checkEmail = 'select * from member where mem_email=?';
 const update = '';
-const updatePassword = '';
-const checkPassword = '';
+const checkPassword = 'select * from member where mem_id=?';
+const updatePassword = 'update member set mem_password=? where mem_id=?';
 module.exports = {
   signup,
   signout,
