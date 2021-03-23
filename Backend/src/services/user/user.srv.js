@@ -2,7 +2,7 @@
 
 const pool = require('../../config/db/db_connect');
 const UserQuery = require('../../models/user/member');
-const transport = require('../../config/mail/mail.transport');
+const transport = require('../../util/mail/mail.transport');
 const redis = require('../../config/redis/redis.emailAuth');
 // const redis = require('redis');
 
