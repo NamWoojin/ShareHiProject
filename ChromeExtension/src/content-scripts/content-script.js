@@ -43,6 +43,7 @@ style.textContent =
   height: 100%;
   background-color:white;
   overflow-y:scroll;
+  overflow-x: scroll;
 }
 .nav {
   display: flex;
@@ -51,16 +52,16 @@ style.textContent =
   padding : 5px;
 }
 .nav-item {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 .nav-item-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 100px;
-    overflow: auto;
-    box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.1);
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 0px;
+  overflow: auto;
+  box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.1);
 }
 .nav-item-last {
   right: 0;
@@ -84,6 +85,9 @@ style.textContent =
   animation: rotateMenu 500ms ease-in-out forwards;
   transform-origin: top center;
 }
+.nav-item-content a:hover {
+  background-color : rgba(0,0,0,0.2);
+}
 .directory ul {
   margin-left : 10px;
   list-style-type: none;
@@ -105,6 +109,7 @@ style.textContent =
   width : 100%;
   line-height : 30px;
   cursor : pointer;
+  white-space: nowrap;
 }
 .dir:hover {
   background-color : rgba(0,0,0,0.2);
@@ -113,6 +118,7 @@ style.textContent =
   width : 100%;
   line-height : 30px;
   cursor : pointer;
+  white-space: nowrap;
 }
 .file:hover {
   background-color : rgba(0,0,0,0.2);
@@ -222,6 +228,9 @@ style.textContent =
   padding : 20px;
   height : fit-content;
   width : fit-content;
+}
+.modal-input {
+  margin-top: 15px;
 }
 .btn-container {
   margin-top : 15px;
