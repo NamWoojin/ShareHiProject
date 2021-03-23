@@ -128,8 +128,12 @@ style.textContent =
   display : none;
 }
 .login-container {
+  position: absolute;
+  margin-top: auto;
+  margin-bottom: auto;
   width: 100%;
-  height: 100%;
+  top: 0;
+  bottom: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -140,8 +144,6 @@ style.textContent =
   margin-bottom : 10px;
 }
 .logo-image {
-  position : absolute;
-  top: 20%;
   width: 200px;
 }
 .login-email-input {
