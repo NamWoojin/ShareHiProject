@@ -2,13 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-const UserService = require('../../services/user/user.srv');
+const UserService = require('../../services/member/member.srv');
 
 
 router.post('/signup', UserService.signup);
 router.delete('/signout', UserService.signout);
-router.get('/getUser/:memId', UserService.getUser);
-router.get('/checkEmail/:memEmail', UserService.checkEmail);
+router.get('/getUser', UserService.getUser);
+router.get('/checkEmail', UserService.checkEmail);
 router.put('/update', UserService.update);
 router.post('/checkPassword', UserService.checkPassword);
 router.put('/updatePassword', UserService.updatePassword);

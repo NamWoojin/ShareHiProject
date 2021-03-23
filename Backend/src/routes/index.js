@@ -3,13 +3,13 @@
 const express = require('express');
 const router = express.Router();
 
-const user = require('./user');
+const member = require('./member');
 const login = require('./login');
 const follow = require('./follow');
 
 
 // router.use('/user', auth, user);
-router.use('/user', user);
+router.use('/member', member);
 router.use('/login', login);
 router.use('/follow', follow);
 
