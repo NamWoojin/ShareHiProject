@@ -1,79 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/activity_user_check_width"
-    android:layout_height="@dimen/activity_user_check_height"
-    android:layout_gravity="center"
-    tools:context=".ui.user.CheckEmailActivity">
-    <TextView
-        android:id="@+id/activity_check_email_info_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="@dimen/activity_user_check_text_size"
-        android:layout_marginHorizontal="@dimen/activity_user_check_textInputLayout_marginHorizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_check_email_time_textView"
-        app:layout_constraintVertical_chainStyle="spread"
-        />
-    <TextView
-        android:id="@+id/activity_check_email_time_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/orangeRed"
-        android:layout_marginHorizontal="@dimen/activity_user_check_textInputLayout_marginHorizontal"
-        app:layout_constraintTop_toBottomOf="@id/activity_check_email_info_textView"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_check_email_text_input_layout"
-        />
+<layout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/activity_check_email_text_input_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_user_check_textInputLayout_height"
-        android:layout_marginHorizontal="@dimen/activity_user_check_textInputLayout_marginHorizontal"
-        android:hint="@string/activity_check_email_textInputLayout_hint"
-        app:layout_constraintTop_toBottomOf="@id/activity_check_email_time_textView"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_check_email_cancel_button"
-        >
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.android.data.viewmodel.SignUpViewModel" />
+    </data>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/activity_check_email_text_input_edit_text"
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="@dimen/activity_user_check_width"
+        android:layout_height="@dimen/activity_user_check_height"
+        android:layout_gravity="center"
+        tools:context=".ui.user.CheckEmailActivity">
+
+        <TextView
+            android:id="@+id/activity_check_email_info_textView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_user_check_textInputLayout_marginHorizontal"
+            android:gravity="center"
+            android:textSize="@dimen/activity_user_check_text_size"
+            app:layout_constraintBottom_toTopOf="@id/activity_check_email_time_textView"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            android:text="@{viewModel.infoLiveData}"/>
 
-    <Button
-        android:id="@+id/activity_check_email_cancel_button"
-        android:layout_width="@dimen/activity_user_check_button_width"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_user_check_button_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_check_email_text_input_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/activity_check_email_ok_button"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        android:text="@string/activity_check_email_cancel_button"
-        />
-    <Button
-        android:id="@+id/activity_check_email_ok_button"
-        android:layout_width="@dimen/activity_user_check_button_width"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/activity_user_check_button_margin"
-        app:layout_constraintTop_toTopOf="@id/activity_check_email_cancel_button"
-        app:layout_constraintBottom_toBottomOf="@id/activity_check_email_cancel_button"
-        app:layout_constraintStart_toEndOf="@id/activity_check_email_cancel_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/activity_check_email_ok_button"
-        />
+        <TextView
+            android:id="@+id/activity_check_email_time_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_user_check_textInputLayout_marginHorizontal"
+            android:gravity="center"
+            android:textColor="@color/orangeRed"
+            app:layout_constraintBottom_toTopOf="@id/activity_check_email_text_input_layout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_check_email_info_textView"
+            android:text="@{viewModel.timeLiveData}"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/activity_check_email_text_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_user_check_textInputLayout_height"
+            android:layout_marginHorizontal="@dimen/activity_user_check_textInputLayout_marginHorizontal"
+            android:hint="@string/activity_check_email_textInputLayout_hint"
+            app:layout_constraintBottom_toTopOf="@id/activity_check_email_cancel_button"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_check_email_time_textView">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/activity_check_email_text_input_edit_text"
+                android:text="@={viewModel.checkEmailLiveData}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/activity_check_email_cancel_button"
+            android:layout_width="@dimen/activity_user_check_button_width"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_user_check_button_margin"
+            android:text="@string/activity_check_email_cancel_button"
+            android:onClick="@{() -> viewModel.closeEmailAuth()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/activity_check_email_ok_button"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_check_email_text_input_layout" />
+
+        <Button
+            android:id="@+id/activity_check_email_ok_button"
+            android:layout_width="@dimen/activity_user_check_button_width"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_user_check_button_margin"
+            android:text="@string/activity_check_email_ok_button"
+            android:onClick="@{() -> viewModel.checkEmailAuth()}"
+            app:layout_constraintBottom_toBottomOf="@id/activity_check_email_cancel_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/activity_check_email_cancel_button"
+            app:layout_constraintTop_toTopOf="@id/activity_check_email_cancel_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

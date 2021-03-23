@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
 import com.example.android.data.connection.RetrofitClient;
-import com.example.android.data.model.dto.LoginDTO;
-import com.example.android.data.model.dto.SignUpDTO;
+import com.example.android.data.model.dto.Event;
+import com.example.android.data.model.dto.User;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.ui.main.MainActivity;
@@ -21,6 +21,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 
@@ -40,29 +43,10 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
     private MutableLiveData<String> passwordLiveData = new MutableLiveData<>();
 
+    private MutableLiveData<Event<Boolean>> loginSuccessLiveData = new MutableLiveData<>();
+
     //GoogleLoginExecutor
     private GoogleLoginExecutor mGoogleLoginExecutor;
-
-    //LiveData
-    @Override
-    public MutableLiveData<String> getEmailLivedata() {
-        return emailLiveData;
-    }
-
-    @Override
-    public void setEmailLivedata(MutableLiveData<String> emailLivedata) {
-        this.emailLiveData = emailLivedata;
-    }
-
-    @Override
-    public MutableLiveData<String> getPasswordLivedata() {
-        return passwordLiveData;
-    }
-
-    @Override
-    public void setPasswordLivedata(MutableLiveData<String> passwordLivedata) {
-        this.passwordLiveData = passwordLivedata;
-    }
 
 
     //activity지정
@@ -81,17 +65,25 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     //로그인 요청
     @Override
     public void onRequestedSignIn() {
-        Call<String> doLogin = RetrofitClient.getUserApiService().Login(new LoginDTO(emailLiveData.getValue(),passwordLiveData.getValue()));
-        doLogin.enqueue(new Callback<String>() {
+        Call<Object> doLogin = RetrofitClient.getLoginApiService().Login(new User(emailLiveData.getValue(), passwordLiveData.getValue()));
+        doLogin.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-//                Log.i(TAG, "onResponse: "+ new Gson().toJson(response.body()));
-                Toast.makeText(mActivityRef.get(), "환영합니다!", Toast.LENGTH_SHORT).show();
-//                updateUI();
+            public void onResponse(Call<Object> call, Response<Object> response) {
+
+                int code = response.code();
+                String message = response.message();
+                String body = new Gson().toJson(response.body());
+                Log.i(TAG, "onResponse: " + code + " "+ message +" "+body);
+                if (code == 200) {
+                    Toast.makeText(mActivityRef.get(), "환영합니다!", Toast.LENGTH_SHORT).show();
+                    loginSuccessLiveData.setValue(new Event<>(true));
+                } else {
+                    Toast.makeText(mActivityRef.get(), "아이디 또는 비밀번호를 다시 확인해주세요", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Object> call, Throwable t) {
                 Log.e(TAG, "onRequestedSignIn: " + t);
                 Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
@@ -130,24 +122,46 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                 //로그인 성공
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 if (account != null) {
-                    updateUI();
+                    loginSuccessLiveData.setValue(new Event<>(true));
                 } else {
                     //로그인 실패
                     Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) {
-                //로그인 실패
-                Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                //로그인 취소
             }
         }
     }
 
-    //화면 전환
-    private void updateUI() { //update ui code here
-        Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
-        mActivityRef.get().startActivity(intent);
-        mActivityRef.get().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        //다시 돌아오지 않도록 끝내기
-        mActivityRef.get().finish();
+    //LiveData getter setter
+    @Override
+    public MutableLiveData<String> getEmailLivedata() {
+        return emailLiveData;
     }
+
+    @Override
+    public void setEmailLivedata(MutableLiveData<String> emailLivedata) {
+        this.emailLiveData = emailLivedata;
+    }
+
+    @Override
+    public MutableLiveData<String> getPasswordLivedata() {
+        return passwordLiveData;
+    }
+
+    @Override
+    public void setPasswordLivedata(MutableLiveData<String> passwordLivedata) {
+        this.passwordLiveData = passwordLivedata;
+    }
+
+    @Override
+    public MutableLiveData<Event<Boolean>> getLoginSuccessLiveData() {
+        return loginSuccessLiveData;
+    }
+
+    @Override
+    public void setLoginSuccessLiveData(MutableLiveData<Event<Boolean>> signUpLiveData) {
+        this.loginSuccessLiveData = signUpLiveData;
+    }
+
 }

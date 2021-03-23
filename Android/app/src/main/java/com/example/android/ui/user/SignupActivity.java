@@ -3,27 +3,21 @@ package com.example.android.ui.user;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
 import com.example.android.data.injection.ViewModelInjection;
-import com.example.android.data.model.dto.SignUpDTO;
+import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
-import com.example.android.databinding.ActivityUserLoginBinding;
 import com.example.android.databinding.ActivityUserSignupBinding;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.regex.Matcher;
@@ -45,7 +39,6 @@ public class SignupActivity extends AppCompatActivity {
     private ActivityUserSignupBinding binding;
 
     private SignUpViewModel mSignUpViewModel;
-    private TextInputEditText viewById;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +49,11 @@ public class SignupActivity extends AppCompatActivity {
         mSignUpViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SignUpViewModelImpl.class);
         mSignUpViewModel.setParentContext(this);
 
+        //바인딩 객체 설정
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_signup);
+        binding.setLifecycleOwner(this);
+        binding.setViewModel(mSignUpViewModel);
+
         //observe 등록
         mSignUpViewModel.getNameLiveData().observe(this, this::checkNameFormat);
         mSignUpViewModel.getEmailLiveData().observe(this, this::checkEmailFormat);
@@ -63,17 +61,11 @@ public class SignupActivity extends AppCompatActivity {
         mSignUpViewModel.getCheckPasswordLiveData().observe(this, this::checkCheckPasswordFormat);
 
         //회원가입 가능 여부 확인
-
         mSignUpViewModel.getIsOKCheckEmail().observe(this, aBoolean -> canSignup());
 
 
         //UserViewModel에 GoogleExecutor, ToastView, LoginView의존성 주입
         injectViewModel(mSignUpViewModel);
-
-        //바인딩 객체 설정
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_signup);
-        binding.setLifecycleOwner(this);
-        binding.setViewModel(mSignUpViewModel);
 
         //TextInputLayout 찾기
         nameTextInputLayout = findViewById(R.id.activity_signup_name_text_input_layout);
@@ -85,6 +77,9 @@ public class SignupActivity extends AppCompatActivity {
         //Button 찾기
         signupButton = findViewById(R.id.activity_signup_button);
         emailCheckButton = findViewById(R.id.activity_signup_email_check_image_view);
+
+        canCheckEmail();
+        canSignup();
 
         //구글 버튼 text변경, 이벤트 추가
         googleSignInButton = findViewById(R.id.activity_signup_google_button);
@@ -197,7 +192,6 @@ public class SignupActivity extends AppCompatActivity {
     private void canCheckEmail() {
         boolean okCheckEmail = mSignUpViewModel.getIsOKCheckEmail().getValue();
         boolean okEmail = mSignUpViewModel.getIsOKEmail().getValue();
-        Log.i("TAG", "canCheckEmail: "+okCheckEmail+" "+okEmail);
         //이메일 인증을 했는지
         if (okCheckEmail) {
             emailCheckButton.setEnabled(false);
@@ -215,7 +209,6 @@ public class SignupActivity extends AppCompatActivity {
             emailCheckButton.setEnabled(false);
             emailCheckButton.setBackgroundColor(Color.rgb(218, 219, 219));
         }
-
     }
 
     //회원가입 버튼 누를 수 있는지 확인

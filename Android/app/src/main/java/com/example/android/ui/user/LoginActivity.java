@@ -3,27 +3,20 @@ package com.example.android.ui.user;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
 import com.example.android.data.injection.ViewModelInjection;
-import com.example.android.data.model.dto.LoginDTO;
-import com.example.android.data.model.entity.User;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.data.viewmodelimpl.LoginViewModelImpl;
 import com.example.android.databinding.ActivityUserLoginBinding;
+import com.example.android.ui.main.MainActivity;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -46,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         //observe 등록
         mLoginViewModel.getEmailLivedata().observe(this, s -> canLogin());
         mLoginViewModel.getPasswordLivedata().observe(this, s -> canLogin());
+        mLoginViewModel.getLoginSuccessLiveData().observe(this,s -> updateUI());
 
         //UserViewModel에 GoogleExecutor의존성 주입
         injectViewModel(mLoginViewModel);
@@ -96,5 +90,14 @@ public class LoginActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mLoginViewModel.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //화면 전환
+    private void updateUI() { //update ui code here
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        //다시 돌아오지 않도록 끝내기
+        finish();
     }
 }

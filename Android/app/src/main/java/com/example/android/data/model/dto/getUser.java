@@ -1,4 +1,4 @@
-package com.example.android.data.model.entity;
+package com.example.android.data.model.dto;
 
 public class getUser {
     private int mem_id;

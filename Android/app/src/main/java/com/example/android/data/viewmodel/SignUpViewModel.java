@@ -5,11 +5,24 @@ import android.content.Intent;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.android.data.model.dto.LoginDTO;
-import com.example.android.data.model.dto.SignUpDTO;
+import com.example.android.data.model.dto.Event;
 
 public interface SignUpViewModel{
-    //LiveData Getter & Setter
+
+    void setParentContext(Activity parentContext);
+    void setGoogleLoginExecutor(GoogleLoginExecutor executor);
+
+    //Event LiveData
+    MutableLiveData<Event<Boolean>> getClickOKLiveData();
+    MutableLiveData<Event<Boolean>> getClickCancelLiveData();
+    void setClickOKLiveData(MutableLiveData<Event<Boolean>> clickOKLiveData);
+    void setClickCancelLiveData(MutableLiveData<Event<Boolean>> clickCancelLiveData);
+    MutableLiveData<Event<Integer>> getGoCheckEmailLiveData();
+    MutableLiveData<Event<Boolean>> getLoginSuccessLiveData();
+    void setGoCheckEmailLiveData(MutableLiveData<Event<Integer>> goCheckEmailLiveData);
+    void setLoginSuccessLiveData(MutableLiveData<Event<Boolean>> loginSuccessLiveData);
+
+    //회원가입
     MutableLiveData<String> getNameLiveData();
     void setNameLiveData(MutableLiveData<String> nameLiveData);
     MutableLiveData<String> getEmailLiveData();
@@ -29,12 +42,22 @@ public interface SignUpViewModel{
     MutableLiveData<Boolean> getIsOKCheckEmail();
     void setIsOKCheckEmail(MutableLiveData<Boolean> isOKCheckEmail);
 
-    void setParentContext(Activity parentContext);
-    void setGoogleLoginExecutor(GoogleLoginExecutor executor);
     int canSignUp();
-    void onActivityResult(int requestCode, int resultCode, Intent data);
-    void onRequestedGoogleSignIn();
     void onRenderCheckEmail();
-    void onRequestedSignIn();
     void onRequestedSignUp();
+    void onRequestedSignIn();
+    void onRequestedGoogleSignIn();
+
+    //이메일 인증
+    MutableLiveData<String> getCheckEmailLiveData();
+    void setCheckEmailLiveData(MutableLiveData<String> checkEmailLiveData);
+    MutableLiveData<String> getInfoLiveData();
+    void setInfoLiveData(MutableLiveData<String> infoLiveData);
+    MutableLiveData<String> getTimeLiveData();
+    void setTimeLiveData(MutableLiveData<String> timeLiveData);
+    void checkEmailAuth();
+    void closeEmailAuth();
+
+
+    void onActivityResult(int requestCode, int resultCode, Intent data);
 }
