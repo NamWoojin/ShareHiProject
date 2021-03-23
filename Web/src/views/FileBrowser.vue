@@ -25,6 +25,14 @@
                   />
                 </v-btn>
                     
+                <v-btn class="navicon" @click="downloadFile"
+                  :disabled="selectitem.length != 1"
+                >
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large style="margin-top: 5px !important">mdi-download</v-icon>
+                  </div>
+                </v-btn>
+
                 <v-btn class="navicon" @click="uploadFile">
                   <div style="width: 50px; height: 50px;">
                     <v-icon x-large color="success" style="margin-top: 5px !important">mdi-plus</v-icon>
@@ -379,6 +387,9 @@ export default {
       this.browsersize = !this.browsersize
       document.getElementById('window').classList.toggle('small-window')
       document.getElementById('window').classList.toggle('max-window')
+    },
+    downloadFile() {
+      console.log('this is downloadFile')
     }
   },
   mounted() {
