@@ -6,6 +6,11 @@ const transport = require('../../util/mail/mail.transport');
 const redis = require('../../config/redis/redis.emailAuth');
 // const redis = require('redis');
 
+const ex = {
+  message: '',
+  detail: '',
+  content: {},
+};
 const signup = async (req, res) => {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>singup');
   let member = req.body;
@@ -14,38 +19,69 @@ const signup = async (req, res) => {
   await pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
     if (err) {
       console.log(err);
-      res.status(500).json(err);
+      res.status(500).json({
+        message: 'FAIL',
+        detail: err,
+        content: {},
+      });
     } else if (result.length == 0) {
       pool.query(UserQuery.signup, member, function (err, result) {
         if (err) {
           console.log(err);
-          res.status(500).json(err);
+          res.status(200).json({
+            message: 'FAIL',
+            detail: err,
+            content: {},
+          });
         }
-        res.status(200).json('SUCCESS');
+        res.status(200).json({
+          message: 'SUCCESS',
+          detail: "",
+          content: {},
+        });
       });
     } else {
-      res.status(200).json('DUPLICATION');
+      res.status(200).json({
+        message: 'FAIL',
+        detail: "DUPLICATE EMAIL",
+        content: {},
+      });
     }
   });
 };
 
 const signout = async (req, res) => {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>signout');
-  let member = req.params;
-  await pool.query(UserQuery.getUser, member['memId'], async function (err, result) {
+  let memId = req.query.mem_id;
+  // console.log(memId)
+  await pool.query(UserQuery.getUser, memId, async function (err, result) {
     if (err) {
-      console.log(err);
-      res.status(500).json(err);
+      // console.log(err);
+      res.status(500).json({
+        message: 'FAIL',
+        detail: err,
+        content: {},
+      });
     } else if (result.length == 0) {
-      res.status(200).json('FAIL');
+      res.status(200).json({
+        message: 'FAIL',
+        detail: "",
+        content: {},
+      });
     } else {
-      await pool.query(UserQuery.signout, member['memId'], function (err, result) {
+      await pool.query(UserQuery.signout, memId, function (err, result) {
         if (err) {
-          console.log(err);
-          res.status(500).json(err);
+          res.status(500).json({
+            message: 'FAIL',
+            detail : err,
+            content: {},
+          });
         }
-        // console.log('>>>success signout');
-        res.status(200).json('SUCCESS');
+        res.status(200).json({
+          message: 'SUCCESS',
+          detail: "",
+          content: {},
+        });
       });
     }
     // return res.json(result);
@@ -86,9 +122,7 @@ const update = async (req, res) => {
   res.json('회원정보수정.');
 };
 
-
-
-const checkPassword = async(req, res) => {
+const checkPassword = async (req, res) => {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>checkPassword');
   let member = req.body;
 
@@ -98,17 +132,15 @@ const checkPassword = async(req, res) => {
       return res.status(500).json(err);
     } else if (result.length == 0) {
       return res.status(500).json('FAIL');
-    } else if(result[0].mem_password == member.mem_password) {
+    } else if (result[0].mem_password == member.mem_password) {
       return res.status(200).json('SUCCESS');
     } else {
       return res.status(200).json('DIF_PW');
-
     }
   });
-
-}
+};
 const updatePassword = async (req, res) => {
- console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>updatePassword');
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>updatePassword');
   let member = req.body;
 
   await pool.query(UserQuery.updatePassword, [member.mem_password, member.mem_id], function (err, result) {
@@ -117,9 +149,9 @@ const updatePassword = async (req, res) => {
       return res.status(500).json(err);
     } else if (result.affectedRows == 0) {
       return res.status(500).json('FAIL');
-    } else if(result.affectedRows ==1) {
+    } else if (result.affectedRows == 1) {
       return res.status(200).json('SUCCESS');
-    } 
+    }
   });
 };
 
@@ -165,12 +197,12 @@ const checkEmailAuth = async (req, res) => {
   //   console.log('Error ' + err);
   // });
   // redis.createClient(redisConfig).get(member.mem_email, function (err, value) {
-  redis.get(member.mem_email, function (err, value) {  
+  redis.get(member.mem_email, function (err, value) {
     if (err) {
       throw err;
     } else if (!value) {
       res.status(500).json('TIMEOUT');
-     } else if (value != member.authNum) {
+    } else if (value != member.authNum) {
       res.status(200).json('DIF_AUTHNUM');
     } else if (value === member.authNum) {
       res.status(200).json('SUCCESS');
