@@ -3,7 +3,9 @@
 
 // Redis 사용 전, 임시 저장
 let socketForWeb;
+let webData;
 let socketForAndroid;
+let andData;
 //////////////////////////
 
 let config = {
@@ -31,6 +33,7 @@ io.sockets.on('connection', (socket) => {
 
   socket.on('message', (data) => {
     console.log('------ writing to Android: ---------');
+    console.log(data);
     writeData(socketForAndroid, 'message', data);
     console.log('------------------------------------');
   });
@@ -40,7 +43,7 @@ io.sockets.on('connection', (socket) => {
 });
 
 let writeData = function (socket, id, data) {
-  socket.emit(id, data);
+  socket.write(data);
 };
 
 var andServer = net.createServer(function (client) {
@@ -79,5 +82,5 @@ andServer.listen(8888, function () {
 var andWriteData = function (socket, data) {
   console.log('socket : ' + socket);
   console.log('data : ' + data);
-  var success = !socket.write(data);
+  //socket.emit(id, data);
 };

@@ -42,20 +42,20 @@ public class SocketClient {
 		try {
 			this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			this.out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-			
-			Thread inputThread = new Thread() {
+			/*
+			Thread inputThread = new Thread(new Runnable() {
 				
 				@Override
 				public void run() {
-					System.out.println("hi~");
 					while(true) {
 						String x = getMessage();
 						System.out.println(x);
 					}
 				}
-			};
+			});
 			
 			inputThread.start();
+			*/
 		} catch (IOException e) {
 			System.out.println("초기화 실패");
 			e.printStackTrace();
