@@ -3,6 +3,10 @@
 
 const express = require('express');
 const app = express();
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
 // swagger
 // const { swaggerUi, specs } = require('./src/modules/swagger');
 // 라우팅
@@ -12,5 +16,13 @@ app.use(express.urlencoded({ extended: false }));
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 //app.use('/api', home);
 app.use('/api', home);
+
+server.listen(8081);
+
+io.on('connection', (socket) => {
+  socket.on('data', (data) => {
+    console.log('hello data : ' + data);
+  });
+});
 
 module.exports = app;
