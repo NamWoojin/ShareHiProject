@@ -5,8 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,15 +15,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.R;
-import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.data.viewmodel.SendViewModel;
-import com.example.android.data.viewmodelimpl.LoginViewModelImpl;
-import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
+import com.example.android.data.viewmodelimpl.SendViewModelImpl;
+import com.example.android.databinding.FragmentSendPrepareBinding;
 import com.example.android.ui.main.BackdropActivity;
 
 public class PrepareFragment extends Fragment {
 
+    private FragmentSendPrepareBinding binding;
     private SendViewModel mSendViewModel;
+
+    private Button goFolderButton;
+    private Button goShareButton;
 
     private static PrepareRecyclerAdapter adapter;
 
@@ -45,24 +49,46 @@ public class PrepareFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_send_prepare, container, false);
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_send_prepare, container, false);
+        View view = binding.getRoot();
 
-        RecyclerView recyclerView = view.findViewById(R.id.fragment_prepare_choice_folders_RecyclerView);
+        mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
+        binding.setViewModel(mSendViewModel);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        mSendViewModel.getFolderPathLiveData().observe((BackdropActivity)getActivity(),this::isChoicedFolder);
 
-        adapter = new PrepareRecyclerAdapter();
-        recyclerView.setAdapter(adapter);
+        goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
+        goShareButton = (Button) view.findViewById(R.id.fragment_prepare_go_share_Button);
+//        RecyclerView recyclerView = view.findViewById(R.id.fragment_prepare_choice_members_RecyclerView);
+//
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//
+//        adapter = new PrepareRecyclerAdapter();
+//        recyclerView.setAdapter(adapter);
 
-        Button goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
+
 
         goFolderButton.setOnClickListener(v -> {
-            setChildFragment(FolderFragment.newInstance());
+            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance());
         });
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    private void isChoicedFolder(String path){
+        if(path.length() == 0){
+//            folderLayout.setVisibility(View.GONE);
+            canShareButton(false);
+        }else{
+//            folderLayout.setVisibility(View.VISIBLE);
+            canShareButton(true);
+        }
+    }
+
+    private void canShareButton(Boolean b){
+        goShareButton.setEnabled(b);
     }
 
     private void setChildFragment(Fragment child){

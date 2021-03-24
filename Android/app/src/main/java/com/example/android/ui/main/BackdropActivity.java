@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.R;
-import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.data.viewmodel.SendViewModel;
+import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.ui.send.PrepareFragment;
 import com.example.android.ui.user.SettingFragment;
 
@@ -34,10 +35,15 @@ public class BackdropActivity extends AppCompatActivity{
 
     public FragmentManager fragmentManager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_backdrop);
+
+        //ViewModel 요청
+        mSendViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SendViewModelImpl.class);
+        mSendViewModel.setParentContext(this);
 
         sendLayout = (ConstraintLayout) findViewById(R.id.activity_backdrop_go_send_layout);
         userLayout = (ConstraintLayout) findViewById(R.id.activity_backdrop_go_user_layout);
@@ -73,10 +79,8 @@ public class BackdropActivity extends AppCompatActivity{
 
     //페이지 이동
     public void changePage(String page) {
-        //addToBackStack - true : 뒤로가기 적용
-        //addToBackStack - false : 뒤로가기 미적용
         Fragment fragment = fragmentManager.findFragmentById(R.id.activity_backdrop_fragment);
-
+//        clearFragmentTransactionStack();
         switch (page) {
             case "send":
                 //첫 진입 시 fragment == null
@@ -137,7 +141,11 @@ public class BackdropActivity extends AppCompatActivity{
     public void replaceFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.activity_backdrop_fragment, fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
+    private void clearFragmentTransactionStack(){
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
 }
