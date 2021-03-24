@@ -88,6 +88,19 @@ style.textContent =
 .nav-item-content a:hover {
   background-color : rgba(0,0,0,0.2);
 }
+.search-input {
+  position: absolute;
+  left: 0;
+  margin-left: 5px;
+  z-index : 900000000;
+  border-radius: 5px;
+}
+.hidden {
+  visibility: hidden;
+}
+.show {
+  visibility: visible;
+}
 .directory ul {
   margin-left : 10px;
   list-style-type: none;
@@ -128,8 +141,12 @@ style.textContent =
   display : none;
 }
 .login-container {
+  position: absolute;
+  margin-top: auto;
+  margin-bottom: auto;
   width: 100%;
-  height: 100%;
+  top: 0;
+  bottom: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -140,8 +157,6 @@ style.textContent =
   margin-bottom : 10px;
 }
 .logo-image {
-  position : absolute;
-  top: 20%;
   width: 200px;
 }
 .login-email-input {
@@ -231,6 +246,7 @@ style.textContent =
 }
 .modal-input {
   margin-top: 15px;
+  border-radius : 5px;
 }
 .btn-container {
   margin-top : 15px;

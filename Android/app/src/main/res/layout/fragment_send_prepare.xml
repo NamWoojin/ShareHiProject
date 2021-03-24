@@ -7,20 +7,51 @@
     android:layout_height="match_parent"
     android:background="@drawable/backdrop_framelayout_radius">
 
+    <TextView
+        android:id="@+id/fragment_prepare_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_prepare_TextView_text"
+        android:textStyle="bold"
+        android:textSize="@dimen/fragment_prepare_TextView_textSize"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/fragment_prepare_TextView_marginTop"
+        android:layout_marginStart="@dimen/fragment_prepare_TextView_marginStart"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_prepare_choice_folders_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_prepare_TextView"
+        />
+
     <Button
         android:id="@+id/fragment_prepare_go_folder_Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="공유 폴더 지정"/>
+        android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"
+        app:layout_constraintStart_toStartOf="@id/fragment_prepare_TextView"
+        app:layout_constraintTop_toBottomOf="@id/fragment_prepare_choice_folders_RecyclerView"
+        android:text="@string/fragment_prepare_go_folder_Button_text"/>
+
     <Button
-        android:id="@+id/fragment_prepare_go_user_Button"
-        android:layout_width="wrap_content"
+        android:id="@+id/fragment_prepare_go_share_Button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_prepare_go_folder_Button"
-        android:text="공유 대상 지정"/>
+        android:layout_marginBottom="@dimen/fragment_prepare_go_share_Button_margin"
+        android:layout_marginHorizontal="@dimen/fragment_prepare_go_share_Button_margin"
+        android:paddingVertical="@dimen/fragment_prepare_go_share_Button_paddingVertical"
+        android:text="@string/fragment_prepare_go_share_Button_text"
+        android:textSize="@dimen/fragment_prepare_go_share_Button_textSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+       />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
