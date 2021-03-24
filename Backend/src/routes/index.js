@@ -6,12 +6,10 @@ const router = express.Router();
 const member = require('./member');
 const login = require('./login');
 const follow = require('./follow');
-const control = require('./control');
 
 // router.use('/user', auth, user);
 router.use('/member', member);
 router.use('/login', login);
 router.use('/follow', follow);
-router.use('/control', control);
 
 module.exports = router;
