@@ -3,14 +3,52 @@ package com.example.android.data.viewmodel;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.example.android.data.view.SignUpView;
-import com.example.android.data.view.ToastView;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import androidx.lifecycle.MutableLiveData;
 
-public interface SignUpViewModel extends SignUpView.ActionListener{
+import com.example.android.data.model.dto.Event;
+
+public interface SignUpViewModel{
+
     void setParentContext(Activity parentContext);
-    void setToastView(ToastView view);
-    void setSignUpView(SignUpView view);
     void setGoogleLoginExecutor(GoogleLoginExecutor executor);
+
+    //Event LiveData
+    MutableLiveData<Boolean> getLoadingLiveData();
+    void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData);
+
+    //회원가입
+    MutableLiveData<String> getNameLiveData();
+    void setNameLiveData(MutableLiveData<String> nameLiveData);
+    MutableLiveData<String> getEmailLiveData();
+    void setEmailLiveData(MutableLiveData<String> emailLiveData);
+    MutableLiveData<String> getPasswordLiveData();
+    void setPasswordLiveData(MutableLiveData<String> passwordLiveData);
+    MutableLiveData<String> getCheckPasswordLiveData();
+    void setCheckPasswordLiveData(MutableLiveData<String> checkPasswordLiveData);
+    MutableLiveData<Boolean> getIsOKName();
+    void setIsOKName(MutableLiveData<Boolean> isOKName);
+    MutableLiveData<Boolean> getIsOKEmail();
+    void setIsOKEmail(MutableLiveData<Boolean> isOKEmail);
+    MutableLiveData<Boolean> getIsOKPassword();
+    void setIsOKPassword(MutableLiveData<Boolean> isOKPassword);
+    MutableLiveData<Boolean> getIsOKCheckPassword();
+    void setIsOKCheckPassword(MutableLiveData<Boolean> isOKCheckPassword);
+    MutableLiveData<Boolean> getIsOKCheckEmail();
+    void setIsOKCheckEmail(MutableLiveData<Boolean> isOKCheckEmail);
+
+    int canSignUp();
+    void onRequestedSignUp();
+    void onRequestedSignIn();
+    void onRequestedGoogleSignIn();
+    void checkEmailDuplicate();
+
+    //이메일 인증
+    MutableLiveData<String> getCheckEmailLiveData();
+    void setCheckEmailLiveData(MutableLiveData<String> checkEmailLiveData);
+    void checkEmailAuth();
+    void closeEmailAuth();
+
+
     void onActivityResult(int requestCode, int resultCode, Intent data);
+
 }

@@ -20,15 +20,42 @@
     <string name="activity_signup_email_error">이메일 형식에 맞게 입력해주세요</string>
     <string name="activity_signup_password_error">특수문자 포함 8자 이상 입력해주세요</string>
     <string name="activity_signup_password_check_error">비밀번호가 일치하지 않아요</string>
+    <string name="activity_signup_name_notOK">이름을 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_email_notOK">이메일을 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_email_check_notOK">이메일을 인증해주세요</string>
+    <string name="activity_signup_password_notOK">비밀번호 확인을 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_password_check_notOK">비밀번호를 조건에 맞게 입력해주세요</string>
+    <string name="activity_signup_signUp_agree">회원가입 시 전체 약관에 동의한 것으로 간주합니다.</string>
 
     <!--check email-->
-    <string name="activity_check_email_textInputLayout_hint">인증번호</string>
-    <string name="activity_check_email_cancel_button">취소</string>
-    <string name="activity_check_email_ok_button">확인</string>
+    <string name="fragment_check_email_textInputLayout_hint">인증번호</string>
+    <string name="fragment_check_email_cancel_button">취소</string>
+    <string name="fragment_check_email_ok_button">확인</string>
 
     <!--main-->
     <string name="activity_main_send_button_text">공유하기</string>
     <string name="activity_main_user_button_text">계정설정</string>
+
+    <!--prepare-->
+    <string name="fragment_prepare_TextView_text">공유할 폴더 선택하기</string>
+    <string name="fragment_prepare_go_folder_Button_text">공유 폴더 선택</string>
+    <string name="fragment_prepare_go_share_Button_text">공유 시작하기</string>
+
+
+    <!--Toast Message-->
+    <string name="toast_login_success_message">환영합니다!</string>
+    <string name="toast_login_fail_message">이메일 또는 비밀번호를 확인해주세요</string>
+
+    <string name="toast_check_email_duplicate_message">이미 사용중인 이메일입니다.</string>
+    <string name="toast_check_email_auth_message">인증번호를 전송했습니다.</string>
+    <string name="toast_check_email_success_message">이메일 인증에 성공했습니다</string>
+    <string name="toast_check_email_timeout_message">제한시간이 지났습니다</string>
+    <string name="toast_check_email_differentAuthNum_message">인증번호가 틀립니다.</string>
+    <string name="toast_signup_success_message">회원가입에 성공했습니다</string>
+    <string name="toast_connect_fail_message">네트워크 연결상태를 확인해주세요</string>
+    <string name="toast_server_fail_message">서버에 문제가 발생했습니다</string>
+    <string name="toast_500">500 error</string>
+    <string name="toast_400">400 error</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

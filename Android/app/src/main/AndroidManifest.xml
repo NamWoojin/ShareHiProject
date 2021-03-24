@@ -12,9 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
-        <activity android:name=".ui.user.CheckEmailActivity"
-            android:theme="@style/popupTheme"
-            />
         <activity android:name=".ui.main.BackdropActivity" />
         <activity android:name=".ui.receive.ShareActivity" />
         <activity android:name=".ui.send.ShareActivity" />
