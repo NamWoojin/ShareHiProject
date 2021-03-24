@@ -11,12 +11,62 @@
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'Login'}" style="text-decoration: none; color: black;">
-          <el-button
-            style="background-color: #3ac569; color: white; font-weight: bold;"
-            round
-          >시작하기</el-button>
-        </router-link>
+        <div v-if="!login">
+          <router-link :to="{ name: 'Login'}" style="text-decoration: none; color: black;">
+            <el-button
+              style="background-color: #3ac569; color: white; font-weight: bold;"
+              round
+            >시작하기</el-button>
+          </router-link>
+        </div>
+        <div v-else>
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <!-- <v-badge
+                content="5"
+                color="red"
+                overlap
+                bordered
+                style="height: 42px;"
+                v-bind="attrs"
+                v-on="on"
+              > -->
+                <v-icon large class="mx-3 cart" style="margin-right: 2rem;" v-bind="attrs" v-on="on">
+                  mdi-bell-outline
+                </v-icon>
+              <!-- </v-badge> -->
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(alert, idx) in alerts"
+                :key="idx"
+              >
+                <v-list-item-title>{{ alert.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-avatar
+                color="purple"
+                size="42"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <span class="white--text headline">SJ</span>
+              </v-avatar>
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title>설정</v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>로그아웃</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
       </div>
     </div>
     <div v-show="mobileWidth">
@@ -31,13 +81,23 @@
         absolute
         temporary
       >
-        <v-list-item>
+        <v-list-item v-if="login">
           <v-list-item-avatar>
             <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
             <v-list-item-title>John Leider</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item v-else @click="$router.push({name:'Login'})">
+          <v-list-item-avatar>
+            <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title>로그인해주세요</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -69,12 +129,20 @@ export default {
   name: 'Header',
   data() {
     return {
+      login: true,
       width: window.innerWidth,
       drawer: null,
       items: [
-        { title: 'Home', icon: 'mdi-view-dashboard' },
-        { title: 'About', icon: 'mdi-forum' },
-      ]
+        { title: '설정', icon: 'mdi-view-dashboard' },
+        { title: '로그아웃', icon: 'mdi-forum' },
+      ],
+      alerts: [
+        { title: 'Alert1', },
+        { title: 'Alert2', },
+        { title: 'Alert3', },
+        { title: 'Alert4', },
+        { title: 'Alert5', },
+      ],
     }
   },
   mounted() {

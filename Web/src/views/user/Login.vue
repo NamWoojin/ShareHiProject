@@ -20,7 +20,6 @@
                 label="아이디(이메일)"
                 :rules="[required_email]"
                 v-model="form.email"
-                :disabled="emailCertification"
               ></v-text-field> 
               
               <v-text-field
@@ -58,8 +57,11 @@
                 </div>
               </v-col>
               <v-col cols="12">
-              <v-divider></v-divider>
-            </v-col>
+                <v-divider></v-divider>
+              </v-col>
+              <v-col cols="12">
+                  <div id="google-signin-btn"></div>
+              </v-col>
           </v-row>
         </v-container>
       </v-form>
@@ -68,6 +70,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'Login',
   data() {
@@ -77,6 +80,12 @@ export default {
         password: '',
       }
     }
+  },
+  mounted() {
+    window.gapi.signin2.render("google-signin-btn", {
+      onsuccess: this.onSignIn,
+    });
+    
   },
   computed: {
     required_email() {
@@ -92,6 +101,11 @@ export default {
         return false
       }
     }
+  },
+  methods: {
+    onSignIn(googleUser) {
+      console.log(googleUser)
+    },
   }
 }
 </script>
