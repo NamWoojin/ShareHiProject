@@ -15,6 +15,7 @@ import com.example.android.data.injection.ViewModelInjection;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.data.viewmodelimpl.LoginViewModelImpl;
 import com.example.android.databinding.ActivityUserLoginBinding;
+import com.example.android.ui.main.LoadingFragment;
 import com.example.android.ui.main.MainActivity;
 import com.google.android.gms.common.SignInButton;
 
@@ -25,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ActivityUserLoginBinding binding;
     private LoginViewModel mLoginViewModel;
-
+    private LoadingFragment loadingFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         //observe 등록
         mLoginViewModel.getEmailLivedata().observe(this, s -> canLogin());
         mLoginViewModel.getPasswordLivedata().observe(this, s -> canLogin());
-        mLoginViewModel.getLoginSuccessLiveData().observe(this,s -> updateUI());
+        mLoginViewModel.getLoadingLiveData().observe(this,this::doLoading);
 
         //UserViewModel에 GoogleExecutor의존성 주입
         injectViewModel(mLoginViewModel);
@@ -63,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         TextView textView = (TextView) googleSignInButton.getChildAt(0);
         textView.setText("Google 이메일로 로그인하기");
 
+        loadingFragment = LoadingFragment.newInstance();
     }
 
 
@@ -91,13 +93,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         mLoginViewModel.onActivityResult(requestCode, resultCode, data);
     }
-
-    //화면 전환
-    private void updateUI() { //update ui code here
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        //다시 돌아오지 않도록 끝내기
-        finish();
+    //로딩 표시
+    private void doLoading(Boolean b){
+        if(b){
+            if(!loadingFragment.isAdded()) {
+                loadingFragment.show(getFragmentManager(), "loading");
+            }
+        }else{
+            loadingFragment.dismiss();
+        }
     }
+
 }

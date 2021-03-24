@@ -37,13 +37,13 @@
     <dimen name="activity_signup_submenu_textSize">16sp</dimen>
 
     <!--check email-->
-    <dimen name="activity_user_check_width">300dp</dimen>
-    <dimen name="activity_user_check_height">300dp</dimen>
-    <dimen name="activity_user_check_textInputLayout_height">60dp</dimen>
-    <dimen name="activity_user_check_textInputLayout_marginHorizontal">24dp</dimen>
-    <dimen name="activity_user_check_button_width">120dp</dimen>
-    <dimen name="activity_user_check_button_margin">24dp</dimen>
-    <dimen name="activity_user_check_text_size">20sp</dimen>
+    <dimen name="fragment_user_check_width">300dp</dimen>
+    <dimen name="fragment_user_check_height">300dp</dimen>
+    <dimen name="fragment_user_check_textInputLayout_height">60dp</dimen>
+    <dimen name="fragment_user_check_textInputLayout_marginHorizontal">24dp</dimen>
+    <dimen name="fragment_user_check_button_width">120dp</dimen>
+    <dimen name="fragment_user_check_button_margin">24dp</dimen>
+    <dimen name="fragment_user_check_text_size">16sp</dimen>
 
     <!--main-->
     <dimen name="activity_main_logo_height">150dp</dimen>

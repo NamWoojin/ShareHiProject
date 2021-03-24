@@ -96,7 +96,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/activity_signup_email_text_input_layout"
                 app:layout_constraintTop_toTopOf="@id/activity_signup_email_text_input_layout"
-                android:onClick="@{() -> viewModel.onRenderCheckEmail()}"/>
+                android:onClick="@{() -> viewModel.checkEmailDuplicate()}"/>
 
             <!--비밀번호-->
             <com.google.android.material.textfield.TextInputLayout
@@ -163,7 +163,7 @@
                 app:layout_constraintBottom_toTopOf="@id/activity_signup_divider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_signup_password_check_text_input_layout"
+                app:layout_constraintTop_toBottomOf="@id/activitiy_signup_textView"
                 android:onClick="@{() -> viewModel.onRequestedSignUp()}"/>
 
             <include
@@ -190,6 +190,5 @@
                 app:layout_constraintTop_toBottomOf="@id/activity_signup_divider" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

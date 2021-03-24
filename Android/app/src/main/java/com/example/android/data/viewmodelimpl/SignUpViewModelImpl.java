@@ -2,6 +2,7 @@ package com.example.android.data.viewmodelimpl;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,19 +12,27 @@ import androidx.lifecycle.ViewModel;
 import com.example.android.R;
 import com.example.android.data.connection.APIRequest;
 import com.example.android.data.connection.RetrofitClient;
+import com.example.android.data.model.dto.APIResponse;
+import com.example.android.data.model.dto.EmailAuth;
 import com.example.android.data.model.dto.Event;
+import com.example.android.data.model.dto.Token;
 import com.example.android.data.model.dto.User;
 import com.example.android.ui.main.MainActivity;
-import com.example.android.ui.user.CheckEmailActivity;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SignUpViewModel;
+import com.example.android.ui.user.CheckEmailFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,10 +48,10 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private WeakReference<Activity> mActivityRef;
 
     //회원가입
-    private MutableLiveData<String> nameLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> passwordLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> checkPasswordLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> nameLiveData = new MutableLiveData<>("");
+    private MutableLiveData<String> emailLiveData = new MutableLiveData<>("");
+    private MutableLiveData<String> passwordLiveData = new MutableLiveData<>("");
+    private MutableLiveData<String> checkPasswordLiveData = new MutableLiveData<>("");
 
     private MutableLiveData<Boolean> isOKName = new MutableLiveData<>(false);
     private MutableLiveData<Boolean> isOKEmail = new MutableLiveData<>(false);
@@ -51,18 +60,13 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private MutableLiveData<Boolean> isOKCheckEmail = new MutableLiveData<>(false);
 
     //이메일 인증
-    private MutableLiveData<String> infoLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> timeLiveData = new MutableLiveData<>();
     private MutableLiveData<String> checkEmailLiveData = new MutableLiveData<>();
 
-    private MutableLiveData<Event<Boolean>> clickOKLiveData = new MutableLiveData<>(new Event<>(false));
-    private MutableLiveData<Event<Boolean>> clickCancelLiveData = new MutableLiveData<>(new Event<>(false));
-    private MutableLiveData<Event<Integer>> goCheckEmailLiveData = new MutableLiveData<>(new Event<>(0));
-    private MutableLiveData<Event<Boolean>> loginSuccessLiveData = new MutableLiveData<>(new Event<>(false));
+    private MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
     //Executor
     private GoogleLoginExecutor mGoogleLoginExecutor;
-
+    private CheckEmailFragment newDialogFragment;
 
     @Override
     public void setParentContext(Activity parentContext) {
@@ -91,67 +95,109 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         }
 
         return result;
+//        return 0;
     }
 
 
     //로그인 시도
     @Override
     public void onRequestedSignIn() {
-        Call<Object> doLogin = RetrofitClient.getLoginApiService().Login(new User(emailLiveData.getValue(), passwordLiveData.getValue()));
-        doLogin.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                Toast.makeText(mActivityRef.get(), "환영합니다!", Toast.LENGTH_SHORT).show();
-                updateUI();
-            }
+        APIRequest.request(RetrofitClient.getLoginApiService().Login(new User(emailLiveData.getValue(), passwordLiveData.getValue())), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
 
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                Log.e(TAG, "onRequestedSignIn: " + t);
-                Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
+            if (code >= 500) {
+                //서버 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 400) {
+                //클라이언트 에러
+            } else if (code >= 300) {
+
+            } else if (code >= 200) {
+                //성공
+                Type listType = new TypeToken<APIResponse<Token>>() {
+                }.getType();
+                APIResponse<Token> res = gson.fromJson(body, listType);
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        //로그인 성공
+                        Toast.makeText(mActivityRef.get(), R.string.toast_login_success_message, Toast.LENGTH_SHORT).show();
+                        String token;
+                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getToken());
+                        token = res.getContent().getToken();
+                        saveLoginToken(token);
+                        saveLoginInfo();
+                        updateUI();
+                        break;
+                    case "FAIL":
+                        //아이디 또는 이메일 틀림
+                        Toast.makeText(mActivityRef.get(), R.string.toast_login_fail_message, Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
+        }, throwable -> {
+            Log.e(TAG, "onRequestedSignIn: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
+    }
+
+    //JWT 토큰 저장
+    private void saveLoginToken(String value) {
+        SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("token", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = tokenInformation.edit();
+        editor.putString("token", value);
+        editor.commit();
+    }
+
+    //일반로그인 정보 저장
+    private void saveLoginInfo() {
+        SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = loginInformation.edit();
+        editor.putBoolean("GoogleLogin", false);
+        editor.putString("email", emailLiveData.getValue());
+        editor.putString("password", passwordLiveData.getValue());
+        editor.commit();
     }
 
     //회원가입 요청
     @Override
     public void onRequestedSignUp() {
-
         User user = new User(nameLiveData.getValue(), emailLiveData.getValue(), passwordLiveData.getValue());
-        Call<Object> doLogin = RetrofitClient.getUserApiService().SignUp(user);
-        doLogin.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-//                response.code() : 200
-//                response.message() : OK
-//                response.body() : 내용
-                Log.i(TAG, "onResponse: " + call.request());
-                int code = response.code();
-                String message = response.message();
-                String body = new Gson().toJson(response.body());
-                Log.i(TAG, "onResponse: " + code + " " + message + " " + body);
+        APIRequest.request(RetrofitClient.getUserApiService().SignUp(user), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
+            APIResponse res = gson.fromJson(body, APIResponse.class);
+            if (code >= 500) {
+                //서버 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 400) {
+                //클라이언트 에러
+            } else if (code >= 300) {
 
-                if (code >= 500) {
-                    //서버 오류
-                    Toast.makeText(mActivityRef.get(), R.string.toast_signup_success_message, Toast.LENGTH_SHORT).show();
-                } else if (code >= 400) {
-                    //요청오류
-                    Toast.makeText(mActivityRef.get(), R.string.toast_signup_success_message, Toast.LENGTH_SHORT).show();
-                } else if (code >= 300) {
-
-                } else if (code >= 200) {
-                    //성공
-                    Toast.makeText(mActivityRef.get(), R.string.toast_signup_success_message, Toast.LENGTH_SHORT).show();
-                    //로그인 시도
-                    onRequestedSignIn();
+            } else if (code >= 200) {
+                //성공
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        //회원가입 성공
+                        Toast.makeText(mActivityRef.get(), R.string.toast_signup_success_message, Toast.LENGTH_SHORT).show();
+                        //로그인 시도
+                        onRequestedSignIn();
+                        break;
+                    case "FAIL":
+                        if (res.getDetail().equals("DUPLICATE EMAIL")) {
+                            //중복된 이메일
+                            Toast.makeText(mActivityRef.get(), R.string.toast_check_email_duplicate_message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
                 }
             }
-
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                Log.e(TAG, "onRequestedSignIn: " + t);
-                Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
-            }
+        }, throwable -> {
+            Log.e(TAG, "onRequestedSignUp: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -164,16 +210,79 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         }
     }
 
-    //이메일 인증 Activity 열기
     @Override
-    public void onRenderCheckEmail() {
-        Intent intent = new Intent(mActivityRef.get(), CheckEmailActivity.class);
-        mActivityRef.get().startActivityForResult(intent, REQ_CODE_CHECK_EMAIL);
-        APIRequest.request(RetrofitClient.getUserApiService().requireEmailAuth(new User(emailLiveData.getValue())),
+    public void checkEmailDuplicate() {
+        loadingLiveData.setValue(true);
+        //이메일 중복 확인
+        APIRequest.request(RetrofitClient.getUserApiService().checkEmail(emailLiveData.getValue()), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
+            APIResponse res = gson.fromJson(body, APIResponse.class);
+            if (code >= 500) {
+                //서버 에러
+                loadingLiveData.setValue(false);
+            } else if (code >= 400) {
+                //클라이언트 에러
+                loadingLiveData.setValue(false);
+            } else if (code >= 300) {
+                loadingLiveData.setValue(false);
+            } else if (code >= 200) {
+                //성공
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        //이메일 중복확인 성공
+                        Log.i(TAG, "checkEmailDuplicate: " + code);
+                        onRenderCheckEmail();
+                        break;
+                    case "FAIL":
+                        if (res.getDetail().equals("DUPLICATE EMAIL")) {
+                            //중복된 이메일
+                            Toast.makeText(mActivityRef.get(), R.string.toast_check_email_duplicate_message, Toast.LENGTH_SHORT).show();
+                            loadingLiveData.setValue(false);
+                        }
+                        break;
+                }
+            }
+        }, throwable -> {
+            loadingLiveData.setValue(false);
+            Log.e(TAG, "checkEmailDuplicate: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    //이메일 인증 Activity 열기
+    private void onRenderCheckEmail() {
+//        이메일 인증 요청 보내기
+        APIRequest.request(RetrofitClient.getUserApiService().requireEmailAuth(new EmailAuth(emailLiveData.getValue())),
                 (objectResponse -> {
+                    loadingLiveData.setValue(false);
+                    Gson gson = new Gson();
                     int code = objectResponse.code();
-                    Log.i(TAG, "onRenderCheckEmail: " + code);
+                    String body = gson.toJson(objectResponse.body());
+                    APIResponse res = gson.fromJson(body, APIResponse.class);
+                    if (code >= 500) {
+                        //서버 에러
+                        Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+
+                    } else if (code >= 400) {
+                        //클라이언트 에러
+                    } else if (code >= 300) {
+
+                    } else if (code >= 200) {
+                        //성공
+                        switch (res.getMessage()) {
+                            case "SUCCESS":
+                                //이메일 인증 fragment dialog 띄우기
+                                Log.i(TAG, "onRenderCheckEmail: " + code);
+                                checkEmailLiveData.setValue("");
+                                newDialogFragment = CheckEmailFragment.newInstance();
+                                newDialogFragment.show(mActivityRef.get().getFragmentManager(), "CHECK_EMAIL");
+                                break;
+                        }
+                    }
                 }), throwable -> {
+                    loadingLiveData.setValue(false);
                     Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
                 });
     }
@@ -181,17 +290,55 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //이메일 인증 확인
     @Override
     public void checkEmailAuth() {
-        if (!clickOKLiveData.getValue().isHandled()) {
-            //이메일 인증 확인
-        }
-        clickOKLiveData.setValue(new Event<>(true));
+        loadingLiveData.setValue(true);
+        APIRequest.request(RetrofitClient.getUserApiService().checkEmailAuth(new EmailAuth(emailLiveData.getValue(), checkEmailLiveData.getValue())),
+                (objectResponse -> {
+                    loadingLiveData.setValue(false);
+                    Gson gson = new Gson();
+                    int code = objectResponse.code();
+                    String body = gson.toJson(objectResponse.body());
+                    APIResponse res = gson.fromJson(body, APIResponse.class);
+                    if (code >= 500) {
+                        //서버 에러
+                        switch (res.getMessage()) {
+                            case "FAIL":
+                                if (res.getDetail().equals("TIMEOUT")) {
+                                    //제한시간 종료
+                                    Toast.makeText(mActivityRef.get(), R.string.toast_check_email_timeout_message, Toast.LENGTH_SHORT).show();
+                                    newDialogFragment.dismiss();
+                                }
+                                break;
+                        }
+                    } else if (code >= 400) {
+                        //클라이언트 에러
+                    } else if (code >= 300) {
+
+                    } else if (code >= 200) {
+                        //성공
+                        switch (res.getMessage()) {
+                            case "SUCCESS":
+                                Toast.makeText(mActivityRef.get(), R.string.toast_check_email_success_message, Toast.LENGTH_SHORT).show();
+                                isOKCheckEmail.setValue(true);
+                                newDialogFragment.dismiss();
+                                break;
+                            case "FAIL":
+                                if (res.getDetail().equals("DIFFERENT AUTHNUM")) {
+                                    //인증번호 틀림
+                                    Toast.makeText(mActivityRef.get(), R.string.toast_check_email_differentAuthNum_message, Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                        }
+                    }
+                }), throwable -> {
+                    loadingLiveData.setValue(false);
+                    Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+                });
     }
 
     //이메일 인증 창 닫기
     @Override
     public void closeEmailAuth() {
-
-        clickCancelLiveData.setValue(new Event<>(true));
+        newDialogFragment.dismiss();
     }
 
 
@@ -231,6 +378,8 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //화면 전환
     private void updateUI() { //update ui code here
         Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mActivityRef.get().startActivity(intent);
         mActivityRef.get().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         //다시 돌아오지 않도록 끝내기
@@ -340,62 +489,11 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     }
 
     @Override
-    public MutableLiveData<String> getInfoLiveData() {
-        return infoLiveData;
+    public MutableLiveData<Boolean> getLoadingLiveData() {
+        return loadingLiveData;
     }
-
     @Override
-    public void setInfoLiveData(MutableLiveData<String> infoLiveData) {
-        this.infoLiveData = infoLiveData;
-    }
-
-    @Override
-    public MutableLiveData<String> getTimeLiveData() {
-        return timeLiveData;
-    }
-
-    @Override
-    public void setTimeLiveData(MutableLiveData<String> timeLiveData) {
-        this.timeLiveData = timeLiveData;
-    }
-
-    @Override
-    public MutableLiveData<Event<Integer>> getGoCheckEmailLiveData() {
-        return goCheckEmailLiveData;
-    }
-
-    @Override
-    public void setGoCheckEmailLiveData(MutableLiveData<Event<Integer>> goCheckEmailLiveData) {
-        this.goCheckEmailLiveData = goCheckEmailLiveData;
-    }
-
-    @Override
-    public MutableLiveData<Event<Boolean>> getLoginSuccessLiveData() {
-        return loginSuccessLiveData;
-    }
-
-    @Override
-    public void setLoginSuccessLiveData(MutableLiveData<Event<Boolean>> loginSuccessLiveData) {
-        this.loginSuccessLiveData = loginSuccessLiveData;
-    }
-
-    @Override
-    public MutableLiveData<Event<Boolean>> getClickOKLiveData() {
-        return clickOKLiveData;
-    }
-
-    @Override
-    public void setClickOKLiveData(MutableLiveData<Event<Boolean>> clickOKLiveData) {
-        this.clickOKLiveData = clickOKLiveData;
-    }
-
-    @Override
-    public MutableLiveData<Event<Boolean>> getClickCancelLiveData() {
-        return clickCancelLiveData;
-    }
-
-    @Override
-    public void setClickCancelLiveData(MutableLiveData<Event<Boolean>> clickCancelLiveData) {
-        this.clickCancelLiveData = clickCancelLiveData;
+    public void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData) {
+        this.loadingLiveData = loadingLiveData;
     }
 }

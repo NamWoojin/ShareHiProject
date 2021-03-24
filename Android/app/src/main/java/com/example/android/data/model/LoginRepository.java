@@ -7,6 +7,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface LoginRepository {
-    @POST("login/login")
+    @POST("login/basic")
     Call<Object> Login(@Body User user);
 }

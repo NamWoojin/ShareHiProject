@@ -13,14 +13,8 @@ public interface SignUpViewModel{
     void setGoogleLoginExecutor(GoogleLoginExecutor executor);
 
     //Event LiveData
-    MutableLiveData<Event<Boolean>> getClickOKLiveData();
-    MutableLiveData<Event<Boolean>> getClickCancelLiveData();
-    void setClickOKLiveData(MutableLiveData<Event<Boolean>> clickOKLiveData);
-    void setClickCancelLiveData(MutableLiveData<Event<Boolean>> clickCancelLiveData);
-    MutableLiveData<Event<Integer>> getGoCheckEmailLiveData();
-    MutableLiveData<Event<Boolean>> getLoginSuccessLiveData();
-    void setGoCheckEmailLiveData(MutableLiveData<Event<Integer>> goCheckEmailLiveData);
-    void setLoginSuccessLiveData(MutableLiveData<Event<Boolean>> loginSuccessLiveData);
+    MutableLiveData<Boolean> getLoadingLiveData();
+    void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData);
 
     //회원가입
     MutableLiveData<String> getNameLiveData();
@@ -43,21 +37,18 @@ public interface SignUpViewModel{
     void setIsOKCheckEmail(MutableLiveData<Boolean> isOKCheckEmail);
 
     int canSignUp();
-    void onRenderCheckEmail();
     void onRequestedSignUp();
     void onRequestedSignIn();
     void onRequestedGoogleSignIn();
+    void checkEmailDuplicate();
 
     //이메일 인증
     MutableLiveData<String> getCheckEmailLiveData();
     void setCheckEmailLiveData(MutableLiveData<String> checkEmailLiveData);
-    MutableLiveData<String> getInfoLiveData();
-    void setInfoLiveData(MutableLiveData<String> infoLiveData);
-    MutableLiveData<String> getTimeLiveData();
-    void setTimeLiveData(MutableLiveData<String> timeLiveData);
     void checkEmailAuth();
     void closeEmailAuth();
 
 
     void onActivityResult(int requestCode, int resultCode, Intent data);
+
 }

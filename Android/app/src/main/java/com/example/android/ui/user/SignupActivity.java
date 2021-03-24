@@ -3,6 +3,7 @@ package com.example.android.ui.user;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
 import com.example.android.databinding.ActivityUserSignupBinding;
+import com.example.android.ui.main.LoadingFragment;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -40,6 +42,8 @@ public class SignupActivity extends AppCompatActivity {
 
     private SignUpViewModel mSignUpViewModel;
 
+    private LoadingFragment loadingFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +52,6 @@ public class SignupActivity extends AppCompatActivity {
         //ViewModel생성
         mSignUpViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SignUpViewModelImpl.class);
         mSignUpViewModel.setParentContext(this);
-
         //바인딩 객체 설정
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_signup);
         binding.setLifecycleOwner(this);
@@ -59,10 +62,13 @@ public class SignupActivity extends AppCompatActivity {
         mSignUpViewModel.getEmailLiveData().observe(this, this::checkEmailFormat);
         mSignUpViewModel.getPasswordLiveData().observe(this, this::checkPasswordFormat);
         mSignUpViewModel.getCheckPasswordLiveData().observe(this, this::checkCheckPasswordFormat);
+        mSignUpViewModel.getLoadingLiveData().observe(this, this::doLoading);
 
         //회원가입 가능 여부 확인
-        mSignUpViewModel.getIsOKCheckEmail().observe(this, aBoolean -> canSignup());
-
+        mSignUpViewModel.getIsOKCheckEmail().observe(this, aBoolean -> {
+            canCheckEmail();
+            canSignup();
+        });
 
         //UserViewModel에 GoogleExecutor, ToastView, LoginView의존성 주입
         injectViewModel(mSignUpViewModel);
@@ -88,6 +94,7 @@ public class SignupActivity extends AppCompatActivity {
         textView.setText("Google 이메일로 가입하기");
         googleSignInButton.setOnClickListener(v -> mSignUpViewModel.onRequestedGoogleSignIn());
 
+        loadingFragment = LoadingFragment.newInstance();
     }
 
 
@@ -151,7 +158,7 @@ public class SignupActivity extends AppCompatActivity {
 
     //비밀번호 체크
     private void checkPasswordFormat(String s) {
-        String passwordFormat = "^(?=.*[$@$!%*#?&])[A-Za-z$@$!%*#?&]{8,45}$";
+        String passwordFormat = "^(?=.*[$@$!%*#?&])[0-9A-Za-z$@$!%*#?&]{8,45}$";
         Pattern pattern = Pattern.compile(passwordFormat);
         Matcher matcher = pattern.matcher(s);
         if (s.length() > 0 && matcher.matches()) {
@@ -195,10 +202,10 @@ public class SignupActivity extends AppCompatActivity {
         //이메일 인증을 했는지
         if (okCheckEmail) {
             emailCheckButton.setEnabled(false);
-            emailCheckButton.setBackgroundColor(Color.rgb(58, 197, 105));
+            emailCheckButton.setBackgroundColor(Color.rgb(207, 240, 218));
         }
         //지금 입력된 이메일이 인증을 안했으며 형식에 맞게 입력했는지
-        else if(okEmail) {
+        else if (okEmail) {
             //이메일 인증 가능
             emailCheckButton.setEnabled(true);
             emailCheckButton.setBackgroundColor(Color.rgb(58, 197, 105));
@@ -219,12 +226,12 @@ public class SignupActivity extends AppCompatActivity {
             //회원가입 가능
             signupButton.setEnabled(true);
             signupButton.setBackgroundColor(Color.rgb(58, 197, 105));
-            beforeSignUpView.setText("");
+            beforeSignUpView.setText(R.string.activity_signup_signUp_agree);
         } else {
             //회원가입 불가
             signupButton.setEnabled(false);
             signupButton.setBackgroundColor(Color.rgb(218, 219, 219));
-            switch (result){
+            switch (result) {
                 case 1:
                     beforeSignUpView.setText(getString(R.string.activity_signup_name_notOK));
                     break;
@@ -241,6 +248,17 @@ public class SignupActivity extends AppCompatActivity {
                     beforeSignUpView.setText(getString(R.string.activity_signup_password_check_notOK));
                     break;
             }
+        }
+    }
+
+    //로딩 표시
+    private void doLoading(Boolean b) {
+        if (b) {
+            if (!loadingFragment.isAdded()) {
+                loadingFragment.show(getFragmentManager(), "loading");
+            }
+        } else {
+            loadingFragment.dismiss();
         }
     }
 
