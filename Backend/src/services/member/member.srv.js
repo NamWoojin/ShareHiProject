@@ -265,7 +265,7 @@ const checkEmailAuth = async (req, res) => {
     } else if (value != member.authNum) {
       res.status(200).json({
         message: 'FAIL',
-        detail: "DIFFENT AUTHNUM",
+        detail: "DIFFERNT AUTHNUM",
         content: {},
       });
     } else if (value === member.authNum) {
