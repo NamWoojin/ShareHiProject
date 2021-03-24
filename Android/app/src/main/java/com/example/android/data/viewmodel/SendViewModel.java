@@ -10,6 +10,9 @@ import java.util.ArrayList;
 public interface SendViewModel {
     void setParentContext(Activity parentContext);
 
+    //prepare
+    void deleteSelectedFolderPath();
+
     void setFolderPathLiveData(MutableLiveData<String> folderPath);
     MutableLiveData<String> getFolderPathLiveData();
 }

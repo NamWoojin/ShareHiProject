@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.android.data.viewmodel.BackdropViewModel" />
+    </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -21,7 +27,9 @@
             android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_menu_white_24" />
+            android:onClick="@{() -> viewModel.toggleBackdropMenu()}"
+            android:src="@{viewModel.backdropMenuOpenLiveData ? @drawable/ic_menu_close_24 : @drawable/ic_menu_white_24}"
+            />
         <TextView
             android:id="@+id/activity_backdrop_action_bar_text"
             android:layout_width="wrap_content"
@@ -32,7 +40,8 @@
             android:textColor="@color/alwaysWhite"
             app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_action_bar_menu"
             app:layout_constraintStart_toEndOf="@+id/activity_backdrop_action_bar_menu"
-            app:layout_constraintTop_toTopOf="@+id/activity_backdrop_action_bar_menu" />
+            app:layout_constraintTop_toTopOf="@+id/activity_backdrop_action_bar_menu"
+            android:text="@{viewModel.pageLiveData.equals(`send`)? @string/activity_main_send_button_text : @string/activity_main_user_button_text}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -56,7 +65,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/activity_backdrop_go_user_layout">
+            app:layout_constraintBottom_toTopOf="@id/activity_backdrop_go_user_layout"
+            android:onClick="@{() -> viewModel.changePage(`send`)}"
+            android:background="@{viewModel.pageLiveData.equals(`send`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}">
             <ImageView
                 android:id="@+id/activity_backdrop_go_send_imageView"
                 android:layout_width="wrap_content"
@@ -88,7 +99,9 @@
             app:layout_constraintTop_toBottomOf="@id/activity_backdrop_go_send_layout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:onClick="@{() -> viewModel.changePage(`user`)}"
+            android:background="@{viewModel.pageLiveData.equals(`user`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}">
             <ImageView
                 android:id="@+id/activity_backdrop_go_user_imageView"
                 android:layout_width="wrap_content"
@@ -144,3 +157,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

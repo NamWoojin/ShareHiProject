@@ -3,149 +3,135 @@ package com.example.android.ui.main;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.SavedStateViewModelFactory;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.R;
+import com.example.android.data.viewmodel.BackdropViewModel;
 import com.example.android.data.viewmodel.SendViewModel;
+import com.example.android.data.viewmodelimpl.BackdropViewModelImpl;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
+import com.example.android.databinding.ActivityMainBackdropBinding;
 import com.example.android.ui.send.PrepareFragment;
 import com.example.android.ui.user.SettingFragment;
 
-public class BackdropActivity extends AppCompatActivity{
+
+public class BackdropActivity extends AppCompatActivity {
 
     private static final String TAG = "BACKDROP_ACTIVITY";
 
+    private BackdropViewModel mBackdropViewModel;
     private SendViewModel mSendViewModel;
 
-    private TextView actionBarTextView;
     private View frameLayout;
     private View actionBarDetail;
-    private ImageView actionBarMenu;
-    private ConstraintLayout sendLayout;
-    private ConstraintLayout userLayout;
 
     public FragmentManager fragmentManager;
+    private Fragment fragment;
 
+    private ActivityMainBackdropBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_backdrop);
 
-        //ViewModel 요청
+        //BackdropViewModel 요청
+        mBackdropViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getApplication(), this, getIntent().getExtras())).get(BackdropViewModelImpl.class);
+        mBackdropViewModel.setParentContext(this);
+
+        //바인딩 객체 설정
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main_backdrop);
+        binding.setLifecycleOwner(this);
+        binding.setViewModel(mBackdropViewModel);
+
+        //SendViewModel 요청
         mSendViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SendViewModelImpl.class);
         mSendViewModel.setParentContext(this);
 
-        sendLayout = (ConstraintLayout) findViewById(R.id.activity_backdrop_go_send_layout);
-        userLayout = (ConstraintLayout) findViewById(R.id.activity_backdrop_go_user_layout);
-        actionBarTextView = (TextView) findViewById(R.id.activity_backdrop_action_bar_text);
+        //페이지 이동에 따른 fragment, UI제어
+        mBackdropViewModel.getPageLiveData().observe(this, this::changePage);
+        mBackdropViewModel.getBackdropMenuOpenLiveData().observe(this, aBoolean -> {
+            backdropMenuToggle();
+        });
+
+
+
         frameLayout = (View) findViewById(R.id.activity_backdrop_fragment);
         actionBarDetail = (View) findViewById(R.id.activity_backdrop_action_bar_detail);
         fragmentManager = getSupportFragmentManager();
+        fragment = fragmentManager.findFragmentById(R.id.activity_backdrop_fragment);
 
-        //요청에 따른 fragment 페이지 설정
-        Intent intent = getIntent();
-        String page = intent.getStringExtra("page");
-        changePage(page);
-        setUIbyFragment(page);
+        //backdrop 초기 값 설정
+//        frameLayout.setEnabled(false);
 
-        //상단바 상세메뉴 여닫기 이벤트 추가
-        actionBarMenu = (ImageView) findViewById(R.id.activity_backdrop_action_bar_menu);
-        actionBarMenu.setOnClickListener(v -> backdropMenuToggle());
-
-        //backdrop 전송하기 메뉴 클릭 시
-        sendLayout.setOnClickListener(v -> {
-            changePage("send");
-            setUIbyFragment("send");
-            backdropMenuToggle();
-        });
-
-        //backdrop 계정설정 메뉴 클릭 시
-        userLayout.setOnClickListener(v -> {
-            changePage("user");
-            setUIbyFragment("user");
-            backdropMenuToggle();
-        });
     }
 
-    //페이지 이동
+
+
+    //fragment 페이지
     public void changePage(String page) {
-        Fragment fragment = fragmentManager.findFragmentById(R.id.activity_backdrop_fragment);
-//        clearFragmentTransactionStack();
         switch (page) {
             case "send":
                 //첫 진입 시 fragment == null
                 //현재 페이지가 PrepageFragment면 실행X
                 if (fragment == null || !(fragment instanceof PrepareFragment)) {
-                    replaceFragment(PrepareFragment.newInstance());
+//                    clearFragmentTransactionStack();
+                    replaceFragment(PrepareFragment.newInstance(),false);
+                    backdropMenuToggle();
                 }
                 break;
             case "user":
                 //첫 진입 시 fragment == null
                 //현재 페이지가 SettingFragment면 실행X
                 if (fragment == null || !(fragment instanceof SettingFragment)) {
-                    replaceFragment(SettingFragment.newInstance());
+//                    clearFragmentTransactionStack();
+                    replaceFragment(SettingFragment.newInstance(),false);
+                    backdropMenuToggle();
                 }
                 break;
         }
-
     }
 
-    //fragment 변화에 따른 backdrop 제어
-    private void setUIbyFragment(String page) {
-        switch (page) {
-            case "send":
-                actionBarTextView.setText("공유하기");
-                setMenuLayoutUI(sendLayout, true);
-                setMenuLayoutUI(userLayout, false);
-                break;
-            case "user":
-                actionBarTextView.setText("계정설정");
-                setMenuLayoutUI(sendLayout, false);
-                setMenuLayoutUI(userLayout, true);
-                break;
-        }
-    }
-
-    //layout 디자인 변경
-    private void setMenuLayoutUI(ConstraintLayout layout, boolean clicked) {
-        if (clicked) {
-            layout.setBackground(ContextCompat.getDrawable(this, R.drawable.backdrop_detaillayout_radius));
-        } else {
-            layout.setBackground(ContextCompat.getDrawable(this, R.drawable.backdrop_detaillayout_none));
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fragment == null){
+            super.onBackPressed();
         }
     }
 
     //backdrop 메뉴 여닫기, menu 아이콘 설정
     private void backdropMenuToggle() {
-        if (frameLayout.isEnabled()) {
+        if (mBackdropViewModel.getBackdropMenuOpenLiveData().getValue()) {
             frameLayout.animate().translationY(actionBarDetail.getHeight());
-            actionBarMenu.setImageResource(R.drawable.ic_menu_close_24);
         } else {
             frameLayout.animate().translationY(0);
-            actionBarMenu.setImageResource(R.drawable.ic_menu_white_24);
         }
-        frameLayout.setEnabled(!frameLayout.isEnabled());
     }
 
     //프래그먼트 화면이동
-    public void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment,boolean addToBackStack) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.activity_backdrop_fragment, fragment);
-        fragmentTransaction.addToBackStack(null);
+        if(addToBackStack)
+            fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
-    private void clearFragmentTransactionStack(){
+    private void clearFragmentTransactionStack() {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }

@@ -25,9 +25,6 @@ public class PrepareFragment extends Fragment {
     private FragmentSendPrepareBinding binding;
     private SendViewModel mSendViewModel;
 
-    private Button goFolderButton;
-    private Button goShareButton;
-
     private static PrepareRecyclerAdapter adapter;
 
     public PrepareFragment() {
@@ -55,10 +52,8 @@ public class PrepareFragment extends Fragment {
         mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
         binding.setViewModel(mSendViewModel);
 
-        mSendViewModel.getFolderPathLiveData().observe((BackdropActivity)getActivity(),this::isChoicedFolder);
+//        mSendViewModel.getFolderPathLiveData().observe((BackdropActivity)getActivity(),this::isChoicedFolder);
 
-        goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
-        goShareButton = (Button) view.findViewById(R.id.fragment_prepare_go_share_Button);
 //        RecyclerView recyclerView = view.findViewById(R.id.fragment_prepare_choice_members_RecyclerView);
 //
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
@@ -69,27 +64,15 @@ public class PrepareFragment extends Fragment {
 
 
 
-        goFolderButton.setOnClickListener(v -> {
-            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance());
-        });
+//        goFolderButton.setOnClickListener(v -> {
+//            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance());
+//        });
 
         // Inflate the layout for this fragment
         return view;
     }
 
-    private void isChoicedFolder(String path){
-        if(path.length() == 0){
-//            folderLayout.setVisibility(View.GONE);
-            canShareButton(false);
-        }else{
-//            folderLayout.setVisibility(View.VISIBLE);
-            canShareButton(true);
-        }
-    }
 
-    private void canShareButton(Boolean b){
-        goShareButton.setEnabled(b);
-    }
 
     private void setChildFragment(Fragment child){
         FragmentTransaction childFt = getChildFragmentManager().beginTransaction();
