@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.R;
+import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.databinding.FragmentSendPrepareBinding;
@@ -51,36 +52,24 @@ public class PrepareFragment extends Fragment {
 
         mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
         binding.setViewModel(mSendViewModel);
+        binding.setLifecycleOwner(this);
 
-//        mSendViewModel.getFolderPathLiveData().observe((BackdropActivity)getActivity(),this::isChoicedFolder);
+        mSendViewModel.getSwitchFragment().observe((BackdropActivity)getActivity(),this::switchFragment);
 
-//        RecyclerView recyclerView = view.findViewById(R.id.fragment_prepare_choice_members_RecyclerView);
-//
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//        adapter = new PrepareRecyclerAdapter();
-//        recyclerView.setAdapter(adapter);
-
-
-
-//        goFolderButton.setOnClickListener(v -> {
-//            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance());
-//        });
 
         // Inflate the layout for this fragment
         return view;
     }
 
+    //send 내에서 화면전환
+    private void switchFragment(Event<String> event){
+        String dest = event.getContentIfNotHandled();
+        if(dest == null)
+            return;
 
-
-    private void setChildFragment(Fragment child){
-        FragmentTransaction childFt = getChildFragmentManager().beginTransaction();
-
-        if(!child.isAdded()){
-            childFt.replace(R.id.activity_backdrop_fragment, child);
-            childFt.addToBackStack(null);
-            childFt.commit();
+        if(dest.equals("folder")){
+            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance(),true);
         }
     }
+
 }
