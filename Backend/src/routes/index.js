@@ -7,7 +7,6 @@ const member = require('./member');
 const login = require('./login');
 const follow = require('./follow');
 
-
 // router.use('/user', auth, user);
 router.use('/member', member);
 router.use('/login', login);
