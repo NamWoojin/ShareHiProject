@@ -72,6 +72,7 @@ export default {
       this.$refs.directory.onClickCloseAllDir()
     },
     searchInputChanged(e) {
+      e.stopPropagation();
       console.log(e.target.value)
     },
   }

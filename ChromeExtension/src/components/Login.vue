@@ -1,9 +1,9 @@
 <template>
   <div class="login-container">
     <img class="logo-image" src="https://github.com/kr2020lbh/TIL/blob/master/0316.assets/logo_transparent.png?raw=true" alt="">
-    <input v-model="userObj.mem_email" class="login-email-input" placeholder="아이디 (이메일)">
+    <input v-model="userObj.mem_email" class="login-email-input" placeholder="아이디 (이메일)" @keyup="stopPropagation" @keydown="stopPropagation">
     <div v-if="loginFail.mem_email" class="login-fail">이메일을 입력해주세요.</div>
-    <input v-model="userObj.mem_password" type="password" class="login-password-input" placeholder="비밀번호">
+    <input v-model="userObj.mem_password" type="password" class="login-password-input" placeholder="비밀번호" @keyup="stopPropagation" @keydown="stopPropagation">
     <div v-if="loginFail.mem_password" class="login-fail">비밀번호를 입력해주세요.</div>
     <div v-if="loginFail.mem_validate" class="login-fail">가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.</div>
     <button class="login-btn" @click="onClickLogin">로그인</button>
@@ -32,6 +32,9 @@ export default {
     }
   },
   methods : {
+    stopPropagation(e) {
+      e.stopPropagation()
+    },
     resetLoginFail(flag1,flag2,flag3) {
       this.loginFail.mem_email = flag1
       this.loginFail.mem_password = flag2
@@ -51,6 +54,7 @@ export default {
         this.userObj,
         (res) => {
           if (res.data.message === 'SUCCESS') {
+            console.log(res.data)
             this.resetLoginFail(false,false,false)
             this.$emit("onClickLogin",true)
           }
