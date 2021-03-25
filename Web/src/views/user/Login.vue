@@ -19,7 +19,7 @@
                 prepend-inner-icon="mdi-email-outline"
                 label="아이디(이메일)"
                 :rules="[required_email]"
-                v-model="form.email"
+                v-model="form.mem_email"
               ></v-text-field> 
               
               <v-text-field
@@ -32,7 +32,8 @@
                 type="password"
                 label="비밀번호"
                 :rules="[required_password]"
-                v-model="form.password"
+                v-model="form.mem_password"
+                @keypress.enter="login"
               ></v-text-field> 
             </v-col>
             <v-col cols="12">
@@ -44,6 +45,7 @@
                   style="font-size: 1.3rem; font-weight: bold; 
                   width: 100%; height: 3rem;"
                   :disabled="!enable_login"
+                  @click="login"
                 >
                   로그인
                 </v-btn>
@@ -71,14 +73,22 @@
 
 <script>
 
+import axios from 'axios'
+import { mapState } from 'vuex'
+
 export default {
   name: 'Login',
   data() {
     return {
       form: {
-        email: '',
-        password: '',
+        mem_email: '',
+        mem_password: '',
       }
+    }
+  },
+  created() {
+    if (this.loginstate) {
+      this.$router.push({ name: 'Main' })
     }
   },
   mounted() {
@@ -89,10 +99,10 @@ export default {
   },
   computed: {
     required_email() {
-      return () => /.+@.+\..+/.test(this.form.email) || '이메일 형식으로 입력해주세요.'
+      return () => /.+@.+\..+/.test(this.form.mem_email) || '이메일 형식으로 입력해주세요.'
     },
     required_password() {
-      return () => (this.form.password.length >= 8 && /[~!@#$%^&*()_+|<>?:{}]/.test(this.form.password)) || '비밀번호를 특수문자 포함 8자 이상 작성해주세요.'
+      return () => (this.form.mem_password.length >= 8 && /[~!@#$%^&*()_+|<>?:{}]/.test(this.form.mem_password)) || '비밀번호를 특수문자 포함 8자 이상 작성해주세요.'
     },
     enable_login() {
       if (this.required_email() == true && this.required_password() == true) {
@@ -100,12 +110,40 @@ export default {
       } else {
         return false
       }
-    }
+    },
+    ...mapState({
+      loginstate: 'login',
+    })
   },
   methods: {
     onSignIn(googleUser) {
-      console.log(googleUser)
+      var profile = googleUser.getBasicProfile();
+      let googleform = {
+        'mem_email': profile.getEmail(),
+        'mem_name': profile.getName(),
+        'mem_image': profile.getImageUrl()
+      }
+
+      axios.post(`https://j4f001.p.ssafy.io/api/login/social`, googleform, {})
+        .then(res => {
+          if (res.data.message == 'SUCCESS') {
+            localStorage.setItem('token', res.data.content.token)
+            this.$store.dispatch("LOGIN", res.data.content.member[0])
+            this.$router.push({ name: 'Storage' })
+          }
+        })
     },
+    login() {
+      // login and router link
+      axios.post(`https://j4f001.p.ssafy.io/api/login/basic`, this.form, {})
+        .then(res => {
+          if (res.data.message == 'SUCCESS') {
+            localStorage.setItem('token', res.data.content.token)
+            this.$store.dispatch("LOGIN", res.data.content.member[0])
+            this.$router.push({ name: 'Storage' })
+          }
+        })
+    }
   }
 }
 </script>
