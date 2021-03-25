@@ -185,6 +185,10 @@ style.textContent =
   display : flex;
   justify-content : space-around; 
 }
+.login-fail {
+  font-size : 12px;
+  color: #ff1616;
+}
 .new-tab-link {
   cursor: pointer;
 }
