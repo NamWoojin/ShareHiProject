@@ -42,6 +42,10 @@ public class PrepareRecyclerAdapter extends RecyclerView.Adapter<PrepareRecycler
         listData.add(route);
     }
 
+    void setItemList(ArrayList<String> list){
+        this.listData = list;
+    }
+
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView routeTextView;

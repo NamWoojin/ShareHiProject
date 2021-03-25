@@ -5,8 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,14 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.R;
-import com.example.android.data.viewmodel.LoginViewModel;
+import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.SendViewModel;
-import com.example.android.data.viewmodelimpl.LoginViewModelImpl;
-import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
+import com.example.android.data.viewmodelimpl.SendViewModelImpl;
+import com.example.android.databinding.FragmentSendPrepareBinding;
 import com.example.android.ui.main.BackdropActivity;
 
 public class PrepareFragment extends Fragment {
 
+    private FragmentSendPrepareBinding binding;
     private SendViewModel mSendViewModel;
 
     private static PrepareRecyclerAdapter adapter;
@@ -45,33 +47,29 @@ public class PrepareFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_send_prepare, container, false);
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_send_prepare, container, false);
+        View view = binding.getRoot();
 
-        RecyclerView recyclerView = view.findViewById(R.id.fragment_prepare_choice_folders_RecyclerView);
+        mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
+        binding.setViewModel(mSendViewModel);
+        binding.setLifecycleOwner(this);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        mSendViewModel.getSwitchFragment().observe((BackdropActivity)getActivity(),this::switchFragment);
 
-        adapter = new PrepareRecyclerAdapter();
-        recyclerView.setAdapter(adapter);
-
-        Button goFolderButton = (Button) view.findViewById(R.id.fragment_prepare_go_folder_Button);
-
-        goFolderButton.setOnClickListener(v -> {
-            setChildFragment(FolderFragment.newInstance());
-        });
 
         // Inflate the layout for this fragment
         return view;
     }
 
-    private void setChildFragment(Fragment child){
-        FragmentTransaction childFt = getChildFragmentManager().beginTransaction();
+    //send 내에서 화면전환
+    private void switchFragment(Event<String> event){
+        String dest = event.getContentIfNotHandled();
+        if(dest == null)
+            return;
 
-        if(!child.isAdded()){
-            childFt.replace(R.id.activity_backdrop_fragment, child);
-            childFt.addToBackStack(null);
-            childFt.commit();
+        if(dest.equals("folder")){
+            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance(),true);
         }
     }
+
 }

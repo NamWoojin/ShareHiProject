@@ -1,10 +1,18 @@
 // 다음 작업 : express-generator를 활용한 구조화
 // 지금은 일단 모듈화
 
-let config = {
-    host: 'localhost',
-}
+// Redis 사용 전, 임시 저장
+let socketForWeb;
+let webData;
+let socketForAndroid;
+let andData;
+//////////////////////////
 
+let config = {
+  host: 'localhost',
+};
+
+const net = require('net');
 const http = require('http');
 const fs = require('fs');
 const socketio = require('socket.io');
@@ -15,22 +23,66 @@ const app = express();
 
 let server = http.createServer(app);
 server.listen(8765, () => {
-    console.log('Server Running at http://127.0.0.1:8765');
+  console.log('Server Running at http://127.0.0.1:8765');
 });
 
 let io = socketio(server);
 
 io.sockets.on('connection', (socket) => {
+  socketForWeb = socket;
 
-    socket.on('message', (data) => {
-        console.log(data);
-        writeData(socket, 'message', 'hi');
-    });
-    socket.on('blob', (data) => {
-        writeData(socket, 'blob', data);
-    });
+  socket.on('message', (data) => {
+    console.log('------ writing to Android: ---------');
+    console.log(data);
+    console.log('socketForAndroid : ' + socketForAndroid);
+    writeData(socketForAndroid, 'message', data);
+    console.log('------------------------------------');
+  });
+  socket.on('blob', (data) => {
+    writeData(socketForAndroid, 'blob', data);
+  });
 });
 
 let writeData = function (socket, id, data) {
-    socket.emit(id, data);
-}
+  console.log('socket : ' + socket);
+  socket.write(data);
+};
+
+var andServer = net.createServer(function (client) {
+  socketForAndroid = client;
+
+  client.on('data', function (data) {
+    console.log('------ writing to Web: ---------');
+    andWriteData(socketForWeb, data);
+  });
+
+  client.on('end', function () {
+    console.log('is end?');
+    nfile.on('data', (data) => {
+      console.log('-----------');
+      andWriteData(client, data);
+      console.log('...........................');
+    });
+  });
+
+  client.on('error', function (err) {});
+
+  client.on('timeout', function () {});
+
+  client.on('drain', () => {
+    console.log('hi drain~');
+  });
+});
+
+andServer.listen(8888, function () {
+  console.log('Server Running at http://127.0.0.1:8888');
+  andServer.on('close', function () {});
+
+  andServer.on('error', function (err) {});
+});
+
+var andWriteData = function (socket, data) {
+  console.log('socket : ' + socket);
+  console.log('data : ' + data);
+  //socket.emit(id, data);
+};
