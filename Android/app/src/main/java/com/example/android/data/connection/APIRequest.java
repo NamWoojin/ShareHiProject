@@ -17,17 +17,19 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class APIRequest {
-    public static void request(Call<Object> object, Consumer<Response<Object>> callback, Consumer<Throwable> fail){
+    public static void request(Call<Object> object, Consumer<Response<Object>> callback, Consumer<Throwable> fail) {
         object.enqueue(new Callback<Object>() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
+
                 callback.accept(response);
             }
+
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-               fail.accept(t);
+                fail.accept(t);
             }
         });
     }

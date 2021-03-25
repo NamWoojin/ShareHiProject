@@ -11,7 +11,7 @@ import com.example.android.data.viewmodel.BackdropViewModel;
 
 import java.lang.ref.WeakReference;
 
-public class BackdropViewModelImpl extends ViewModel implements BackdropViewModel{
+public class BackdropViewModelImpl extends ViewModel implements BackdropViewModel {
 
     private static final String TAG = "BackdropViewModelImpl";
 
@@ -20,7 +20,7 @@ public class BackdropViewModelImpl extends ViewModel implements BackdropViewMode
     private MutableLiveData<String> pageLiveData = new MutableLiveData<>("");
     private MutableLiveData<Boolean> backdropMenuOpenLiveData = new MutableLiveData<>(false);
 
-    public BackdropViewModelImpl(SavedStateHandle handle){
+    public BackdropViewModelImpl(SavedStateHandle handle) {
         pageLiveData = handle.getLiveData("page");
     }
 
@@ -28,8 +28,9 @@ public class BackdropViewModelImpl extends ViewModel implements BackdropViewMode
     public void setParentContext(Activity parentContext) {
         this.mActivityRef = new WeakReference<>(parentContext);
     }
+
     @Override
-    public void toggleBackdropMenu(){
+    public void toggleBackdropMenu() {
         backdropMenuOpenLiveData.setValue(!backdropMenuOpenLiveData.getValue());
     }
 
@@ -43,14 +44,17 @@ public class BackdropViewModelImpl extends ViewModel implements BackdropViewMode
     public MutableLiveData<String> getPageLiveData() {
         return pageLiveData;
     }
+
     @Override
     public void setPageLiveData(MutableLiveData<String> pageLiveData) {
         this.pageLiveData = pageLiveData;
     }
+
     @Override
     public MutableLiveData<Boolean> getBackdropMenuOpenLiveData() {
         return backdropMenuOpenLiveData;
     }
+
     @Override
     public void setBackdropMenuOpenLiveData(MutableLiveData<Boolean> backdropMenuOpenLiveData) {
         this.backdropMenuOpenLiveData = backdropMenuOpenLiveData;

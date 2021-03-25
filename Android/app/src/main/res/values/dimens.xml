@@ -77,6 +77,7 @@
     <dimen name="fragment_folder_header_title_textView_textSize">18sp</dimen>
     <dimen name="fragment_folder_footer_layout_height">56dp</dimen>
     <dimen name="fragment_folder_footer_button_marginHorizontal">16dp</dimen>
+    <dimen name="recycler_folder_imageView_margin">16dp</dimen>
 
 
 </resources>

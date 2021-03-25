@@ -49,7 +49,7 @@ public class SettingFragment extends Fragment {
 
         //로그아웃
 //        signOutButton.setOnClickListener(v -> {
-//            mActionListener.onRequestedSignOut();
+////            mActionListener.onRequestedSignOut();
 ////            Intent intent = new Intent(getActivity(), GoogleLoginActivity.class);
 ////            intent.putExtra("action", "SIGN_OUT");
 ////            startActivity(intent);
