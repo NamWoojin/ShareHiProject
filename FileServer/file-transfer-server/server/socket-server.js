@@ -43,11 +43,13 @@ io.sockets.on('connection', (socket) => {
   });
 });
 
+// 서버->and 데이터전송
 let writeData = function (socket, id, data) {
   console.log('socket : ' + socket);
   socket.write(data);
 };
 
+// server-and연결
 var andServer = net.createServer(function (client) {
   socketForAndroid = client;
 
@@ -73,6 +75,7 @@ var andServer = net.createServer(function (client) {
     console.log('hi drain~');
   });
 });
+
 
 andServer.listen(8888, function () {
   console.log('Server Running at http://127.0.0.1:8888');
