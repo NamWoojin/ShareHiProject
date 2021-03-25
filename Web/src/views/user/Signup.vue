@@ -57,7 +57,17 @@
                     <span style="position: absolute; right: 20px;"><v-icon @click="dialog = false">mdi-close</v-icon></span>
                   </v-card-title>
                   <v-card-text>
-                    <p style="color: red; margin-bottom: 1rem;">남은시간 : {{prettyTime()}}</p>
+                    <div style="display: flex; justify-content: center;">
+                      <p style="color: red; margin-bottom: 1rem;">남은시간 : {{prettyTime()}}</p>
+                      <v-btn
+                        class="color-box"
+                        style="margin-left: 2rem;"
+                        @click="emailCheck"
+                        v-if="timeCounter < 5"
+                      >
+                        재발급
+                      </v-btn>
+                    </div>
                     <v-text-field
                       solo
                       flat
@@ -117,6 +127,7 @@
                   style="font-size: 1.3rem; font-weight: bold; 
                   width: 100%; height: 3rem;"
                   :disabled="!enable_signup"
+                  @click="signup"
                 >
                   가입하기
                 </v-btn>
@@ -192,22 +203,17 @@ export default {
     emailCheck() {
       // 
       axios.get(`https://j4f001.p.ssafy.io/api/member/checkEmail`, {
-        headers: {
+        params: {
           'mem_email': this.form.mem_email
         }
       })
         .then(res => {
-          console.log(res)
-          console.log(res.data)
-
           if (res.data.message == 'SUCCESS') {
             // duplicate 가 없을 시 email auth 발급
-            axios.get(`https://j4f001.p.ssafy.io/api/member/requireEmailAuth`, {
+            axios.post(`https://j4f001.p.ssafy.io/api/member/requireEmailAuth`, {
               'mem_email': this.form.mem_email
             })
-              .then(res => {
-                console.log(res)
-                console.log(res.data)
+              .then(() => {
                 this.dialog = true; 
                 this.timeCounter = 180; 
                 this.start()
@@ -226,7 +232,7 @@ export default {
       axios.post(`https://j4f001.p.ssafy.io/api/member/checkEmailAuth`, {
         'mem_email': this.form.mem_email,
         'authNum': this.authNum
-      })
+      }, {})
         .then(res => {
           console.log(res)
           console.log(res.data)
@@ -254,7 +260,17 @@ export default {
         })
 
       
-    }
+    },
+    signup() {
+      axios.post(`https://j4f001.p.ssafy.io/api/member/signup`, {
+        'mem_name': this.form.mem_name,
+        'mem_email': this.form.mem_email,
+        'mem_password': this.form.mem_password
+      })
+        .then(() => {
+          this.$router.push({ name: 'Login' })
+        })
+    },
   }
 }
 </script>

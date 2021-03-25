@@ -19,22 +19,14 @@
             >시작하기</el-button>
           </router-link>
         </div>
-        <div v-else>
+        <div v-else style="display: flex;">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <!-- <v-badge
-                content="5"
-                color="red"
-                overlap
-                bordered
-                style="height: 42px;"
-                v-bind="attrs"
-                v-on="on"
-              > -->
-                <v-icon large class="mx-3 cart" style="margin-right: 2rem;" v-bind="attrs" v-on="on">
+              <div>
+                <v-icon class="mx-5 cart" style="font-size: 26px; margin-top: 8px" v-bind="attrs" v-on="on">
                   mdi-bell-outline
                 </v-icon>
-              <!-- </v-badge> -->
+              </div>
             </template>
             <v-list>
               <v-list-item
@@ -48,21 +40,44 @@
 
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-avatar
-                color="purple"
-                size="42"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <span class="white--text headline">SJ</span>
-              </v-avatar>
+              <div v-if="member.mem_image == 'default.img'" style="height: 40px;">
+                <v-avatar
+                  color="success"
+                  size="32"
+                  v-bind="attrs"
+                  v-on="on"
+                  style="margin-top: 4px;"
+                >
+                  <span style="color: white">{{member.mem_name.substring(0,1)}}</span>
+                </v-avatar>
+              </div>
+
+              <div v-else>
+                <v-avatar 
+                  style="height:40px"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <img 
+                    src="https://cdn.vuetifyjs.com/images/john.jpg"
+                    style="height: 32px; width: 32px;"
+                  >
+                </v-avatar>
+              </div>
             </template>
             <v-list>
               <v-list-item>
-                <v-list-item-title>설정</v-list-item-title>
+                <router-link :to="{ name: 'Storage'}" style="text-decoration: none; color: black;">
+                  <v-list-item-title>내 저장소</v-list-item-title>
+                </router-link>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>로그아웃</v-list-item-title>
+                <router-link :to="{ name: 'Profile'}" style="text-decoration: none; color: black;">
+                  <v-list-item-title>설정</v-list-item-title>
+                </router-link>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title style="cursor: pointer" @click="logout">로그아웃</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -82,12 +97,18 @@
         temporary
       >
         <v-list-item v-if="login">
-          <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
-          </v-list-item-avatar>
+          <div v-if="member.mem_image == 'default.img'" style="height: 40px;">
+            <v-avatar
+              color="success"
+              size="32"
+              style="margin-top: 4px;"
+            >
+              <span style="color: white">{{member.mem_name.substring(0,1)}}</span>
+            </v-avatar>
+          </div>
 
           <v-list-item-content>
-            <v-list-item-title>John Leider</v-list-item-title>
+            <v-list-item-title>{{member.mem_name}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -125,11 +146,12 @@
 
 <script>
 
+import { mapState } from 'vuex'
+
 export default {
   name: 'Header',
   data() {
     return {
-      login: true,
       width: window.innerWidth,
       drawer: null,
       items: [
@@ -151,6 +173,12 @@ export default {
   methods: {
     handleResize() {
       this.width = window.innerWidth
+    },
+    logout() {
+      this.$store.dispatch("LOGOUT")
+        .then(() => {
+          this.$router.push({ name: 'Main' })
+        })
     }
   },
   computed: {
@@ -161,6 +189,10 @@ export default {
         return false
       }
     },
+    ...mapState([
+      'login',
+      'member',
+    ])
   }
 }
 </script>
