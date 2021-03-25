@@ -40,7 +40,7 @@ let andServer = net.createServer((socket) => {
   registSocket(socket);
   socket.write(
     JSON.stringify({
-      id: KEY.CONNECT,
+      namespace: KEY.CONNECT,
       status: 200,
       message: 'connect',
     }) + '\n'
@@ -79,7 +79,8 @@ let andServer = net.createServer((socket) => {
           JSON.stringify({
             status: data.status,
             message: data.message,
-            data: data.data,
+            detail: data.detail,
+            content: data.content,
           })
         );
         break;
@@ -90,7 +91,8 @@ let andServer = net.createServer((socket) => {
           JSON.stringify({
             status: data.status,
             message: data.message,
-            data: data.data,
+            detail: data.detail,
+            content: data.content,
           })
         );
         break;
@@ -101,7 +103,8 @@ let andServer = net.createServer((socket) => {
           JSON.stringify({
             status: data.status,
             message: data.message,
-            data: data.data,
+            detail: data.detail,
+            content: data.content,
           })
         );
         break;
@@ -112,7 +115,8 @@ let andServer = net.createServer((socket) => {
           JSON.stringify({
             status: data.status,
             message: data.message,
-            data: data.data,
+            detail: data.detail,
+            content: data.content,
           })
         );
         break;
@@ -170,7 +174,7 @@ io.on('connection', (socket) => {
   socket.emit(
     KEY.CONNECT,
     JSON.stringify({
-      id: KEY.CONNECT,
+      namespace: KEY.CONNECT,
       status: 200,
       message4: 'CONNECT SUCCESS',
     })
@@ -192,23 +196,26 @@ io.on('connection', (socket) => {
   socket.on(KEY.GET_LIST_OF_CONNECTED_DEVICES_NAME, (data) => {
     // 1002 - 연결된 디바이스의 이름들 출력 요청
   });
-  socket.on(KEY.GET_TREE_OF_FOLDERS, () => {
+  socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
     // 2000 - 폴더 구조를 출력 요청
+    data = JSON.parse(data);
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
       io.to(socket.id).emit(
         KEY.NOT_SHARE_DEVICE,
         JSON.stringify({
           status: 204,
-          message: 'NOT SHARE DEVICE',
+          message: 'NO SHARE DEVICE',
         })
       );
       return;
     }
     idMap.get(shareDevice).write(
       JSON.stringify({
-        id: KEY.GET_TREE_OF_FOLDERS,
+        namespace: KEY.GET_TREE_OF_FOLDERS,
         targetId: socketMap.get(socket),
+        path: data.path,
+        name: data.name,
       }) + '\n'
     );
   });
@@ -234,7 +241,7 @@ io.on('connection', (socket) => {
     }
     idMap.get(shareDevice).write(
       JSON.stringify({
-        id: KEY.UPDATE_NAME_OF_FOLDER,
+        namespace: KEY.UPDATE_NAME_OF_FOLDER,
         targetId: socketMap.get(socket),
         path: './example/folder',
         name: 'hello.txt',
@@ -260,7 +267,7 @@ io.on('connection', (socket) => {
     }
     idMap.get(shareDevice).write(
       JSON.stringify({
-        id: KEY.DELETE_FOLDERS,
+        namespace: KEY.DELETE_FOLDERS,
         targetId: socketMap.get(socket),
         path: './example/folder',
         name: 'hello.txt',
@@ -285,7 +292,7 @@ io.on('connection', (socket) => {
     }
     idMap.get(shareDevice).write(
       JSON.stringify({
-        id: KEY.ADD_FOLDERS,
+        namespace: KEY.ADD_FOLDERS,
         targetId: socketMap.get(socket),
         path: './example/folder',
         name: 'hello.txt',
