@@ -46,7 +46,7 @@ const basic = async (req, res) => {
           });
         }
       });
-    } else if (result.length == 0) {
+    } else {
       return res.status(200).json({
         message: 'FAIL',
         detail: 'CHECK MEM_EMAIL OR MEM_PASSWORD',
