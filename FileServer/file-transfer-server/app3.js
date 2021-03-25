@@ -1,5 +1,5 @@
 'use strict';
-
+//참고 X
 var net = require('net');
 var fs = require('fs');
 var file = fs.createWriteStream('./img/video-small.mp4', { flags: 'w' });
