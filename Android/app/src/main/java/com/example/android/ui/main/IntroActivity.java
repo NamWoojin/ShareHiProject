@@ -1,65 +1,68 @@
 package com.example.android.ui.main;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
+import com.example.android.data.model.dto.Event;
+import com.example.android.data.viewmodel.IntroViewModel;
+import com.example.android.data.viewmodelimpl.IntroViewModelImpl;
 import com.example.android.ui.user.LoginActivity;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import java.util.UUID;
 
 public class IntroActivity extends AppCompatActivity {
 
-    private final int WRITE_EXTERNAL_STORAGE = 1;
+    private static final String TAG = "IntroActivity";
+
+    private IntroViewModel mIntroViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_intro);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            //파일 접근 권한 허용되지 않았을 때
-            //권한 요청
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
-        } else {
-            //권한 허용되어 있을 때
-            startIntro();
-        }
+        mIntroViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(IntroViewModelImpl.class);
+        mIntroViewModel.setParentContext(this);
+        mIntroViewModel.getPermissionAndLogin();
+        mIntroViewModel.getCheckAutoLoginLiveData().observe(this,this::setHandler);
+
+        String useruuid = null;
+        useruuid = UUID.randomUUID().toString();
+        Log.i(TAG, "onCreate: "+useruuid);
     }
 
-    //권한 승인 결과에 따라서 실행
+//    private String GetDevicesUUID(Context mContext){
+//        final TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+//        final String tmDevice, tmSerial, androidId;
+//        tmDevice = "" + tm.getDeviceId();
+//        tmSerial = "" + tm.getSimSerialNumber();
+//        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+//        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+//        String deviceId = deviceUuid.toString();
+//        return deviceId;
+//    }
+
+    
+    //권한 허용에 대한 결과 전달
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case WRITE_EXTERNAL_STORAGE: {
-
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 권한 승인
-                    startIntro();
-                } else {
-                    exitProgram();
-                }
-                return;
-            }
-
-        }
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        mIntroViewModel.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 
-
-    private void startIntro() {
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    //자동로그인 확인 결과에 따른 처리
+    private void setHandler(Event<Boolean> event){
+        boolean canLogin = event.getContentIfNotHandled();
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             Intent intent;
             //로그인 성공
-            if (account != null) {
+            if (canLogin) {
                 intent = new Intent(IntroActivity.this, MainActivity.class);
             }
             //로그인 실패
@@ -73,21 +76,6 @@ public class IntroActivity extends AppCompatActivity {
 
             //인트로로 다시 돌아오지 못하도록 끝내기
             finish();
-        }, 2000);
-    }
-
-    //어플리케이션 종료
-    private void exitProgram() {
-        // 태스크를 백그라운드로 이동
-        moveTaskToBack(true);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 액티비티 종료 + 태스크 리스트에서 지우기
-            finishAndRemoveTask();
-        } else {
-            // 액티비티 종료
-            finish();
-        }
-        System.exit(0);
+        },2000);
     }
 }

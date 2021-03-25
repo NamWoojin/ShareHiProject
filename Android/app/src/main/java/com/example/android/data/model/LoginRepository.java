@@ -9,4 +9,7 @@ import retrofit2.http.POST;
 public interface LoginRepository {
     @POST("login/basic")
     Call<Object> Login(@Body User user);
+
+    @POST("login/social")
+    Call<Object> socialLogin(@Body User user);
 }

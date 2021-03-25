@@ -3,6 +3,7 @@ package com.example.android.data.viewmodelimpl;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,11 +15,11 @@ import com.example.android.data.connection.APIRequest;
 import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.Event;
-import com.example.android.data.model.dto.Token;
+import com.example.android.data.model.dto.LoginContent;
+import com.example.android.data.model.dto.Member;
 import com.example.android.data.model.dto.User;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.LoginViewModel;
-import com.example.android.ui.main.LoadingFragment;
 import com.example.android.ui.main.MainActivity;
 import com.example.android.ui.user.SignupActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -43,7 +44,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
     private MutableLiveData<String> passwordLiveData = new MutableLiveData<>();
 
-    private MutableLiveData<Event<Boolean>> loginSuccessLiveData = new MutableLiveData<>();
 
     private MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
@@ -83,18 +83,19 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
             } else if (code >= 200) {
                 //성공
-                Type listType = new TypeToken<APIResponse<Token>>() {
+                Type listType = new TypeToken<APIResponse<LoginContent>>() {
                 }.getType();
-                APIResponse<Token> res = gson.fromJson(body, listType);
+                APIResponse<LoginContent> res = gson.fromJson(body, listType);
                 switch (res.getMessage()) {
                     case "SUCCESS":
                         //로그인 성공
                         Toast.makeText(mActivityRef.get(), R.string.toast_login_success_message, Toast.LENGTH_SHORT).show();
-                        String token;
+                        String token = res.getContent().getToken();
+                        Member member = res.getContent().getMember();
                         Log.i(TAG, "onRequestedSignIn: " + res.getContent().getToken());
-                        token = res.getContent().getToken();
+                        saveMemberInfo(member);
                         saveLoginToken(token);
-                        saveLoginInfo();
+                        saveAutoLoginInfo();
                         updateUI();
                         break;
                     case "FAIL":
@@ -110,6 +111,15 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         });
     }
 
+    //사용자 정보 저장
+    private void saveMemberInfo(Member member){
+        SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = tokenInformation.edit();
+        String memberJson = new Gson().toJson(member);
+        editor.putString("member",memberJson);
+        editor.apply();
+    }
+
     //JWT 토큰 저장
     private void saveLoginToken(String value) {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("token", Activity.MODE_PRIVATE);
@@ -119,10 +129,10 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     }
 
     //일반로그인 정보 저장
-    private void saveLoginInfo() {
+    private void saveAutoLoginInfo() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = loginInformation.edit();
-        editor.putBoolean("GoogleLogin", false);
+        editor.putBoolean("basicLogin", true);
         editor.putString("email", emailLiveData.getValue());
         editor.putString("password", passwordLiveData.getValue());
         editor.apply();
@@ -137,6 +147,97 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         }
     }
 
+    //구글 로그인 요청에 따른 반환(mActivityRef에서 여기로 전달)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQ_CODE_GOOGLE_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                //로그인 성공
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                if (account != null) {
+                    String name = account.getDisplayName();
+                    String email = account.getEmail();
+                    Uri imageUri = account.getPhotoUrl();
+                    String image = imageUri != null ? imageUri.toString() : null;
+                    googleLogin(name,email,image);
+                } else {
+                    //로그인 실패
+                    Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            } catch (ApiException e) {
+                //로그인 취소
+            }
+        }
+    }
+
+    //구글 로그인 정보로 사용자 정보 조회
+    private void googleLogin(String name, String email, String image){
+        User user = new User();
+        user.setMem_name(name);
+        user.setMem_email(email);
+        user.setMem_image(image);
+        APIRequest.request(RetrofitClient.getLoginApiService().socialLogin(user), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
+            if (code >= 500) {
+                //서버 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 400) {
+                //클라이언트 에러
+            } else if (code >= 300) {
+
+            } else if (code >= 200) {
+                //성공
+                Type listType = new TypeToken<APIResponse<LoginContent>>() {
+                }.getType();
+                APIResponse<LoginContent> res = gson.fromJson(body, listType);
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        //로그인 성공
+                        String token = res.getContent().getToken();
+                        Member member = res.getContent().getMember();
+                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
+                        saveMemberInfo(member);
+                        saveLoginToken(token);
+                        saveGoogleLoginInfo();
+                        updateUI();
+                        break;
+                    case "FAIL":
+                        //아이디 또는 이메일 틀림
+                        Toast.makeText(mActivityRef.get(), R.string.toast_login_fail_message, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, throwable -> {
+            Log.e(TAG, "onRequestedSignIn: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    //구글 로그인 정보 SharedPreference에 저장
+    private void saveGoogleLoginInfo() {
+        SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = loginInformation.edit();
+        editor.putBoolean("basicLogin", false);
+        editor.apply();
+    }
+
+
+    //화면 전환
+    private void updateUI() { //update ui code here
+        Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mActivityRef.get().startActivity(intent);
+        mActivityRef.get().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        //다시 돌아오지 않도록 끝내기
+        mActivityRef.get().finish();
+    }
+
+
     //회원가입으로 이동
     @Override
     public void onRenderSignUp() {
@@ -148,38 +249,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     @Override
     public void onMoveFindPassword() {
 
-    }
-
-    //구글 로그인 요청에 따른 반환(mActivityRef에서 여기로 전달)
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == REQ_CODE_GOOGLE_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                //로그인 성공
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                if (account != null) {
-                    loginSuccessLiveData.setValue(new Event<>(true));
-                } else {
-                    //로그인 실패
-                    Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
-                }
-            } catch (ApiException e) {
-                //로그인 취소
-            }
-        }
-    }
-
-    //화면 전환
-    private void updateUI() { //update ui code here
-        Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mActivityRef.get().startActivity(intent);
-        mActivityRef.get().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        //다시 돌아오지 않도록 끝내기
-        mActivityRef.get().finish();
     }
 
     //LiveData getter setter
@@ -204,18 +273,10 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     }
 
     @Override
-    public MutableLiveData<Event<Boolean>> getLoginSuccessLiveData() {
-        return loginSuccessLiveData;
-    }
-
-    @Override
-    public void setLoginSuccessLiveData(MutableLiveData<Event<Boolean>> signUpLiveData) {
-        this.loginSuccessLiveData = signUpLiveData;
-    }
-    @Override
     public MutableLiveData<Boolean> getLoadingLiveData() {
         return loadingLiveData;
     }
+
     @Override
     public void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData) {
         this.loadingLiveData = loadingLiveData;

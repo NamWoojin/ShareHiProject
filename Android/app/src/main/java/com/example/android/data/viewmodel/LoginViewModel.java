@@ -12,8 +12,6 @@ public interface LoginViewModel {
     void setEmailLivedata(MutableLiveData<String> emailLivedata);
     MutableLiveData<String> getPasswordLivedata();
     void setPasswordLivedata(MutableLiveData<String> passwordLivedata);
-    MutableLiveData<Event<Boolean>> getLoginSuccessLiveData();
-    void setLoginSuccessLiveData(MutableLiveData<Event<Boolean>> signUpLiveData);
     MutableLiveData<Boolean> getLoadingLiveData();
     void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData);
     void setParentContext(Activity parentContext);
