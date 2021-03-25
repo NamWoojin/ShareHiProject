@@ -11,7 +11,7 @@ import java.nio.ByteOrder;
 public class SocketClientV1 {
 
 	private static final String IP = "localhost";
-	private static final int PORT = 8888;
+	private static final int PORT = 9001;
 
 	public Thread checkStart = new Thread() {
 		
