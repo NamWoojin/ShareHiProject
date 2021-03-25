@@ -114,7 +114,7 @@ const getUser = async (req, res) => {
       return res.status(200).json({
         message: 'SUCCESS',
         detail: '',
-        content: { member: result },
+        content: { member: result[0] },
       });
   });
 };
