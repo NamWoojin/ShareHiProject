@@ -59,7 +59,7 @@
                   v-on="on"
                 >
                   <img 
-                    src="https://cdn.vuetifyjs.com/images/john.jpg"
+                    :src="member.mem_image"
                     style="height: 32px; width: 32px;"
                   >
                 </v-avatar>
@@ -104,6 +104,16 @@
               style="margin-top: 4px;"
             >
               <span style="color: white">{{member.mem_name.substring(0,1)}}</span>
+            </v-avatar>
+          </div>
+          <div v-else>
+            <v-avatar 
+              style="height: 32px"
+            >
+              <img 
+                :src="member.mem_image"
+                style="height: 32px; width: 32px;"
+              >
             </v-avatar>
           </div>
 
