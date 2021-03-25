@@ -64,6 +64,9 @@
               <v-col cols="12">
                   <div id="google-signin-btn"></div>
               </v-col>
+              <v-col>
+                <UserFooter />
+              </v-col>
           </v-row>
         </v-container>
       </v-form>
@@ -75,9 +78,13 @@
 
 import axios from 'axios'
 import { mapState } from 'vuex'
+import UserFooter from '../../components/user/UserFooter.vue';
 
 export default {
   name: 'Login',
+  components: {
+    UserFooter
+  },
   data() {
     return {
       form: {
@@ -91,12 +98,12 @@ export default {
       this.$router.push({ name: 'Main' })
     }
   },
-  mounted() {
-    window.gapi.signin2.render("google-signin-btn", {
-      onsuccess: this.onSignIn,
-    });
+  // mounted() {
+  //   window.gapi.signin2.render("google-signin-btn", {
+  //     onsuccess: this.onSignIn,
+  //   });
     
-  },
+  // },
   computed: {
     required_email() {
       return () => /.+@.+\..+/.test(this.form.mem_email) || '이메일 형식으로 입력해주세요.'
