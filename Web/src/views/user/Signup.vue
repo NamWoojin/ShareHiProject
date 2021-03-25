@@ -121,17 +121,20 @@
             <v-col cols="12">
               <v-divider></v-divider>
             </v-col>
-              <v-col cols="12">
-                <v-btn 
-                  class="color-box"
-                  style="font-size: 1.3rem; font-weight: bold; 
-                  width: 100%; height: 3rem;"
-                  :disabled="!enable_signup"
-                  @click="signup"
-                >
-                  가입하기
-                </v-btn>
-              </v-col>
+            <v-col cols="12">
+              <v-btn 
+                class="color-box"
+                style="font-size: 1.3rem; font-weight: bold; 
+                width: 100%; height: 3rem;"
+                :disabled="!enable_signup"
+                @click="signup"
+              >
+                가입하기
+              </v-btn>
+            </v-col>
+            <v-col>
+              <UserFooter />
+            </v-col>
           </v-row>
         </v-container>
       </v-form>
@@ -142,9 +145,13 @@
 <script>
 
 import axios from 'axios'
+import UserFooter from '../../components/user/UserFooter.vue';
 
 export default {
   name: 'Signup',
+  components: {
+    UserFooter
+  },
   data() {
     return {
       rePassword: '',
