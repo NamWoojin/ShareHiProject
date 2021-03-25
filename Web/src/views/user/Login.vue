@@ -117,13 +117,16 @@ export default {
   },
   methods: {
     onSignIn(googleUser) {
+      
       var profile = googleUser.getBasicProfile();
       let googleform = {
         'mem_email': profile.getEmail(),
         'mem_name': profile.getName(),
-        'mem_image': profile.getImageUrl()
+        'mem_image': profile.getImageUrl(),
       }
-
+      console.log(googleUser)
+      console.log(profile)
+      console.log(googleform)
       axios.post(`https://j4f001.p.ssafy.io/api/login/social`, googleform, {})
         .then(res => {
           if (res.data.message == 'SUCCESS') {
