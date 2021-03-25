@@ -10,7 +10,7 @@ const signup = async (req, res) => {
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>singup');
   let member = req.body;
 
-  bcrypt.hash(member.mem_password, 10, function (err, hash) {
+  bcrypt.hash(member.mem_password, 10, async function (err, hash) {
     if (err) {
       console.log(err);
       res.status(500).json({
@@ -20,41 +20,42 @@ const signup = async (req, res) => {
       });
     }
     member.mem_password = hash;
+    await pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
+      if (err) {
+        console.log(err);
+        res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else if (result.length == 0) {
+        pool.query(UserQuery.signup, member, function (err, result) {
+          if (err) {
+            console.log(err);
+            res.status(200).json({
+              message: 'FAIL',
+              detail: err,
+              content: {},
+            });
+          }
+          res.status(200).json({
+            message: 'SUCCESS',
+            detail: '',
+            content: {},
+          });
+        });
+      } else {
+        res.status(200).json({
+          message: 'FAIL',
+          detail: 'DUPLICATE EMAIL',
+          content: {},
+        });
+      }
+    });
   });
   // console.log('>>>member');
   // console.log(member);
-  await pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
-    if (err) {
-      console.log(err);
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else if (result.length == 0) {
-      pool.query(UserQuery.signup, member, function (err, result) {
-        if (err) {
-          console.log(err);
-          res.status(200).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        }
-        res.status(200).json({
-          message: 'SUCCESS',
-          detail: '',
-          content: {},
-        });
-      });
-    } else {
-      res.status(200).json({
-        message: 'FAIL',
-        detail: 'DUPLICATE EMAIL',
-        content: {},
-      });
-    }
-  });
+  
 };
 
 const signout = async (req, res) => {
