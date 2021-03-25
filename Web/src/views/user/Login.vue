@@ -117,7 +117,6 @@ export default {
   },
   methods: {
     onSignIn(googleUser) {
-      
       var profile = googleUser.getBasicProfile();
       let googleform = {
         'mem_email': profile.getEmail(),
@@ -131,18 +130,20 @@ export default {
         .then(res => {
           if (res.data.message == 'SUCCESS') {
             localStorage.setItem('token', res.data.content.token)
-            this.$store.dispatch("LOGIN", res.data.content.member[0])
+            this.$store.dispatch("LOGIN", res.data.content.member)
             this.$router.push({ name: 'Storage' })
           }
         })
     },
     login() {
       // login and router link
+      console.log('login')
+      console.log(this.form)
       axios.post(`https://j4f001.p.ssafy.io/api/login/basic`, this.form, {})
         .then(res => {
           if (res.data.message == 'SUCCESS') {
             localStorage.setItem('token', res.data.content.token)
-            this.$store.dispatch("LOGIN", res.data.content.member[0])
+            this.$store.dispatch("LOGIN", res.data.content.member)
             this.$router.push({ name: 'Storage' })
           }
         })
