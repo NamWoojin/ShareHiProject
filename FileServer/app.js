@@ -17,6 +17,8 @@ let socketMap = new HashMap(); // socket - id
 let idMap = new HashMap(); // id - socket
 ///////^^^^^^^^^^^^^^^^^^^^^^^^^^^^/////////////
 
+console.log('서버 가동중...');
+
 let andServer = net.createServer((socket) => {
   /////////// 초기 연결 /////////////////
   console.log('Success - Android Connect');
