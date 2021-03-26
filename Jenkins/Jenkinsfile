@@ -45,6 +45,7 @@ pipeline {
             -p 9000:9000 \
             -p 9001:9001 \
             -v /volumes/fileServer_home:/volumes \
+            --network field-network \
             field-pjt-fileserver:latest'
       }
     }
