@@ -42,6 +42,8 @@
     <string name="fragment_prepare_member_TextView_text">공유할 대상 선택하기</string>
     <string name="fragment_prepare_go_share_Button_text">공유 시작하기</string>
 
+    <!--folder-->
+    <string name="fragment_folder_nothing_text">뒤로 가기</string>
 
     <!--Toast Message-->
     <string name="toast_login_success_message">환영합니다!</string>

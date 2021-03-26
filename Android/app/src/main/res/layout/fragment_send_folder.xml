@@ -25,6 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/fragment_folder_header_title_textView_marginStart"
+                android:text="@{viewModel.folderTitleLiveData}"
                 android:textSize="@dimen/fragment_folder_header_title_textView_textSize"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -35,20 +36,23 @@
             android:id="@+id/fragment_folder_path_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/fragment_folder_file_listView"
+            android:text="@{viewModel.folderPathLiveData}"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintBottom_toTopOf="@id/fragment_folder_file_recyclerView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fragment_folder_header_layout" />
 
-        <ListView
-            android:id="@+id/fragment_folder_file_listView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragment_folder_file_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:divider="@color/gray"
             app:layout_constraintBottom_toTopOf="@id/fragment_folder_footer_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_folder_path_textView" />
+            app:layout_constraintTop_toBottomOf="@id/fragment_folder_path_textView"
+            folderAdapter="@{viewModel.folderRecyclerAdapter}"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_folder_footer_layout"
@@ -57,7 +61,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_folder_file_listView">
+            app:layout_constraintTop_toBottomOf="@id/fragment_folder_file_recyclerView">
 
             <Button
                 android:id="@+id/fragment_folder_select_button"
@@ -65,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/fragment_folder_footer_button_marginHorizontal"
                 android:text="이 폴더 공유"
+                android:onClick="@{() -> viewModel.choiceFolderPath()}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
