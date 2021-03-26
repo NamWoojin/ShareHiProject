@@ -43,7 +43,8 @@ pipeline {
             field-pjt-front:latest'
         sh 'docker run -d --name field-pjt-fileServer \
             -p 9999:9999 \
-            -v /volumes/fileServer_home:/volumes'
+            -v /volumes/fileServer_home:/volumes \
+            field-pjt-fileserver:latest'
       }
     }
   }
