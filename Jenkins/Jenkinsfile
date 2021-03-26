@@ -7,7 +7,7 @@ pipeline {
       steps {
         sh 'docker build -t field-pjt-back:latest ./Backend'
         sh 'docker build -t field-pjt-front:latest ./Web'
-        sh 'docker build -t field-pjt-fileServer:latest ./FileServer'
+        sh 'docker build -t field-pjt-fileserver:latest ./FileServer'
       }
     }
   
@@ -20,8 +20,8 @@ pipeline {
         sh 'docker ps -f name=field-pjt-front -q | xargs --no-run-if-empty docker container stop'
         sh 'docker container ls -a -name=field-pjt-front -q | xargs -r docker container rm'
 
-        sh 'docker ps -f name=field-pjt-fileServer -q | xargs --no-run-if-empty docker container stop'
-        sh 'docker container ls -a -name=field-pjt-fileServer -q | xargs -r docker container rm'
+        sh 'docker ps -f name=field-pjt-fileserver -q | xargs --no-run-if-empty docker container stop'
+        sh 'docker container ls -a -name=field-pjt-fileserver -q | xargs -r docker container rm'
 
         sh 'docker ps -a -f "status=created" -f "status=exited" -q | xargs -r docker container rm'
         sh 'docker images -f "dangling=true" -q | xargs -r docker rmi'
