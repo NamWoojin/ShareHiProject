@@ -19,6 +19,7 @@ let idMap = new HashMap(); // id - socket
 
 let andServer = net.createServer((socket) => {
   /////////// 초기 연결 /////////////////
+  console.log('Success - Android Connect');
   registSocket(socket);
   socket.write(
     JSON.stringify({
@@ -171,6 +172,7 @@ server.listen(9000);
 andServer.listen(9001);
 
 io.on('connection', (socket) => {
+  console.log('Success Web Connect');
   registSocket(socket);
   socket.emit(
     KEY.CONNECT,
