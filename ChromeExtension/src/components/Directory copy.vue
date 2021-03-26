@@ -1,6 +1,40 @@
 <template>
   <div>
     <div class="directory">
+      <div class="dir">root</div>
+      <ul>
+        <li>
+          <div class="dir">폴더1</div>
+          <ul>
+            <li>
+              <div class="dir">폴더1-2</div>                
+              <ul>
+                <li>
+                  <div class="dir">폴더1-2-1</div>
+                  <ul>
+
+                  </ul>
+                </li>
+                <li>
+                  <div class="dir">폴더1-2-2</div>
+                  <ul>
+
+                  </ul>
+                </li>
+                <li>
+                  <div class="file">파일1-2-1</div>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <div class="file">파일1-1</div>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <div class="file">파일1</div>
+        </li>
+      </ul>  
     </div>
   </div>
 </template>
@@ -15,9 +49,6 @@ export default {
     return {
     }
   },
-  mounted () {
-    this.rootDataParsing()
-  },
   methods : {
     onClickOpenAllDir() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
@@ -26,7 +57,6 @@ export default {
         uls[idx].classList.remove('closed')
       } 
     },
-
     onClickCloseAllDir() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
       const uls = directory.querySelectorAll('ul')
@@ -34,77 +64,34 @@ export default {
         uls[idx].classList.add('closed')
       } 
     },
-
-    elementSetting(tagName,className=null) {
-      const tag = document.createElement(tagName)
-      if (className) {
-        tag.setAttribute('class',className)
-      }
-      return tag
-    },
-
-    rootDataParsing() {
+    addClassToUl() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
-      const rootData = this.directoryData
-      if (!rootData) {
-        console.log('noData',rootData)
-        return
+      const uls = directory.querySelectorAll('ul')
+      for (let idx=0; idx<uls.length; idx++) {
+        uls[idx].classList.add('closed')
       }
-      const folders = []
-      const files = []
-      for (let i=0;i<rootData.directory.length;i++) {
-        const element = rootData.directory[i]
-        if (element.type === 'folder') {
-          folders.push(rootData.directory[i])
-        }
-        else {
-          files.push(rootData.directory[i])
-        }
-      }
-      const rootDiv = this.elementSetting('div','dir')
-      rootDiv.innerText = "root"
-      const rootUl = this.elementSetting('ul')
-      rootDiv.addEventListener('click', () => {
-          rootUl.classList.toggle('closed')
-        })
-      if (folders) {
-        folders.forEach(folder => {
-          const li = this.elementSetting('li')
-          const folderDiv = this.elementSetting('div','dir')
-          const ul = this.elementSetting('ul')
-          folderDiv.innerText = folder.name
-          folderDiv.addEventListener('click', () => {
-            ul.classList.toggle('closed')
-            // path에 대해서 하위 내용 구조 통신하여 받는거 추가하기
-            
-          })
-          folderDiv.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            this.createContextMenu(e.clientX,e.clientY,e.target,'dir');
-          })
-          li.appendChild(folderDiv)
-          li.appendChild(ul)
-          rootUl.appendChild(li)        
-        });
-      }
-      if (files) {
-        files.forEach(file => {
-          const li = this.elementSetting('li')
-          const fileDiv = this.elementSetting('div','file')
-          fileDiv.innerText = file.name
-          fileDiv.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            this.createContextMenu(e.clientX,e.clientY,e.target,'file');
-          })
-          li.appendChild(fileDiv)
-          li.appendChild(ul)
-          rootUl.appendChild(li)        
-        });
-      }
-      directory.appendChild(rootDiv)
-      directory.appendChild(rootUl)
     },
-
+    addEventToDir() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      const dirs = directory.querySelectorAll('.dir')
+      const files = directory.querySelectorAll('.file')
+      for (let idx=0; idx<dirs.length; idx++) {
+        const ul = dirs[idx].nextElementSibling
+        dirs[idx].addEventListener('click', () => {
+          ul.classList.toggle('closed')
+        })
+        dirs[idx].addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          this.createContextMenu(e.clientX,e.clientY,e.target,'dir');
+        })
+      }
+      for (let idx=0; idx<files.length; idx++) {
+        files[idx].addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          this.createContextMenu(e.clientX,e.clientY,e.target,'file');
+        })
+      }
+    },
     setDeleteMenu(target) {
       const deleteMenu = document.createElement('div')
       deleteMenu.setAttribute('class','context-menu-content')
@@ -159,9 +146,6 @@ export default {
       const modalObj = {
         'nameInput' : document.createElement('input'),
       }
-      modalObj.nameInput.addEventListener('keydown',(e) => {
-        e.stopPropagation()
-      })
       const overlay = document.querySelector('#shadowElement').shadowRoot.querySelector('.overlay')
       const modalOverlay = document.createElement('div')
       modalOverlay.setAttribute('class','modal-overlay')
@@ -289,7 +273,11 @@ export default {
       overlay.appendChild(contextMenuOverlay)
       overlay.appendChild(contextMenu)
     }
+  },
+  mounted() {
+    this.addClassToUl()
+    this.addEventToDir()
   }
-}
+};
 </script>
 

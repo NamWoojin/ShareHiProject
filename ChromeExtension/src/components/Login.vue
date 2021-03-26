@@ -32,15 +32,20 @@ export default {
     }
   },
   methods : {
-    stopPropagation(e) {
+    stopPropagation(e) {      
       e.stopPropagation()
+      if (e.code === 'Enter') {
+        this.onClickLogin()
+        return
+      }
     },
+
     resetLoginFail(flag1,flag2,flag3) {
       this.loginFail.mem_email = flag1
       this.loginFail.mem_password = flag2
       this.loginFail.mem_validate = flag3
-    }
-    ,
+    },
+    
     onClickLogin() {
       if (!this.userObj.mem_email) {
         this.resetLoginFail(true,false,false)
@@ -68,12 +73,15 @@ export default {
         }
       )
     },
+
     onClickSignup(newURL) {
       window.open(newURL, '_blank');
     },
+
     onClickFindPassword(newURL) {
       window.open(newURL, '_blank');
     },
+    
     onClickAxiosTest() {
       axiosTest()
     }
