@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
 let config = {
-  host: 'http://127.0.0.1:9000',
+  host: 'http://j4f001.p.ssafy.io/file/web',
   uploadedSize: 0,
   uploadTotalSize: 0,
   savePath: './',
