@@ -10,7 +10,9 @@ public class FileSocket {
     private Thread fileSendThread = new Thread(){
         @Override
         public void run() {
-            super.run();
+            // super.run();
+
+
             //
         }
     };

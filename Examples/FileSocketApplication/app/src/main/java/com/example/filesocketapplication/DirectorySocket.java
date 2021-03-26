@@ -1,5 +1,7 @@
 package com.example.filesocketapplication;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 public class DirectorySocket {
@@ -8,6 +10,7 @@ public class DirectorySocket {
 
     public DirectorySocket(JSONObject jsonObject){
         this.jsonObject = jsonObject;
+
         directorySendThread.start();
     }
 
@@ -15,7 +18,9 @@ public class DirectorySocket {
         @Override
         public void run() {
             super.run();
-            //
+            SocketInfo s = new SocketInfo();
+
+            s.connect();
         }
     };
 }
