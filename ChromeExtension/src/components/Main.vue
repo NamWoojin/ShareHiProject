@@ -39,8 +39,8 @@
         </div>
       </div>
     </nav>
-    <SearchResult v-if="searchFlag" />
-    <Directory ref="directory" v-else />
+    <SearchResult :directoryData="directoryData" v-if="searchFlag" />
+    <Directory :directoryData="directoryData" ref="directory" v-else />
   </div>
 </template>
 
@@ -55,6 +55,62 @@ export default {
     return {
       searchFlag : false,
       searchInputValue : '',
+      directoryData : {
+        "name":"0",
+        "path":"\/storage\/emulated\/0",
+        "directory":[
+          {
+            "name":"Music",
+            "path":"\/storage\/emulated\/0\/Music",
+            "type":"folder"
+          },
+          {
+            "name":"Podcasts",
+            "path":"\/storage\/emulated\/0\/Podcasts",
+            "type":"folder"
+          },
+          {
+          "name":"Ringtones",
+          "path":"\/storage\/emulated\/0\/Ringtones",
+          "type":"folder"
+          },
+          {
+          "name":"Alarms",
+          "path":"\/storage\/emulated\/0\/Alarms",
+          "type":"folder"
+          },
+          {
+          "name":"Notifications",
+          "path":"\/storage\/emulated\/0\/Notifications",
+          "type":"folder"
+          },
+          {
+          "name":"Pictures",
+          "path":"\/storage\/emulated\/0\/Pictures",
+          "type":"folder"
+          },
+          {
+          "name":"Movies",
+          "path":"\/storage\/emulated\/0\/Movies",
+          "type":"folder"
+          },
+          {
+          "name":"Download",
+          "path":"\/storage\/emulated\/0\/Download",
+          "type":"folder"
+          },
+          {
+          "name":"DCIM",
+          "path":"\/storage\/emulated\/0\/DCIM",
+          "type":"folder"
+          },
+          {
+          "name":"Android",
+          "path":"\/storage\/emulated\/0\/Android",
+          "type":"folder"
+          }
+        ]
+      } 
     }
   },
   methods : {
