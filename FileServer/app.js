@@ -10,6 +10,8 @@ const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 
 const KEY = require('./src/config/key/key');
+const cors = require('cors');
+app.use(cors());
 
 let shareDevice;
 //////////////// socket map system /////////////
