@@ -42,6 +42,17 @@ let andServer = net.createServer((socket) => {
   });
 
   socket.on('data', (data) => {
+    if (isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
     data = JSON.parse(data);
     console.log(data);
     let id = parseInt(data.namespace);
