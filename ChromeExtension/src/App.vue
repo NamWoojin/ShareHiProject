@@ -20,7 +20,7 @@ export default {
   components: { Login,Main },
   data () {
     return {
-      loginStatus : false,
+      loginStatus : true,
     }
   },
   methods : {

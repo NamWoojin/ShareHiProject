@@ -17,7 +17,7 @@
       <div class="nav-item" >
         <button class="nav-item-btn">디바이스</button>
         <div v-if="true" class="nav-item-content">
-          <a href="#">Device1</a>
+          <a href="#" @click="onClicktest">Device1</a>
           <a href="#">Device2</a>
           <a href="#">Device3</a>
           <a href="#">Device4</a>
@@ -47,7 +47,7 @@
 <script>
 import Directory from "@/components/Directory.vue";
 import SearchResult from "@/components/SearchResult.vue";
-
+import  {test} from "@/assets/api/test.js";
 export default {
   name: "Main",
   components: { Directory,SearchResult },
@@ -131,6 +131,9 @@ export default {
       e.stopPropagation();
       console.log(e.target.value)
     },
+    onClicktest() {
+      test();
+    }
   }
 };
 </script>
