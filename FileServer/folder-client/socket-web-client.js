@@ -1,7 +1,16 @@
 const io = require('socket.io-client');
 
 let config = {
-  host: 'http://172.30.1.17:9000',
+  host: 'http://j4f001.p.ssafy.io/file/web',
+  uploadedSize: 0,
+  uploadTotalSize: 0,
+  savePath: './',
+  saveName: 'sample',
+  saveExt: '.mp4',
+  saveFile: '',
+  filename: '',
+  downLoadSize: 0,
+  downLoadTotalSize: 0,
 };
 
 let socket = '';

@@ -7,6 +7,7 @@ pipeline {
       steps {
         sh 'docker build -t field-pjt-back:latest ./Backend'
         sh 'docker build -t field-pjt-front:latest ./Web'
+        sh 'docker build -t field-pjt-fileserver:latest ./FileServer'
       }
     }
   
@@ -18,6 +19,9 @@ pipeline {
 
         sh 'docker ps -f name=field-pjt-front -q | xargs --no-run-if-empty docker container stop'
         sh 'docker container ls -a -name=field-pjt-front -q | xargs -r docker container rm'
+
+        sh 'docker ps -f name=field-pjt-fileserver -q | xargs --no-run-if-empty docker container stop'
+        sh 'docker container ls -a -name=field-pjt-fileserver -q | xargs -r docker container rm'
 
         sh 'docker ps -a -f "status=created" -f "status=exited" -q | xargs -r docker container rm'
         sh 'docker images -f "dangling=true" -q | xargs -r docker rmi'
@@ -37,6 +41,12 @@ pipeline {
             -v /volumes/web_home/log:/var/log/nginx/host.access.log \
             --network field-network \
             field-pjt-front:latest'
+        sh 'docker run -d --name field-pjt-fileserver \
+            -p 9000:9000 \
+            -p 9001:9001 \
+            -v /volumes/fileServer_home:/volumes \
+            --network field-network \
+            field-pjt-fileserver:latest'
       }
     }
   }

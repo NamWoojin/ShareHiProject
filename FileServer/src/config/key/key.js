@@ -15,6 +15,7 @@ const RES_DELETE_FOLDERS = 3002;
 const RES_ADD_FOLDERS = 3003;
 
 const NOT_SHARE_DEVICE = 4000;
+const INVALID_JSON = 4001;
 
 module.exports = {
   CONNECT,
@@ -34,4 +35,5 @@ module.exports = {
   RES_ADD_FOLDERS,
 
   NOT_SHARE_DEVICE,
+  INVALID_JSON,
 };
