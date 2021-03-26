@@ -33,11 +33,10 @@ let getConnection = function () {
   socket.on(1010, (data) => {
     console.log('1010');
     socket.emit(
-      2001,
+      2000,
       JSON.stringify({
         path: 'root 또는 부모의 경로',
         name: '폴더의 이름',
-        newName: '변경될 폴더의 이름',
       })
     );
   });

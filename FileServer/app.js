@@ -113,6 +113,14 @@ let andServer = net.createServer((socket) => {
 });
 
 ////////////// socket map CRUD //////////////////
+function isJsonString(str) {
+  try {
+    var json = JSON.parse(str);
+    return typeof json === 'object';
+  } catch (e) {
+    return false;
+  }
+}
 let deleteSocket = (socket) => {
   if (idMap.get(socketMap.get(socket))) {
     idMap.delete(socketMap.get(socket));
@@ -180,6 +188,17 @@ io.on('connection', (socket) => {
   });
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
     // 2000 - 폴더 구조를 출력 요청
+    if (isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
     data = JSON.parse(data);
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
@@ -203,13 +222,35 @@ io.on('connection', (socket) => {
   });
   socket.on(KEY.RES_GET_TREE_OF_FOLDERS, (data) => {
     // 3000 - 폴더 구조를 출력 요청에 대한 응답(ex 폴더 트리 제공)
+    if (isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
     data = JSON.parse(data);
     console.log('RES_GET_TREE_OF_FOLDERS');
     console.log('data.targetId : ' + data.targetId);
     io.to(data.targetId).emit(KEY.RES_GET_TREE_OF_FOLDERS, data);
   });
-  socket.on(KEY.UPDATE_NAME_OF_FOLDER, () => {
+  socket.on(KEY.UPDATE_NAME_OF_FOLDER, (data) => {
     // 2001 - 폴더 이름 변경
+    if (isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
       io.to(socket.id).emit(
@@ -221,13 +262,14 @@ io.on('connection', (socket) => {
       );
       return;
     }
+    data = JSON.parse(data);
     idMap.get(shareDevice).write(
       JSON.stringify({
         namespace: KEY.UPDATE_NAME_OF_FOLDER,
         targetId: socketMap.get(socket),
-        path: './example/folder',
-        name: 'hello.txt',
-        newName: 'hello2.txt',
+        path: data.path,
+        name: data.name,
+        newName: data.newName,
       }) + '\n'
     );
   });
@@ -236,6 +278,17 @@ io.on('connection', (socket) => {
   });
   socket.on(KEY.DELETE_FOLDERS, (data) => {
     // 2002 - 폴더 삭제
+    if (isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
       io.to(socket.id).emit(
@@ -247,12 +300,13 @@ io.on('connection', (socket) => {
       );
       return;
     }
+    data = JSON.parse(data);
     idMap.get(shareDevice).write(
       JSON.stringify({
         namespace: KEY.DELETE_FOLDERS,
         targetId: socketMap.get(socket),
-        path: './example/folder',
-        name: 'hello.txt',
+        path: data.path,
+        name: data.name,
       }) + '\n'
     );
   });
@@ -261,6 +315,17 @@ io.on('connection', (socket) => {
   });
   socket.on(KEY.ADD_FOLDERS, (data) => {
     // 2003 - 폴더 추가
+    if (isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
       io.to(socket.id).emit(
@@ -272,12 +337,13 @@ io.on('connection', (socket) => {
       );
       return;
     }
+    data = JSON.parse(data);
     idMap.get(shareDevice).write(
       JSON.stringify({
         namespace: KEY.ADD_FOLDERS,
         targetId: socketMap.get(socket),
-        path: './example/folder',
-        name: 'hello.txt',
+        path: data.path,
+        name: data.name,
       }) + '\n'
     );
   });

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="file" value="파일 업로드 버뚠뚠" />
+    <input type="button" id="btn" value="socket connect" />
+  </body>
+
+  <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+  <script>
+    let socket = undefined;
+
+    let button = document.querySelector('#btn');
+    button.addEventListener('click', () => {
+      console.log('hi');
+      socket = io.connect('http://j4f001.p.ssafy.io/file/web');
+      socket.on('connection', () => {
+        console.log('hi connection!');
+      });
+      socket.on('connect', () => {
+        console.log('hi connect!');
+      });
+    });
+  </script>
+</html>
