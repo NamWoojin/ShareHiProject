@@ -166,10 +166,12 @@ let printSocket = (socket) => {
 };
 /////////////^^^^^^^^^^^^^^^^^^^^^^^//////////////
 
-server.listen(9000);
+//server.listen(9000);
+io.listen(9000);
 andServer.listen(9001);
 
 io.on('connection', (socket) => {
+  console.log('connect success with web');
   registSocket(socket);
   socket.emit(
     KEY.CONNECT,

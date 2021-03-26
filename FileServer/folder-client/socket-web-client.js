@@ -1,16 +1,7 @@
 const io = require('socket.io-client');
 
 let config = {
-  host: 'http://127.0.0.1:9000',
-  uploadedSize: 0,
-  uploadTotalSize: 0,
-  savePath: './',
-  saveName: 'sample',
-  saveExt: '.mp4',
-  saveFile: '',
-  filename: '',
-  downLoadSize: 0,
-  downLoadTotalSize: 0,
+  host: 'http://172.30.1.17:9000',
 };
 
 let socket = '';
@@ -33,11 +24,10 @@ let getConnection = function () {
   socket.on(1010, (data) => {
     console.log('1010');
     socket.emit(
-      2001,
+      2000,
       JSON.stringify({
         path: 'root 또는 부모의 경로',
         name: '폴더의 이름',
-        newName: '변경될 폴더의 이름',
       })
     );
   });
