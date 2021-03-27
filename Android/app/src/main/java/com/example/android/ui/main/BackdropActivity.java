@@ -68,7 +68,6 @@ public class BackdropActivity extends AppCompatActivity {
         });
 
 
-
         frameLayout = (View) findViewById(R.id.activity_backdrop_fragment);
         actionBarDetail = (View) findViewById(R.id.activity_backdrop_action_bar_detail);
         fragmentManager = getSupportFragmentManager();
@@ -77,8 +76,8 @@ public class BackdropActivity extends AppCompatActivity {
         //backdrop 초기 값 설정
 //        frameLayout.setEnabled(false);
 
-    }
 
+    }
 
 
     //fragment 페이지
@@ -88,8 +87,8 @@ public class BackdropActivity extends AppCompatActivity {
                 //첫 진입 시 fragment == null
                 //현재 페이지가 PrepageFragment면 실행X
                 if (fragment == null || !(fragment instanceof PrepareFragment)) {
-//                    clearFragmentTransactionStack();
-                    replaceFragment(PrepareFragment.newInstance(),false);
+                    clearFragmentTransactionStack();
+                    replaceFragment(PrepareFragment.newInstance(), false);
                     backdropMenuToggle();
                 }
                 break;
@@ -97,20 +96,18 @@ public class BackdropActivity extends AppCompatActivity {
                 //첫 진입 시 fragment == null
                 //현재 페이지가 SettingFragment면 실행X
                 if (fragment == null || !(fragment instanceof SettingFragment)) {
-//                    clearFragmentTransactionStack();
-                    replaceFragment(SettingFragment.newInstance(),false);
+                    clearFragmentTransactionStack();
+                    replaceFragment(SettingFragment.newInstance(), false);
                     backdropMenuToggle();
                 }
                 break;
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if(fragment == null){
-            super.onBackPressed();
-        }
+    //fragment stack 비우기
+    private void clearFragmentTransactionStack() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     //backdrop 메뉴 여닫기, menu 아이콘 설정
@@ -123,15 +120,23 @@ public class BackdropActivity extends AppCompatActivity {
     }
 
     //프래그먼트 화면이동
-    public void replaceFragment(Fragment fragment,boolean addToBackStack) {
+    public void replaceFragment(Fragment fragment, boolean addToBackStack) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.activity_backdrop_fragment, fragment);
-        if(addToBackStack)
+        if (addToBackStack)
             fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
-    private void clearFragmentTransactionStack() {
-        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
+        Log.i(TAG, "onBackPressed: " + fm.getBackStackEntryCount());
+        if (fm.getBackStackEntryCount() >= 1) {
+            fm.popBackStack();
+        } else {
+            finish();
+        }
     }
+
 }

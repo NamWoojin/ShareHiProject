@@ -36,8 +36,10 @@ public class BackdropViewModelImpl extends ViewModel implements BackdropViewMode
 
     @Override
     public void changePage(String page) {
-        pageLiveData.setValue(page);
-        backdropMenuOpenLiveData.setValue(false);
+        if(backdropMenuOpenLiveData.getValue()) {
+            pageLiveData.setValue(page);
+            backdropMenuOpenLiveData.setValue(false);
+        }
     }
 
     @Override

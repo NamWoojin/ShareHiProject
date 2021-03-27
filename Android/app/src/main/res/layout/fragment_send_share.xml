@@ -1,34 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.data.viewmodel.SendViewModel" />
     </data>
 
     <FrameLayout
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="@dimen/fragment_user_check_width"
-            android:layout_height="@dimen/fragment_user_check_height">
+            android:layout_width="@dimen/fragment_share_layout_width"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/fragment_share_connection_TextView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fragment_share_connection_textView_height"
+                android:layout_marginVertical="@dimen/fragment_share_marginVertical"
+                android:gravity="center"
+                android:text="공유중입니다"
+                android:textColor="@color/green_3"
+                android:textSize="@dimen/fragment_share_connection_textView_textSize"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/fragment_share_title_folder_TextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="spread" />
+
+            <TextView
+                android:id="@+id/fragment_share_title_folder_TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/fragment_share_marginHorizontal"
+                android:text="@string/fragment_share_path_textView"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/fragment_share_content_folder_TextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_share_connection_TextView" />
+
+            <TextView
+                android:id="@+id/fragment_share_content_folder_TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/fragment_share_marginHorizontal"
+                android:text="@{viewModel.selectedPathLiveData}"
+                app:layout_constraintBottom_toTopOf="@id/fragment_share_stop_share_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_share_title_folder_TextView" />
+
             <Button
                 android:id="@+id/fragment_share_stop_share_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="공유중지"
+                android:layout_marginHorizontal="@dimen/fragment_share_marginHorizontal"
+                android:layout_marginVertical="@dimen/fragment_share_marginVertical"
                 android:backgroundTint="@color/orangeRed"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/fragment_share_stop_share_button_text"
+                android:onClick="@{() -> viewModel.stopShare()}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_share_content_folder_TextView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

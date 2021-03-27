@@ -42,6 +42,19 @@
     <string name="fragment_prepare_member_TextView_text">공유할 대상 선택하기</string>
     <string name="fragment_prepare_go_share_Button_text">공유 시작하기</string>
 
+    <!--folder-->
+    <string name="fragment_folder_nothing_text">뒤로 가기</string>
+
+    <!--share-->
+    <string name="fragment_share_path_textView">공유중인 경로</string>
+    <string name="fragment_share_stop_share_button_text">공유중지</string>
+
+    <!--setting-->
+    <string name="fragment_setting_edit_name_button_text">이름 수정하기</string>
+    <string name="fragment_setting_edit_image_button_text">이미지 수정하기</string>
+    <string name="fragment_setting_edit_password_button_text">비밀번호 수정하기</string>
+    <string name="fragment_setting_sign_out_button_text">로그아웃</string>
+    <string name="fragment_setting_user_delete_button_text">탈퇴하기</string>
 
     <!--Toast Message-->
     <string name="toast_login_success_message">환영합니다!</string>
