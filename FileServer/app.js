@@ -11,10 +11,13 @@ const { v4: uuidv4 } = require('uuid');
 
 const KEY = require('./src/config/key/key');
 
-let shareDevice;
 //////////////// socket map system /////////////
+let shareDevice;
+let shareData;
 let socketMap = new HashMap(); // socket - id
 let idMap = new HashMap(); // id - socket
+let size = 0;
+let tmpfileSize = 0;
 ///////^^^^^^^^^^^^^^^^^^^^^^^^^^^^/////////////
 
 console.log('서버 가동중...');
@@ -23,13 +26,22 @@ let andServer = net.createServer((socket) => {
   /////////// 초기 연결 /////////////////
   console.log('Success - Android Connect');
   registSocket(socket);
-  socket.write(
-    JSON.stringify({
-      namespace: KEY.CONNECT,
-      status: 200,
-      message: 'connect',
-    }) + '\n'
-  );
+  if (shareDevice !== undefined) {
+    shareData = socketMap.get(socket);
+    idMap.get(shareDevice).write(
+      JSON.stringify({
+        namespace: KEY.SET_SHARE_DATA,
+      }) + '\n'
+    );
+  } else {
+    socket.write(
+      JSON.stringify({
+        namespace: KEY.CONNECT,
+        status: 200,
+        message: 'connect',
+      }) + '\n'
+    );
+  }
   printSocket();
   ////////^^^^^^^^^^^^^^^^^^^^^^^///////
 
@@ -45,7 +57,7 @@ let andServer = net.createServer((socket) => {
   });
 
   socket.on('data', (data) => {
-    if (isJsonString(data)) {
+    if (!isJsonString(data)) {
       io.to(socket.id).emit(
         KEY.INVALID_JSON,
         JSON.stringify({
@@ -67,6 +79,16 @@ let andServer = net.createServer((socket) => {
         // 1020 공유 디바이스의 아이디를 설정한다
         shareDevice = socketMap.get(socket);
         console.log('shareDevice : ' + shareDevice);
+        break;
+      case KEY.SET_SHARE_DATA:
+        // 1030 공유할 데이터 tcp를 연다
+        shareData = socketMap.get(socket);
+        console.log('share data : ' + shareData);
+        idMap.get(shareDevice).write(
+          JSON.stringify({
+            namespace: KEY.SET_SHARE_DATA,
+          }) + '\n'
+        );
         break;
       case KEY.GET_TREE_OF_FOLDERS:
         // 2000 폴더 디렉토리 요청에 대한 응답
@@ -93,7 +115,7 @@ let andServer = net.createServer((socket) => {
         );
         break;
       case KEY.DELETE_FOLDERS:
-        // 2001 폴더 삭제에 대한 응답
+        // 2002 폴더 삭제에 대한 응답
         io.to(idMap.get(data.targetId).id).emit(
           KEY.DELETE_FOLDERS,
           JSON.stringify({
@@ -104,10 +126,10 @@ let andServer = net.createServer((socket) => {
           })
         );
         break;
-      case KEY.RES_ADD_FOLDERS:
+      case KEY.ADD_FOLDERS:
         // 2003 폴더 추가에 대한 응답
         io.to(idMap.get(data.targetId).id).emit(
-          KEY.RES_ADD_FOLDERS,
+          KEY.ADD_FOLDERS,
           JSON.stringify({
             status: data.status,
             message: data.message,
@@ -116,7 +138,22 @@ let andServer = net.createServer((socket) => {
           })
         );
         break;
-      // 2001 폴더 이름을 변경한 후의 응답
+      case KEY.SEND_FILE_STAT:
+        // 7000 파일 스텟에 대한 응답
+        size = data.size;
+        tmpfileSize = data.tmpfileSize;
+
+        io.to(idMap.get(data.targetId).id).emit(
+          KEY.SEND_FILE_STAT,
+          JSON.stringify({
+            tmpfileSize: data.tmpfileSize,
+            status: data.status,
+            message: data.message,
+            detail: data.detail,
+            content: data.content,
+          })
+        );
+        break;
     }
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -365,4 +402,80 @@ io.on('connection', (socket) => {
   socket.on(KEY.RES_ADD_FOLDERS, (data) => {
     // 2003 - 폴더 추가에 대한 응답(ex 폴더 트리 다시 제공)
   });
+  socket.on(KEY.SEND_FILE_STAT, (data) => {
+    // 7000 파일 스텟 전송
+    if (!isJsonString(data)) {
+      io.to(socket.id).emit(
+        KEY.INVALID_JSON,
+        JSON.stringify({
+          status: 400,
+          detail: 'INVALID JSON',
+          message: 'BAD REQUEST',
+        })
+      );
+      return;
+    }
+    data = JSON.parse(data);
+    console.log(data);
+    if (!checkSocket(shareDevice)) {
+      // 4000 - 공유 디바이스 연결이 되어있지 않음.
+      io.to(socket.id).emit(
+        KEY.NOT_SHARE_DEVICE,
+        JSON.stringify({
+          status: 204,
+          message: 'NO SHARE DEVICE',
+        })
+      );
+      return;
+    }
+    idMap.get(shareDevice).write(
+      JSON.stringify({
+        namespace: KEY.SEND_FILE_STAT,
+        targetId: socketMap.get(socket),
+        path: data.path,
+        name: data.name,
+        size: data.size,
+        ext: data.ext,
+      }) + '\n'
+    );
+  });
+  socket.on(KEY.SEND_FILE, (data) => {
+    // 7001 파일 전송
+    if (!checkSocket(shareDevice)) {
+      // 4000 - 공유 디바이스 연결이 되어있지 않음.
+      io.to(socket.id).emit(
+        KEY.NOT_SHARE_DEVICE,
+        JSON.stringify({
+          status: 204,
+          message: 'NO SHARE DEVICE',
+        })
+      );
+      return;
+    }
+    tmpfileSize += data.length;
+    let percent = getFilePercent();
+    idMap.get(shareDevice).write(
+      JSON.stringify({
+        namespace: KEY.SEND_FILE,
+        percent: percent,
+      }) + '\n'
+    );
+    io.to(socket.id).emit(
+      KEY.SEND_FILE,
+      JSON.stringify({
+        percent: percent,
+      })
+    );
+
+    /**
+     * 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
+     */
+    idMap.get(shareData).write(data);
+  });
 });
+
+let getFilePercent = () => {
+  let ans = Math.floor((tmpfileSize / size) * 100);
+  //console.log(ans);
+  return ans;
+};
