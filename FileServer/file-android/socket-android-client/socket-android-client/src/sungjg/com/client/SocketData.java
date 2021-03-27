@@ -35,13 +35,13 @@ public class SocketData {
 
 	public void connect() {
 		try {
-			file = new File(fs.getPath() + fs.getName() + ".tmpfile");
+			file = new File(fs.getPath() + fs.getName() + fs.getExt());
 			socket = new Socket();
 			SocketAddress socketAddress = new InetSocketAddress(IP, PORT);
 			socket.connect(socketAddress, 8288);
 
 			buf = new byte[CHUNK_SIZE];
-			fileOutput = new FileOutputStream(file, false);
+			fileOutput = new FileOutputStream(file, true);
 			dataInput = new DataInputStream(socket.getInputStream());
 			bufferdInput = new BufferedInputStream(dataInput);
 			getIO.start();
@@ -57,8 +57,6 @@ public class SocketData {
 			try {
 				long size = fs.getSize();
 				long tmp = fs.getTmpfileSize();
-				System.out.println("start size : " + size);
-				System.out.println("start tmp : " + tmp);
 				while (size - tmp > CHUNK_SIZE) {
 					int i = 0;
 					while (i < CHUNK_SIZE) {
@@ -68,6 +66,7 @@ public class SocketData {
 					tmp += (CHUNK_SIZE);
 					i = 0;
 					fileOutput.write(buf);
+					System.out.println();
 					fileOutput.flush();
 				}
 				if (size - tmp <= CHUNK_SIZE) {
@@ -80,11 +79,10 @@ public class SocketData {
 					fileOutput.write(buf);
 					tmp += (size - tmp);
 				}
-				System.out.println("size : " + size);
-				System.out.println("tmp : " + tmp);
 				
 				fileOutput.flush();
 				File newFile = new File(fs.getPath() + fs.getName() + fs.getExt());
+				
 				boolean isSuc = file.renameTo(newFile);
 				System.out.println(isSuc);
 				System.out.println("FILE을 모두 썼습니다.");

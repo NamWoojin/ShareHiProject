@@ -168,7 +168,7 @@ public class SocketInfo {
 
 						File file = new File(path + name + ext);
 						// 1. 파일이 이미 있는지 확인한다
-						if (file.exists()) {
+						if (file.length() == size) {
 							System.out.println("이미 파일이 있습니다.");
 							jobj = new JsonObject();
 							jobj.addProperty("namespace", "7004");
@@ -182,14 +182,12 @@ public class SocketInfo {
 							break;
 						} else {
 
-							file = new File(path + name + ".tmpfile");
+							file = new File(path + name + ext);
 							long tmpfileSize = 0;
 							if (file.exists()) {
 								System.out.println("이어받기 로직을 수행합니다.");
 								tmpfileSize = file.length();
 								System.out.println("현재 청크 사이즈 : " + tmpfileSize);
-								Scanner scn = new Scanner(System.in);
-								scn.next();
 							}
 
 							fs = new FileStat(name, path, ext, size, tmpfileSize);

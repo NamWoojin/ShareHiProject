@@ -5,11 +5,11 @@ const app = express();
 
 const server = require('http').createServer(app);
 // const io = require('socket.io')(server);
-const io = require('socket.io')(server {
-    cors: {
-      origin: '*',
-    }
-  });
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  },
+});
 const net = require('net');
 const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
