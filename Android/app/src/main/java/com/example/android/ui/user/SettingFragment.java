@@ -44,8 +44,8 @@ public class SettingFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_setting, container, false);
 
-        signOutButton = view.findViewById(R.id.fragment_setting_signout_button);
-        userDeleteButton = view.findViewById(R.id.fragment_setting_user_delete_button);
+//        signOutButton = view.findViewById(R.id.fragment_setting_signout_button);
+//        userDeleteButton = view.findViewById(R.id.fragment_setting_user_delete_button);
 
         //로그아웃
 //        signOutButton.setOnClickListener(v -> {

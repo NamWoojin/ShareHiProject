@@ -60,6 +60,6 @@ public class ShareFragment extends DialogFragment {
 
 
         
-        return inflater.inflate(R.layout.fragment_send_share, container, false);
+        return view;
     }
 }

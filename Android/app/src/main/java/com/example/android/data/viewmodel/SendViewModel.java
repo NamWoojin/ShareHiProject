@@ -16,9 +16,12 @@ public interface SendViewModel {
     void setParentContext(Activity parentContext);
 
     void switchPage(String page);
-    void startShare();
+
+    //share
+    void stopShare();
 
     //prepare
+    void startShare();
     void deleteSelectedFolderPath();
 
     //folder

@@ -36,6 +36,8 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
 
+    private ShareFragment shareFragment;
+
 
     @Override
     public void setParentContext(Activity parentContext) {
@@ -50,14 +52,23 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         }
     }
 
+    //share
+    //공유 중단
+    @Override
+    public void stopShare(){
+        Log.i("TAG", "stopShare: 들어옴");
+        shareFragment.dismiss();
+    }
+
+    //prepare
+    //공유 시작
     @Override
     public void startShare() {
-        ShareFragment shareFragment = ShareFragment.newInstance();
+        shareFragment = ShareFragment.newInstance();
         shareFragment.setCancelable(false);
         shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
     }
 
-    //prepare
     //선택 폴더 경로 삭제
     @Override
     public void deleteSelectedFolderPath() {
@@ -138,6 +149,8 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         return folderItems.get(pos).getName();
     }
 
+
+    //getter setter
     @Override
     public void setFolderPathLiveData(MutableLiveData<String> folderPath) {
         this.folderPathLiveData = folderPath;
