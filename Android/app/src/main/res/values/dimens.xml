@@ -79,5 +79,21 @@
     <dimen name="fragment_folder_footer_button_marginHorizontal">16dp</dimen>
     <dimen name="recycler_folder_imageView_margin">16dp</dimen>
 
+    <!--share-->
+    <dimen name="fragment_share_layout_width">300dp</dimen>
+    <dimen name="fragment_share_connection_textView_height">82dp</dimen>
+    <dimen name="fragment_share_connection_textView_textSize">18sp</dimen>
+    <dimen name="fragment_share_marginHorizontal">16dp</dimen>
+    <dimen name="fragment_share_marginVertical">16dp</dimen>
+
+    <!--setting-->
+    <dimen name="fragment_setting_marginHorizontal">16dp</dimen>
+    <dimen name="fragment_setting_info_marginTop">24dp</dimen>
+    <dimen name="fragment_setting_info_paddingVertical">24dp</dimen>
+    <dimen name="fragment_setting_info_paddingHorizontal">16dp</dimen>
+    <dimen name="fragment_setting_info_textView_marginStart">12dp</dimen>
+    <dimen name="fragment_setting_name_textView_textSize">18sp</dimen>
+    <dimen name="fragment_setting_imageView_height">100dp</dimen>
+    <dimen name="fragment_setting_button_textSize">14sp</dimen>
 
 </resources>

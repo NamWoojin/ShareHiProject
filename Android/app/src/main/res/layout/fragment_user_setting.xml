@@ -6,22 +6,167 @@
     android:layout_height="match_parent"
     android:background="@drawable/backdrop_framelayout_radius">
 
-
-    <Button
-        android:id="@+id/fragment_setting_signout_button"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/fragment_setting_info_layout"
+        android:layout_marginHorizontal="@dimen/fragment_setting_marginHorizontal"
+        android:layout_marginTop="@dimen/fragment_setting_info_marginTop"
+        android:paddingVertical="@dimen/fragment_setting_info_paddingVertical"
+        android:paddingHorizontal="@dimen/fragment_setting_info_paddingHorizontal"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="로그아웃"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_layout"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0">
+<!--        <ImageView-->
+<!--            android:layout_width="@dimen/fragment_setting_imageView_height"-->
+<!--            android:layout_height="@dimen/fragment_setting_imageView_height"-->
+<!--            android:id="@+id/fragment_setting_image_imageView"-->
+<!--            android:background="@color/gray"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="@dimen/fragment_setting_imageView_height"
+            android:layout_height="@dimen/fragment_setting_imageView_height"
+            android:id="@+id/fragment_setting_image_imageView"
+            android:src="@color/gray"
+            app:civ_border_width="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_setting_name_textView"
+            android:textStyle="bold"
+            android:text="남우진"
+            android:textColor="@color/textBlack"
+            android:textSize="@dimen/fragment_setting_name_textView_textSize"
+            android:layout_marginStart="@dimen/fragment_setting_info_textView_marginStart"
+            app:layout_constraintTop_toTopOf="@id/fragment_setting_image_imageView"
+            app:layout_constraintStart_toEndOf="@id/fragment_setting_image_imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fragment_setting_email_textView"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_setting_email_textView"
+            android:text="nam9904@naver.com"
+            android:textColor="@color/textBlack"
+            android:layout_marginStart="@dimen/fragment_setting_info_textView_marginStart"
+            app:layout_constraintTop_toBottomOf="@id/fragment_setting_name_textView"
+            app:layout_constraintStart_toEndOf="@id/fragment_setting_image_imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/fragment_setting_image_imageView"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/fragment_setting_user_delete_button"
-        android:layout_width="wrap_content"
+
+<!--    <Button-->
+<!--        android:id="@+id/fragment_setting_signout_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:text="로그아웃"/>-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_setting_edit_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_setting_signout_button"
-        android:text="탈퇴하기"/>
+        android:paddingVertical="16dp"
+        android:layout_marginHorizontal="@dimen/fragment_setting_marginHorizontal"
+        app:layout_constraintTop_toBottomOf="@id/fragment_setting_info_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <Button
+            android:id="@+id/fragment_setting_edit_name_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fragment_setting_button_textSize"
+            android:drawableLeft="@drawable/ic_drive_file_rename_outline_black_24dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/textBlack"
+            android:gravity="center_vertical|left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_image_button"
+            android:text="@string/fragment_setting_edit_name_button_text"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:id="@+id/fragment_setting_edit_image_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fragment_setting_button_textSize"
+            android:drawableLeft="@drawable/ic_account_circle_black_24dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/textBlack"
+            android:gravity="center_vertical|left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_name_button"
+            app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_password_button"
+            android:text="@string/fragment_setting_edit_image_button_text"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:id="@+id/fragment_setting_edit_password_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fragment_setting_button_textSize"
+            android:drawableLeft="@drawable/ic_password_black_24dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/textBlack"
+            android:gravity="center_vertical|left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_image_button"
+            app:layout_constraintBottom_toTopOf="@id/fragment_setting_sign_out_button"
+            android:text="@string/fragment_setting_edit_password_button_text"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:id="@+id/fragment_setting_sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fragment_setting_button_textSize"
+            android:drawableLeft="@drawable/ic_logout_black_24dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/textBlack"
+            android:gravity="center_vertical|left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_password_button"
+            app:layout_constraintBottom_toTopOf="@id/fragment_setting_user_delete_button"
+            android:text="@string/fragment_setting_sign_out_button_text"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:id="@+id/fragment_setting_user_delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/fragment_setting_button_textSize"
+            android:drawableLeft="@drawable/ic_remove_circle_outline_black_24dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/textBlack"
+            android:gravity="center_vertical|left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_setting_sign_out_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/fragment_setting_user_delete_button_text"
+            android:stateListAnimator="@null"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
