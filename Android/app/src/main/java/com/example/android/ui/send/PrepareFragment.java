@@ -1,6 +1,7 @@
 package com.example.android.ui.send;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class PrepareFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("TAG", "switchFragment: "+((BackdropActivity)getActivity()));
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_send_prepare, container, false);
         View view = binding.getRoot();
 
@@ -54,22 +56,10 @@ public class PrepareFragment extends Fragment {
         binding.setViewModel(mSendViewModel);
         binding.setLifecycleOwner(this);
 
-        mSendViewModel.getSwitchFragment().observe((BackdropActivity)getActivity(),this::switchFragment);
 
 
         // Inflate the layout for this fragment
         return view;
-    }
-
-    //send 내에서 화면전환
-    private void switchFragment(Event<String> event){
-        String dest = event.getContentIfNotHandled();
-        if(dest == null)
-            return;
-
-        if(dest.equals("folder")){
-            ((BackdropActivity)getActivity()).replaceFragment(FolderFragment.newInstance(),true);
-        }
     }
 
 }

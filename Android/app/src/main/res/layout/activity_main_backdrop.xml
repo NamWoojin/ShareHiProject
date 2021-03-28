@@ -28,7 +28,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:onClick="@{() -> viewModel.toggleBackdropMenu()}"
-            android:src="@{viewModel.backdropMenuOpenLiveData ? @drawable/ic_menu_close_24 : @drawable/ic_menu_white_24}"
+            android:src="@{viewModel.backdropMenuOpenLiveData ? @drawable/ic_close_white_24dp : @drawable/ic_menu_white_24dp}"
             />
         <TextView
             android:id="@+id/activity_backdrop_action_bar_text"
@@ -66,6 +66,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toTopOf="@id/activity_backdrop_go_user_layout"
+            android:clickable="@{viewModel.backdropMenuOpenLiveData}"
             android:onClick="@{() -> viewModel.changePage(`send`)}"
             android:background="@{viewModel.pageLiveData.equals(`send`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}">
             <ImageView
@@ -100,6 +101,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="@{viewModel.backdropMenuOpenLiveData}"
             android:onClick="@{() -> viewModel.changePage(`user`)}"
             android:background="@{viewModel.pageLiveData.equals(`user`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}">
             <ImageView

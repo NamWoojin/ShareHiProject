@@ -17,5 +17,4 @@ app.use(cors());
 //app.use('/api', home);
 app.use('/api', home);
 
-
 module.exports = app;
