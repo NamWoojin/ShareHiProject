@@ -19,7 +19,7 @@ describe("my awesome project", () => {
     io = new Server(httpServer);
     httpServer.listen(() => {
       // const port = httpServer.address().port;
-      clientSocket = new Client(`https://j4f001.p.ssafy.com/file/web`);
+      clientSocket = new Client(`https://j4f001.p.ssafy.io/file/web/`);
       io.on("connection", (socket) => {
         serverSocket = socket;
       });
@@ -32,21 +32,21 @@ describe("my awesome project", () => {
     clientSocket.close();
   });
 
-  it("should work", (done) => {
-    clientSocket.on("hello", (arg) => {
-      assert.equal(arg, "world");
-      done();
-    });
-    serverSocket.emit("hello", "world");
-  });
+  // it("should work", (done) => {
+  //   clientSocket.on("hello", (arg) => {
+  //     assert.equal(arg, "world");
+  //     done();
+  //   });
+  //   serverSocket.emit("hello", "world");
+  // });
 
-  it("should work (with ack)", (done) => {
-    serverSocket.on("hi", (cb) => {
-      cb("hola");
-    });
-    clientSocket.emit("hi", (arg) => {
-      assert.equal(arg, "hola");
-      done();
-    });
-  });
+  // it("should work (with ack)", (done) => {
+  //   serverSocket.on("hi", (cb) => {
+  //     cb("hola");
+  //   });
+  //   clientSocket.emit("hi", (arg) => {
+  //     assert.equal(arg, "hola");
+  //     done();
+  //   });
+  // });
 });

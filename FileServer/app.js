@@ -213,8 +213,12 @@ let printSocket = (socket) => {
 };
 /////////////^^^^^^^^^^^^^^^^^^^^^^^//////////////
 
-server.listen(9000);
-andServer.listen(9001);
+server.listen(9000, () => {
+  console.log("웹-서버 socket연결")
+});
+andServer.listen(9001, () => {
+  console.log("안드-서버 socket연결")
+});
 
 io.on('connection', (socket) => {
   console.log('Success Web Connect');
