@@ -1,6 +1,6 @@
 package com.example.android.data.model.dto;
 
-public class Folder {
+public class Folder implements Comparable<Folder>{
     //0 : parent, 1:folder, 2:file
     int type;
     String name;
@@ -46,5 +46,13 @@ public class Folder {
                 ", name='" + name + '\'' +
                 ", path='" + path + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Folder o) {
+        if(this.type == o.type){
+            return this.name.compareTo(o.name);
+        }
+        return this.type - o.type;
     }
 }

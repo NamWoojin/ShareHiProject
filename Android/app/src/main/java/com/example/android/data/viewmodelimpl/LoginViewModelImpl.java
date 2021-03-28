@@ -156,6 +156,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
             try {
                 //로그인 성공
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+
                 if (account != null) {
                     String name = account.getDisplayName();
                     String email = account.getEmail();
