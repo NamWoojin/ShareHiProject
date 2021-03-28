@@ -8,29 +8,37 @@
 // with { "type": "commonjs" } in your package.json
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const Client = require("socket.io-client");
+const {io} = require("socket.io-client");
 const assert = require("chai").assert;
 
 describe("my awesome project", () => {
-  let io, serverSocket, clientSocket;
+  //let io, serverSocket, clientSocket;
 
-  before((done) => {
-    const httpServer = createServer();
-    io = new Server(httpServer);
-    httpServer.listen(() => {
-      // const port = httpServer.address().port;
-      clientSocket = new Client(`https://j4f001.p.ssafy.io/file/web/`);
-      io.on("connection", (socket) => {
-        serverSocket = socket;
-      });
-      clientSocket.on("connect", done);
-    });
-  });
+  // before((done) => {
+  //   const httpServer = createServer();
+  //   io = new Server(httpServer);
+  //   httpServer.listen(() => {
+  //     // const port = httpServer.address().port;
+  //     clientSocket = new Client(`https://j4f001.p.ssafy.io/file/web/`);
+  //     io.on("connection", (socket) => {
+  //       serverSocket = socket;
+  //     });
+  //     clientSocket.on("connection", done);
+  //   });
+  // });
 
-  after(() => {
-    io.close();
-    clientSocket.close();
-  });
+  // after(() => {
+  //   io.close();
+  //   clientSocket.close();
+  // });
+
+  it("socket connetion test", () => {
+    const client = io(`https://j4f001.p.ssafy.io/file/web/`);
+    //const client = io(`http://localhost:9000`);
+    client.on(1010, () => {
+      console.log("Client Connection");
+    })
+  })
 
   // it("should work", (done) => {
   //   clientSocket.on("hello", (arg) => {
