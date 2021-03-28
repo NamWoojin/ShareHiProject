@@ -19,7 +19,7 @@ describe("my awesome project", () => {
     io = new Server(httpServer);
     httpServer.listen(() => {
       // const port = httpServer.address().port;
-      clientSocket = new Client(`https://j4f001.p.ssafy.com:9000`);
+      clientSocket = new Client(`https://j4f001.p.ssafy.com/file/web`);
       io.on("connection", (socket) => {
         serverSocket = socket;
       });
