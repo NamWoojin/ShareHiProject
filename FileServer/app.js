@@ -23,6 +23,9 @@ let socketMap = new HashMap(); // socket - id
 let idMap = new HashMap(); // id - socket
 ///////^^^^^^^^^^^^^^^^^^^^^^^^^^^^/////////////
 
+console.log('서버 가동중...');
+
+
 let andServer = net.createServer((socket) => {
   /////////// 초기 연결 /////////////////
   registSocket(socket);
@@ -154,8 +157,12 @@ let printSocket = (socket) => {
 };
 /////////////^^^^^^^^^^^^^^^^^^^^^^^//////////////
 
-server.listen(9000);
-andServer.listen(9001);
+server.listen(9000, () => {
+  console.log("웹-서버 socket연결")
+});
+andServer.listen(9001, () => {
+  console.log("안드-서버 socket연결")
+});
 
 io.on('connection', (socket) => {
   registSocket(socket);
