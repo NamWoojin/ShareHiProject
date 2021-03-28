@@ -15,12 +15,7 @@ const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 
 const KEY = require('./src/config/key/key');
-const io = require('socket.io')(server {
-  cors: {
-    origin: '*',
-  }
-});
-app.use(cors());
+
 
 //////////////// socket map system /////////////
 let shareDevice;
