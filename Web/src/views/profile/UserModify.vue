@@ -6,21 +6,46 @@
         <tr>
           <th scope="row">프로필 사진</th>
           <td>
+            <input 
+              type="file"
+              name="imageinput"
+              id="imageinput"
+              accept="image/*"
+              style="display: none;"
+              @change="previewFile"
+            >
+            <div v-if="this.newImg" style="display: flex; align-items: flex-end;">
+              <img 
+                id="previewimage"
+                style="width: 120px; height: 120px; cursor: pointer;"
+                :src="newImgURL"
+                class="image-container"
+                @click="changeImage"
+              >
+              
+              <v-btn
+                class="ma-2"
+                color="success"
+                style="bottom: 0;"
+                @click="submitImage"
+              >저장</v-btn>
+            </div>
             <div 
-              v-if="member.mem_image == 'default.img'"
-              style="position: relative"
-              @click="changeImage"
+              v-else-if="member.mem_image == 'default.img'"
+              style="position: relative;"
             >
               <img 
                 src="https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png"
-                style="width: 120px; height: 120px;"
+                style="width: 120px; height: 120px; cursor: pointer;"
+                class="image-container"
+                @click="changeImage"
               >
-              <v-icon 
+              <!-- <v-icon 
                 large 
                 color="success"
                 style="position: absolute; left: 90px;"
-                
-              >mdi-plus</v-icon>
+                @click="changeImage"
+              >mdi-plus</v-icon> -->
             </div>
             <div v-else>
               <img :src="member.mem_image">
@@ -43,9 +68,16 @@
 <script>
 
 import { mapState } from 'vuex'
+// import axios from 'axios'
 
 export default {
   name: 'UserModify',
+  data() {
+    return {
+      newImg: null,
+      newImgURL: null,
+    }
+  },
   computed: {
     ...mapState([
       'member'
@@ -53,7 +85,16 @@ export default {
   },
   methods: {
     changeImage() {
-      console.log('change image')
+      document.getElementById('imageinput').click()
+    },
+    previewFile(e) {
+      var selectedFile = e.target.files[0];
+      this.newImg = selectedFile
+      this.newImgURL = URL.createObjectURL(selectedFile);
+    },
+    submitImage() {
+      // this.newImg를 submit 해라 mapState로 userid도 넘겨줘야댈듯.
+      // axios.post(`https://j4f001.p.ssafy.io/`)
     }
   }
 }
@@ -109,4 +150,7 @@ export default {
     font-size: 14px;
   }
 
+  .image-container:hover {
+    box-shadow: 5px 5px 5px gray;
+  }
 </style>
