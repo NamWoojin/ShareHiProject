@@ -34,7 +34,7 @@
 
           <v-row>
             <v-col cols="5">
-              <v-subheader>비밀번호 다시 입력</v-subheader>
+              <v-subheader>비밀번호 확인</v-subheader>
             </v-col>
             <v-col cols="7">
               <v-text-field
