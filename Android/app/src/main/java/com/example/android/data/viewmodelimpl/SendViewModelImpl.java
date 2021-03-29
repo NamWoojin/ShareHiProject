@@ -21,6 +21,7 @@ import com.example.android.ui.send.ShareFragment;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SendViewModelImpl extends ViewModel implements SendViewModel {
@@ -118,6 +119,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
             newList.add(folder);
         }
+        Collections.sort(newList);
         folderItems = new ArrayList<>(newList);
         folderRecyclerAdapter.notifyDataSetChanged();
     }

@@ -15,8 +15,7 @@ const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 
 const KEY = require('./src/config/key/key');
-const cors = require('cors');
-app.use(cors());
+
 
 //////////////// socket map system /////////////
 let shareDevice;
@@ -214,8 +213,12 @@ let printSocket = (socket) => {
 };
 /////////////^^^^^^^^^^^^^^^^^^^^^^^//////////////
 
-server.listen(9000);
-andServer.listen(9001);
+server.listen(9002, () => {
+  console.log("웹-서버 socket연결")
+});
+andServer.listen(9003, () => {
+  console.log("안드-서버 socket연결")
+});
 
 io.on('connection', (socket) => {
   console.log('Success Web Connect');

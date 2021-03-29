@@ -3,8 +3,14 @@
     <div id="window" class="small-window">
       <v-container>
         <v-row>
-          <v-col cols="12" style="border: 1px solid black; margin: -1px 0 0;">
-            <div id="windowheader" :class="{ cursor: !browsersize }" style="display: flex; justify-content: flex-end" @mousedown="dragMouseDown">
+          <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: 0 0 0;" class="headercolor">
+            <div 
+              id="windowheader" 
+              :class="{ cursor: !browsersize }" 
+              style="display: flex; justify-content: flex-end;"
+              @mousedown="dragMouseDown"
+              @dblclick="resize"
+            >
               <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
               <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
 
@@ -12,11 +18,12 @@
               
             </div>
           </v-col>
-          <v-col cols="12" style="border: 1px solid black; margin: -1px 0;">
+          <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0;">
             <div style="display: flex; justify-content: space-between">
-              <router-link :to="{ name: 'Storage' }">
-                <el-button icon="el-icon-back" circle></el-button>
-              </router-link>
+
+              <div>
+                This is node path
+              </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
                   <img
@@ -78,16 +85,23 @@
           >
             <el-tree
               :data="data"
+              
               :default-expanded-keys="[0]"
               node-key="id"
               :props="defaultProps"
               @node-click="nodeClick"
+              :key="componentKey"
             >
             </el-tree>
           </v-col>
-          <v-col cols="10" style="border: 1px solid black; border-left-style: none;" @contextmenu="openMenu($event)" @click="clickOuter">
-            <div v-if="node.folder && node.folder.length > 0" style="display: flex; flex-wrap: wrap;" id="outter">
-              <div v-for="child in node.folder" :key="child.id" id="outter">
+          <v-col 
+            cols="10"
+            style="border: 1px solid black; border-left-style: none;"
+            @contextmenu="openMenu($event)"
+            @click="clickOuter"
+          >
+            <div v-if="node.directory && node.directory.length > 0" style="display: flex; flex-wrap: wrap;" id="outter">
+              <div v-for="child in node.directory" :key="child.id" id="outter">
                 <div style="margin: 20px;">
                   
                     <div 
@@ -95,7 +109,7 @@
                       @contextmenu="selectRightclick(child);openMenu($event)"
                       class="boxitem"
                     >
-                      <div v-if="child.folder" @dblclick="openFolder(child)">
+                      <div v-if="child.type == 'folder'" @dblclick="openFolder(child)">
                         <div :class="{selectBox: selectitem.includes(child)}">
                           <div class="box">
                             <img
@@ -104,7 +118,7 @@
                               height="100px"
                             />
                           </div>
-                          <span style="display:inline-block; width: 100px;">{{child.label}}</span>
+                          <span style="display:inline-block; width: 100px;">{{child.name}}</span>
                         </div>
                       </div>
                       <div v-else>
@@ -116,7 +130,7 @@
                               height="100px"
                             />
                           </div>
-                          <span style="display:inline-block; width: 100px;">{{child.label}}</span>
+                          <span style="display:inline-block; width: 100px;">{{child.name}}</span>
                         </div>
                       </div>
                     </div>
@@ -166,55 +180,20 @@ export default {
       },
       componentKey: 0,
       selectitem: [],
-      data: 
-      [{
-        id: 0,
-        label: 'root',
-        folder: [{
-          label: '새 폴더',
-          folder: [{
-            label: '새 폴더 (1)',
-            folder: [{
-              label: '파일0'
-            }, {
-              label: '파일1'
-            }, {
-              label: '파일2'
-            }, {
-              label: '파일3'
-            }, {
-              label: '파일4'
-            }, {
-              label: '파일5'
-            }, {
-              label: '파일6'
-            }, {
-              label: '파일7'
-            }, {
-              label: '파일8'
-            }, {
-              label: '파일9'
-            }]
-          },
-          {
-            label: '파일0',
-          }]
-        }, 
-        {
-          label: '다른파일'
-        }],
+      
+      data: [
 
-      }],
+      ],
       defaultProps: {
-        children: 'folder',
-        label: 'label'
+        'children': 'directory',
+        'label': 'name'
       },
-    node: '',
-    viewMenu: false,
-    top: '0px',
-    left: '0px',
-    fileList: null,
-    browsersize: false,
+      node: '',
+      viewMenu: false,
+      top: '0px',
+      left: '0px',
+      fileList: null,
+      browsersize: false,
     };
   },
   methods: {
@@ -239,7 +218,7 @@ export default {
       document.onmousemove = null
     },
     nodeClick(node) {
-      if (node.folder) {
+      if (node.type == 'folder' || this.data[0] == node) {
         this.node = node
         this.selectitem = []
       }
@@ -296,8 +275,8 @@ export default {
       })
         .then(() => {
           for(let i=0; i<this.selectitem.length; i++) {
-            let idx = this.node.folder.indexOf(this.selectitem[i])
-            if (idx > -1) this.node.folder.splice(idx, 1)
+            let idx = this.node.directory.indexOf(this.selectitem[i])
+            if (idx > -1) this.node.directory.splice(idx, 1)
           }
           this.selectitem = [];
           this.$message({
@@ -318,48 +297,53 @@ export default {
       this.selectitem = [];
     },
     checkFolder: function(folderName) {
-      for(let i=0; i<this.node.folder.length; i++) {
-        if(this.node.folder[i].label == folderName) return false
+      if (this.node.directory) {
+        for(let i=0; i<this.node.directory.length; i++) {
+          if(this.node.directory[i].name == folderName) return false
+        }
       }
       return true
     },
     createNewFolder() {
-      let label = '새 폴더'
+      let name = '새 폴더'
       
-      if (!this.checkFolder(label)) {
+      if (!this.checkFolder(name)) {
         let number = 1
-        while(!this.checkFolder(label + ' (' + number + ')')) {
+        while(!this.checkFolder(name + ' (' + number + ')')) {
           number++
         }
-        label = label + ' (' + number + ')'
+        name = name + ' (' + number + ')'
       }
-      
-      this.node.folder.push(
-        {
-          label: label,
-          folder: [
 
-          ]
+      if (!this.node.directory) {
+        this.node.directory = []
+      }
+      this.node.directory.push(
+        {
+          name: name,
+          // directory: [],
+          type: 'folder'
         }
-      )
+        )
       this.componentKey++
-      this.viewMenu = false
+      this.selectitem = [];
+      this.viewMenu = false;
     },
     editName() {
       this.viewMenu = false
       this.$prompt('Please edit filename', 'Edit', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
-        inputValue: this.selectitem[0].label
+        inputValue: this.selectitem[0].name
       })
         .then((value) => {
-          if (this.selectitem[0].label == value.value) {
+          if (this.selectitem[0].name == value.value) {
             this.$message({
               type: 'info',
               message: '변경된 내용이 없습니다.'
             })
           } else if (this.checkFolder(value.value)) {
-            this.selectitem[0].label = value.value;
+            this.selectitem[0].name = value.value;
             this.$message({
               type: 'success',
               message: '수정되었습니다.'
@@ -401,8 +385,8 @@ export default {
         let cnt = 0;
         for(let i=0; i<this.fileList.length; i++) {
           if (this.checkFolder(this.fileList[i].name)) {
-            this.node.folder.push({
-              label: this.fileList[i].name
+            this.node.directory.push({
+              name: this.fileList[i].name
             })
             cnt++
           } else {
@@ -421,6 +405,66 @@ export default {
         this.fileList = null;
       }
     }
+  },
+  created() {
+    this.data.push(
+      {
+        "name":"0",
+        // "path":"\/storage\/emulated\/0",
+        "directory":[
+          {
+            "name":"Music",
+            // "path":"\/storage\/emulated\/0\/Music",
+            "type":"folder"
+          },
+          {
+            "name":"Podcasts",
+            // "path":"\/storage\/emulated\/0\/Podcasts",
+            "type":"folder"
+          },
+          {
+            "name":"Ringtones",
+            // "path":"\/storage\/emulated\/0\/Ringtones",
+            "type":"folder"
+          },
+          {
+            "name":"Alarms",
+            // "path":"\/storage\/emulated\/0\/Alarms",
+            "type":"folder"
+          },
+          {
+            "name":"Notifications",
+            // "path":"\/storage\/emulated\/0\/Notifications",
+            "type":"folder"
+          },
+          {
+            "name":"Pictures",
+            // "path":"\/storage\/emulated\/0\/Pictures",
+            "type":"folder"
+          },
+          {
+            "name":"Movies",
+            // "path":"\/storage\/emulated\/0\/Movies",
+            "type":"folder"
+          },
+          {
+            "name":"Download",
+            // "path":"\/storage\/emulated\/0\/Download",
+            "type":"folder"
+          },
+          {
+            "name":"DCIM",
+            // "path":"\/storage\/emulated\/0\/DCIM",
+            "type":"folder"
+          },
+          {
+            "name":"Android",
+            // "path":"\/storage\/emulated\/0\/Android",
+            "type":"folder"
+          }
+        ]
+      })
+    this.data[0].id = 0
   }
 };
 </script>
@@ -482,8 +526,12 @@ export default {
 
   .small-window {
     position: absolute;
+    min-width: 30%;
+    max-width: 75%;
     width: 50%;
     margin: auto;
+    resize: horizontal;
+    overflow: auto;
   }
 
   .cursor {
@@ -491,7 +539,7 @@ export default {
   }
 
   .max-window {
-    width: 100%;
+    width: 100% !important;
   }
 
   #window {
@@ -502,5 +550,9 @@ export default {
   #windowheader {
     
     z-index: 10;
+  }
+
+  .headercolor {
+    background-color: palegoldenrod;
   }
 </style>
