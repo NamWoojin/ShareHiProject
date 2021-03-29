@@ -18,11 +18,11 @@
               
             </div>
           </v-col>
-          <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0;">
-            <div style="display: flex; justify-content: space-between">
+          <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0; padding-top: 0; padding-bottom: 0;">
+            <div style="display: flex; justify-content: space-between" class="icon-container">
 
               <div>
-                This is node path
+                <span style="font-size: 1.5rem;">{{node.path}}</span>
               </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
@@ -164,10 +164,9 @@
   </div>
 </template>
 
+
 <script>
-
-
-
+/*eslint-disable*/
 export default {
   name: 'FileBrowser',
   data() {
@@ -410,56 +409,56 @@ export default {
     this.data.push(
       {
         "name":"0",
-        // "path":"\/storage\/emulated\/0",
+        "path":"\/storage\/emulated\/0",
         "directory":[
           {
             "name":"Music",
-            // "path":"\/storage\/emulated\/0\/Music",
+            "path":"\/storage\/emulated\/0\/Music",
             "type":"folder"
           },
           {
             "name":"Podcasts",
-            // "path":"\/storage\/emulated\/0\/Podcasts",
+            "path":"\/storage\/emulated\/0\/Podcasts",
             "type":"folder"
           },
           {
             "name":"Ringtones",
-            // "path":"\/storage\/emulated\/0\/Ringtones",
+            "path":"\/storage\/emulated\/0\/Ringtones",
             "type":"folder"
           },
           {
             "name":"Alarms",
-            // "path":"\/storage\/emulated\/0\/Alarms",
+            "path":"\/storage\/emulated\/0\/Alarms",
             "type":"folder"
           },
           {
             "name":"Notifications",
-            // "path":"\/storage\/emulated\/0\/Notifications",
+            "path":"\/storage\/emulated\/0\/Notifications",
             "type":"folder"
           },
           {
             "name":"Pictures",
-            // "path":"\/storage\/emulated\/0\/Pictures",
+            "path":"\/storage\/emulated\/0\/Pictures",
             "type":"folder"
           },
           {
             "name":"Movies",
-            // "path":"\/storage\/emulated\/0\/Movies",
+            "path":"\/storage\/emulated\/0\/Movies",
             "type":"folder"
           },
           {
             "name":"Download",
-            // "path":"\/storage\/emulated\/0\/Download",
+            "path":"\/storage\/emulated\/0\/Download",
             "type":"folder"
           },
           {
             "name":"DCIM",
-            // "path":"\/storage\/emulated\/0\/DCIM",
+            "path":"\/storage\/emulated\/0\/DCIM",
             "type":"folder"
           },
           {
             "name":"Android",
-            // "path":"\/storage\/emulated\/0\/Android",
+            "path":"\/storage\/emulated\/0\/Android",
             "type":"folder"
           }
         ]
@@ -517,7 +516,7 @@ export default {
     width: 50px !important;
     height: 50px !important;
     padding: 0;
-    margin: 0 10px;
+    
   }
 
   /* .navicon > .v-btn__content {
@@ -554,5 +553,9 @@ export default {
 
   .headercolor {
     background-color: palegoldenrod;
+  }
+
+  .icon-container >>> button {
+    transform: scale(0.7);
   }
 </style>

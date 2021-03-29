@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 style="text-align: left; margin: 1rem 0;">비밀번호변경</h2>
-      <v-card style="max-width: 75%;">
+      <v-card style="max-width: 60%;">
         <v-container fluid>
           <v-row>
             <v-col cols="5">

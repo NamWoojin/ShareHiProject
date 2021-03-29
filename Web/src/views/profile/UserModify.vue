@@ -40,12 +40,6 @@
                 class="image-container"
                 @click="changeImage"
               >
-              <!-- <v-icon 
-                large 
-                color="success"
-                style="position: absolute; left: 90px;"
-                @click="changeImage"
-              >mdi-plus</v-icon> -->
             </div>
             <div v-else>
               <img :src="member.mem_image">
@@ -60,6 +54,7 @@
           <th scope="row">이름</th>
           <td><strong>{{member.mem_name}}</strong></td>
         </tr>
+        
       </tbody>
     </table>
   </div>

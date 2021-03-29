@@ -67,6 +67,35 @@
             </template>
             <v-list>
               <v-list-item>
+                <router-link :to="{ name: 'UserModify'}" style="text-decoration: none; color: black;">
+                  <div style="display: flex;">
+                    <div v-if="member.mem_image == 'default.img'" style="height: 40px;">
+                      <v-avatar
+                        color="success"
+                        size="32"
+                        style="margin-top: 4px;"
+                      >
+                        <span style="color: white">{{member.mem_name.substring(0,1)}}</span>
+                      </v-avatar>
+                    </div>
+
+                    <div v-else>
+                      <v-avatar 
+                        style="height:40px"
+                      >
+                        <img 
+                          :src="member.mem_image"
+                          style="height: 32px; width: 32px;"
+                        >
+                      </v-avatar>
+                    </div>
+                    <v-list-item-title style="margin-top: 4px;">{{member.mem_name}}</v-list-item-title>
+                  </div>
+                  {{member.mem_email}}
+                </router-link>
+              </v-list-item>
+              <v-divider style="margin: 1rem 0;"></v-divider>
+              <v-list-item>
                 <router-link :to="{ name: 'Storage'}" style="text-decoration: none; color: black;">
                   <v-list-item-title>내 저장소</v-list-item-title>
                 </router-link>
@@ -77,7 +106,7 @@
                 </router-link>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title style="cursor: pointer" @click="logout">로그아웃</v-list-item-title>
+                <v-list-item-title style="cursor: pointer; text-align: left;" @click="logout">로그아웃</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
