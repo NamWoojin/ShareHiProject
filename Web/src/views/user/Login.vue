@@ -130,9 +130,6 @@ export default {
         'mem_name': profile.getName(),
         'mem_image': profile.getImageUrl(),
       }
-      console.log(googleUser)
-      console.log(profile)
-      console.log(googleform)
       axios.post(`https://j4f001.p.ssafy.io/api/login/social`, googleform, {})
         .then(res => {
           if (res.data.message == 'SUCCESS') {
@@ -144,14 +141,17 @@ export default {
     },
     login() {
       // login and router link
-      console.log('login')
-      console.log(this.form)
       axios.post(`https://j4f001.p.ssafy.io/api/login/basic`, this.form, {})
         .then(res => {
           if (res.data.message == 'SUCCESS') {
             localStorage.setItem('token', res.data.content.token)
             this.$store.dispatch("LOGIN", res.data.content.member)
             this.$router.push({ name: 'Storage' })
+          } else {
+            this.$message({
+              type: 'info',
+              message: '이메일과 비밀번호를 확인해주세요.'
+            })
           }
         })
     }

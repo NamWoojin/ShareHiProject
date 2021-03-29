@@ -91,6 +91,10 @@ export default {
     changePassword() {
       // axios
       // goto login page
+      this.$message({
+        type: 'success',
+        message: '비밀번호가 변경되었습니다.'
+      })
       this.$store.dispatch('LOGOUT')
       this.$router.push({ name: 'Login' })
     }

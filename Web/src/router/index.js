@@ -75,7 +75,7 @@ const routes = [
         path: 'profile',
         name: 'Profile',
         component: () => import('../views/profile/Profile.vue'),
-        redirect: { name: 'UserModify' },
+        redirect: { name: 'FollowerPage' },
         children: [
           {
             path: 'user-modify',
