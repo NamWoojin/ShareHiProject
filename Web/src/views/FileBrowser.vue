@@ -22,7 +22,7 @@
             <div style="display: flex; justify-content: space-between" class="icon-container">
 
               <div>
-                <span style="font-size: 1.5rem;">{{node.path}}</span>
+                <span style="font-size: 1.5rem;">{{customPath}}</span>
               </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
@@ -63,27 +63,14 @@
                     <v-icon x-large color="black" style="margin-top: 5px !important">mdi-folder-edit-outline</v-icon>
                   </div>
                 </v-btn>
-                <!-- <v-btn class="navicon" disabled>
-                  <div style="width: 50px; height: 50px;">
-                    <p style="margin-top: 15px;">복사</p>
-                  </div>
-                </v-btn>
-                
-                <v-btn class="navicon" disabled>
-                  <div style="width: 50px; height: 50px;">
-                    <p style="margin-top: 15px;">잘라내기</p>
-                  </div>
-                </v-btn> -->
               </div>
-
-              
             </div>
           </v-col>
           <v-col
-            cols="2"
+            cols="3"
             style="border: 1px solid black; margin: 0;"
           >
-            <el-tree
+            <!-- <el-tree
               :data="data"
               
               :default-expanded-keys="[0]"
@@ -92,10 +79,37 @@
               @node-click="nodeClick"
               :key="componentKey"
             >
-            </el-tree>
+            </el-tree> -->
+            <v-treeview
+              v-model="tree"
+              :items="data"
+              item-children="directory"
+              open-on-click
+              hoverable
+              :open="initiallyOpen"
+              :key="componentKey"
+            >
+              <!-- <template v-slot:append="{ item }">
+                <span @click="selectFolder(item)">{{item.name}}</span>
+              </template> -->
+              <template v-slot:label="{ item }">
+                <span @click="selectFolder(item)">{{item.name}}</span>
+              </template>
+              <template v-slot:prepend="{ item, open }">
+                <v-icon @click="selectFolder(item)" v-if="item.type=='folder' && open && item.directory">
+                  mdi-folder-open
+                </v-icon>
+                <v-icon @click="selectFolder(item)" v-else-if="item.type=='folder'">
+                  mdi-folder
+                </v-icon>
+                <!-- <v-icon v-else>
+                  {{ files[item.file] }}
+                </v-icon> -->
+              </template>
+            </v-treeview>
           </v-col>
           <v-col 
-            cols="10"
+            cols="9"
             style="border: 1px solid black; border-left-style: none;"
             @contextmenu="openMenu($event)"
             @click="clickOuter"
@@ -193,6 +207,10 @@ export default {
       left: '0px',
       fileList: null,
       browsersize: false,
+      selection: [],
+      initiallyOpen: [0],
+      active: [],
+      tree: [],
     };
   },
   methods: {
@@ -321,6 +339,7 @@ export default {
         {
           name: name,
           // directory: [],
+          path: this.node.path + '\/' + name,
           type: 'folder'
         }
         )
@@ -373,6 +392,9 @@ export default {
     },
     downloadFile() {
       console.log('this is downloadFile')
+    },
+    selectFolder(i) {
+      this.node = i
     }
   },
   mounted() {
@@ -391,7 +413,7 @@ export default {
           } else {
             this.$message({
               type: 'info',
-              message: this.fileList[i].name + '은 이미 있는 파일입니다.'
+              message: this.fileList[i].name + '은 이미 존재하는 파일입니다.'
             })
           }
         }
@@ -403,6 +425,13 @@ export default {
         }
         this.fileList = null;
       }
+    }
+  },
+  computed: {
+    customPath() {
+      if (this.node.path)
+      return this.node.path.split('\/').slice(3).join(' > ')
+      
     }
   },
   created() {
@@ -463,6 +492,7 @@ export default {
           }
         ]
       })
+    this.data[0].type = 'folder'
     this.data[0].id = 0
   }
 };
@@ -557,5 +587,9 @@ export default {
 
   .icon-container >>> button {
     transform: scale(0.7);
+  }
+
+  >>> .v-treeview-node__label {
+    text-align: left;
   }
 </style>
