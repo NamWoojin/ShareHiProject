@@ -70,7 +70,7 @@
                     android:id="@+id/recycler_prepare_delete_ImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_close_white_24dp"
+                    android:src="@drawable/ic_close_black_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -85,6 +85,7 @@
                 android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"
                 android:text="@string/fragment_prepare_go_folder_Button_text"
                 android:onClick="@{() -> viewModel.switchPage(`folder`)}"
+                android:visibility="@{viewModel.selectedPathLiveData.length() > 0 ? View.GONE : View.VISIBLE}"
                 app:layout_constraintStart_toStartOf="@id/fragment_prepare_folder_TextView"
                 app:layout_constraintTop_toBottomOf="@id/fragment_prepare_choiced_layout" />
         </androidx.constraintlayout.widget.ConstraintLayout>

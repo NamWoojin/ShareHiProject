@@ -5,6 +5,7 @@ import com.example.android.data.model.dto.User;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -14,12 +15,18 @@ public interface UserRepository {
     //회원가입
     @POST("member/signup")
     Call<Object> SignUp(@Body User user);
+
+    //회원탈퇴
+    @DELETE("member/signout")
+    Call<Object> SignOut(@Query("mem_id") int id);
+
     //이메일 중복 확인
     @GET("member/checkEmail")
     Call<Object> checkEmail(@Query("mem_email") String mem_email);
 
+    //사용자 정보 조회
     @GET("member/getUser")
-    Call<Object> getUser(@Path("id") int id);
+    Call<Object> getUser(@Query("mem_id") int id);
 
     //이메일 인증 요청
     @POST("member/requireEmailAuth")
