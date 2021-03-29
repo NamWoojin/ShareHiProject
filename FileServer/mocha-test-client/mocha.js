@@ -33,7 +33,7 @@ describe("my awesome project", () => {
   // });
 
   it("socket connetion test", () => {
-    const client = io.connect(`https://j4f001.p.ssafy.io:9000`);
+    const client = io.connect(`http://j4f001.p.ssafy.io:9002`);
     // const client = io(`http://localhost:9000`);
     client.on('connection', () => {
       console.log("Client Connection");
