@@ -402,13 +402,19 @@ export default {
   },
   watch: {
     fileList: function () {
-      if (this.fileList) {
+      if (this.fileList && this.fileList.length > 0) {
         let cnt = 0;
         for(let i=0; i<this.fileList.length; i++) {
           if (this.checkFolder(this.fileList[i].name)) {
-            this.node.directory.push({
-              name: this.fileList[i].name
-            })
+            if (this.node.directory) {
+              this.node.directory.push({
+                name: this.fileList[i].name
+              })
+            } else {
+              this.node.directory = [{
+                name: this.fileList[i].name
+              }]
+            }
             cnt++
           } else {
             this.$message({
