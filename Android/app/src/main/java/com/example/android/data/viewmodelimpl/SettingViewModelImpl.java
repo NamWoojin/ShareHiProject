@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.bumptech.glide.Glide;
 import com.example.android.R;
 import com.example.android.data.connection.APIRequest;
 import com.example.android.data.connection.RetrofitClient;
@@ -21,6 +22,8 @@ import com.example.android.data.model.dto.Member;
 import com.example.android.data.model.dto.User;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SettingViewModel;
+import com.example.android.ui.user.EditNameFragment;
+import com.example.android.ui.user.EditPasswordFragment;
 import com.example.android.ui.user.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,19 +33,30 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.http.POST;
 
 public class SettingViewModelImpl extends ViewModel implements SettingViewModel {
 
     private static final String TAG = "SettingViewModelImpl";
 
-    private static final int REQ_CODE_SIGN_OUT = 1;
-    private static final int REQ_CODE_REVOKE_ACCESS = 2;
     private WeakReference<Activity> mActivityRef;
 
-    private MutableLiveData<Member> memberLiveData = new MutableLiveData<Member>();
+    SharedPreferences memberInformation;
 
     //LiveData
+    private int mem_id;
+    private MutableLiveData<String> memberNameLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> memberImgLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> memberEmailLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> currentPasswordLiveData = new MutableLiveData<>("");
+    private MutableLiveData<String> newPasswordLiveData = new MutableLiveData<>("");
+    private MutableLiveData<String> newCheckPasswordLiveData = new MutableLiveData<>("");
+    private MutableLiveData<Boolean> isOKNewPassword = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> isOKNewCheckPassword = new MutableLiveData<>(false);
+
+    private EditPasswordFragment mEditPasswordFragment;
+
     private GoogleLoginExecutor mGoogleLoginExecutor;
 
     @Override
@@ -58,14 +72,14 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     //사용자 정보 얻기
     @Override
     public void getMemberInformation() {
-        SharedPreferences memberInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
-        String memberJson = memberInformation.getString("member", null);
-        if (memberJson != null) {
-            memberLiveData.setValue(new Gson().fromJson(memberJson, Member.class));
-            getUser(memberLiveData.getValue().getMem_id());
+        memberInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
+        mem_id = memberInformation.getInt("mem_id",-1);
+        if (mem_id != -1) {
+            getUser(mem_id);
         }
     }
 
+    //사용자 정보 조회
     private void getUser(int mem_id) {
         APIRequest.request(RetrofitClient.getUserApiService().getUser(mem_id), objectResponse -> {
             Gson gson = new Gson();
@@ -89,8 +103,11 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                     case "SUCCESS":
                         Member member = res.getContent().getMember();
                         Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
-                        memberLiveData.setValue(member);
-                        saveMemberInfo(member);
+                        memberNameLiveData.setValue(member.getMem_name());
+                        memberEmailLiveData.setValue(member.getMem_email());
+                        memberImgLiveData.setValue(member.getMem_image());
+                        CircleImageView userImageView = (CircleImageView)mActivityRef.get().findViewById(R.id.fragment_setting_image_imageView);
+                        Glide.with(mActivityRef.get()).load(member.getMem_image()).into(userImageView);
                         break;
                     case "FAIL":
                         //회원탈퇴 실패
@@ -104,16 +121,54 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         });
     }
 
-    //사용자 정보 저장
-    private void saveMemberInfo(Member member){
-        SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = tokenInformation.edit();
-        String memberJson = new Gson().toJson(member);
-        editor.putString("member",memberJson);
-        editor.apply();
+//    //이름 변경 dialog 열기
+//    @Override
+//    public void openEditNameDialog(){
+//        editNameLiveData.setValue(memberNameLiveData.getValue());
+//        mEditNameFragment = EditNameFragment.newInstance();
+//        mEditNameFragment.show(mActivityRef.get().getFragmentManager(), "EDIT_NAME");
+//    }
+//
+//    //이름 변경
+//    @Override
+//    public void editName(){
+//        memberNameLiveData.setValue(editNameLiveData.getValue());
+//        //이름 변경 api 추가
+//        mEditNameFragment.dismiss();
+//    }
+//
+//    //이름 변경 dialog 닫기
+//    @Override
+//    public void closeEditNameDialog(){
+//        mEditNameFragment.dismiss();
+//    }
+
+    //이미지 변경하기
+    @Override
+    public void editImage(){
+
     }
 
+    @Override
+    public void openEditPasswordDialog(){
+        currentPasswordLiveData.setValue("");
+        newPasswordLiveData.setValue("");
+        newCheckPasswordLiveData.setValue("");
+        mEditPasswordFragment = EditPasswordFragment.newInstance();
+        mEditPasswordFragment.show(mActivityRef.get().getFragmentManager(), "EDIT_PASSWORD");
+    }
 
+    @Override
+    public void editPassword(){
+        mEditPasswordFragment.dismiss();
+    }
+
+    @Override
+    public void closeEditPasswordDialog(){
+        mEditPasswordFragment.dismiss();
+    }
+
+    //로그아웃
     @Override
     public void onRequestedSignOut() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
@@ -143,6 +198,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     }
 
+    //회원탈퇴
     @Override
     public void onRequestedRevokeAccess() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
@@ -150,8 +206,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         new AlertDialog.Builder(mActivityRef.get())
                 .setTitle(R.string.fragment_setting_user_delete_button_text).setMessage("정말 탈퇴하시겠습니까?")
                 .setPositiveButton(R.string.fragment_setting_user_delete_button_text, (dialog, whichButton) -> {
-                    int mem_id = memberLiveData.getValue().getMem_id();
-                    Log.i(TAG, "onRequestedRevokeAccess: " + mem_id);
                     APIRequest.request(RetrofitClient.getUserApiService().SignOut(mem_id), objectResponse -> {
                         Gson gson = new Gson();
                         int code = objectResponse.code();
@@ -233,12 +287,59 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     //getter setter
     @Override
-    public MutableLiveData<Member> getMemberLiveData() {
-        return memberLiveData;
+    public MutableLiveData<String> getMemberNameLiveData() {
+        return memberNameLiveData;
     }
-
     @Override
-    public void setMemberLiveData(MutableLiveData<Member> memberLiveData) {
-        this.memberLiveData = memberLiveData;
+    public void setMemberNameLiveData(MutableLiveData<String> memberNameLiveData) {
+        this.memberNameLiveData = memberNameLiveData;
+    }
+    @Override
+    public MutableLiveData<String> getMemberEmailLiveData() {
+        return memberEmailLiveData;
+    }
+    @Override
+    public void setMemberEmailLiveData(MutableLiveData<String> memberEmailLiveData) {
+        this.memberEmailLiveData = memberEmailLiveData;
+    }
+    @Override
+    public MutableLiveData<String> getCurrentPasswordLiveData() {
+        return currentPasswordLiveData;
+    }
+    @Override
+    public void setCurrentPasswordLiveData(MutableLiveData<String> currentPasswordLiveData) {
+        this.currentPasswordLiveData = currentPasswordLiveData;
+    }
+    @Override
+    public MutableLiveData<String> getNewPasswordLiveData() {
+        return newPasswordLiveData;
+    }
+    @Override
+    public void setNewPasswordLiveData(MutableLiveData<String> newPasswordLiveData) {
+        this.newPasswordLiveData = newPasswordLiveData;
+    }
+    @Override
+    public MutableLiveData<String> getNewCheckPasswordLiveData() {
+        return newCheckPasswordLiveData;
+    }
+    @Override
+    public void setNewCheckPasswordLiveData(MutableLiveData<String> newCheckPasswordLiveData) {
+        this.newCheckPasswordLiveData = newCheckPasswordLiveData;
+    }
+    @Override
+    public MutableLiveData<Boolean> getIsOKNewPassword() {
+        return isOKNewPassword;
+    }
+    @Override
+    public void setIsOKNewPassword(MutableLiveData<Boolean> isOKNewPassword) {
+        this.isOKNewPassword = isOKNewPassword;
+    }
+    @Override
+    public MutableLiveData<Boolean> getIsOKNewCheckPassword() {
+        return isOKNewCheckPassword;
+    }
+    @Override
+    public void setIsOKNewCheckPassword(MutableLiveData<Boolean> isOKNewCheckPassword) {
+        this.isOKNewCheckPassword = isOKNewCheckPassword;
     }
 }

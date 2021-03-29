@@ -94,6 +94,17 @@
     <dimen name="fragment_setting_info_textView_marginStart">12dp</dimen>
     <dimen name="fragment_setting_name_textView_textSize">18sp</dimen>
     <dimen name="fragment_setting_imageView_height">100dp</dimen>
+    <dimen name="fragment_setting_button_height">56dp</dimen>
     <dimen name="fragment_setting_button_textSize">14sp</dimen>
+    <dimen name="fragment_setting_dialog_layout_width">300dp</dimen>
+    <dimen name="fragment_setting_dialog_marginHorizontal">24dp</dimen>
+
+    <dimen name="fragment_edit_name_layout_height">230dp</dimen>
+    <dimen name="fragment_edit_name_info_textSize">18sp</dimen>
+    <dimen name="fragment_edit_name_button_width">120dp</dimen>
+
+    <dimen name="fragment_edit_password_layout_height">340dp</dimen>
+    <dimen name="fragment_edit_password_text_input_layout_height">85dp</dimen>
+    <dimen name="fragment_edit_password_text_input_edit_text_height">56dp</dimen>
 
 </resources>

@@ -198,8 +198,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     private void saveMemberInfo(Member member) {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
-        String memberJson = new Gson().toJson(member);
-        editor.putString("member", memberJson);
+        editor.putInt("mem_id", member.getMem_id());
         editor.apply();
     }
 
