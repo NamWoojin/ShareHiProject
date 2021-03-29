@@ -447,6 +447,7 @@ io.on('connection', (socket) => {
     );
   });
   socket.on(KEY.SEND_FILE, (data) => {
+    console.log(data);
     // 7001 파일 전송
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.

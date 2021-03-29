@@ -14,8 +14,6 @@ import sugjg.com.dto.FileStat;
 
 public class SocketData {
 
-	private static final String IP = "localhost";
-	private static final int PORT = 9001;
 	private static final int CHUNK_SIZE = 16 * 1024 * 1024;
 	private FileStat fs;
 	private File file;
@@ -37,9 +35,9 @@ public class SocketData {
 		try {
 			file = new File(fs.getPath() + fs.getName() + fs.getExt());
 			socket = new Socket();
-			SocketAddress socketAddress = new InetSocketAddress(IP, PORT);
+			SocketAddress socketAddress = new InetSocketAddress(Client.IP, Client.PORT);
 			socket.connect(socketAddress, 8288);
-
+			socket.setSoTimeout(5000);
 			buf = new byte[CHUNK_SIZE];
 			fileOutput = new FileOutputStream(file, true);
 			dataInput = new DataInputStream(socket.getInputStream());
