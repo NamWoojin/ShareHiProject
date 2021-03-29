@@ -56,6 +56,7 @@
     <string name="fragment_setting_sign_out_button_text">로그아웃</string>
     <string name="fragment_setting_user_delete_button_text">탈퇴하기</string>
 
+
     <!--Toast Message-->
     <string name="toast_login_success_message">환영합니다!</string>
     <string name="toast_login_fail_message">이메일 또는 비밀번호를 확인해주세요</string>
@@ -66,7 +67,9 @@
     <string name="toast_check_email_timeout_message">제한시간이 지났습니다</string>
     <string name="toast_check_email_differentAuthNum_message">인증번호가 틀립니다.</string>
     <string name="toast_signup_success_message">회원가입에 성공했습니다</string>
+    <string name="toast_setting_user_delete_fail_message">회원탈퇴에 실패했습니다.\n다시 시도해주세요.</string>
     <string name="toast_connect_fail_message">네트워크 연결상태를 확인해주세요</string>
+    <string name="toast_404_fail_message">해당 요청을 수행할 수 없습니다.</string>
     <string name="toast_server_fail_message">서버에 문제가 발생했습니다</string>
     <string name="toast_500">500 error</string>
     <string name="toast_400">400 error</string>
