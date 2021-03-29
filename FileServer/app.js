@@ -16,7 +16,6 @@ const { v4: uuidv4 } = require('uuid');
 
 const KEY = require('./src/config/key/key');
 
-
 //////////////// socket map system /////////////
 let shareDevice;
 let shareData;
@@ -214,10 +213,10 @@ let printSocket = (socket) => {
 /////////////^^^^^^^^^^^^^^^^^^^^^^^//////////////
 
 server.listen(9002, () => {
-  console.log("웹-서버 socket연결")
+  console.log('웹-서버 socket연결');
 });
 andServer.listen(9003, () => {
-  console.log("안드-서버 socket연결")
+  console.log('안드-서버 socket연결');
 });
 
 io.on('connection', (socket) => {
@@ -450,6 +449,7 @@ io.on('connection', (socket) => {
     );
   });
   socket.on(KEY.SEND_FILE, (data) => {
+    console.log(data);
     // 7001 파일 전송
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
@@ -463,7 +463,9 @@ io.on('connection', (socket) => {
       return;
     }
     tmpfileSize += data.length;
+    console.log(data.length);
     let percent = getFilePercent();
+    console.log(percent);
     idMap.get(shareDevice).write(
       JSON.stringify({
         namespace: KEY.SEND_FILE,

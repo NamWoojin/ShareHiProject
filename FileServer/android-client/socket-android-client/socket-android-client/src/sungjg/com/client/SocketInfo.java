@@ -21,8 +21,6 @@ import sugjg.com.dto.FileStat;
 
 public class SocketInfo {
 
-	private static final String IP = "localhost";
-	private static final int PORT = 9001;
 	private FileStat fs;
 
 	private Socket socket;
@@ -39,7 +37,8 @@ public class SocketInfo {
 	public void connect() {
 		try {
 			socket = new Socket();
-			SocketAddress socketAddress = new InetSocketAddress(IP, PORT);
+			System.out.println("ip,port : " + Client.IP + "," + Client.PORT);
+			SocketAddress socketAddress = new InetSocketAddress(Client.IP, Client.PORT);
 			socket.connect(socketAddress, 8288);
 
 			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
