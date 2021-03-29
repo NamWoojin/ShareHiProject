@@ -14,7 +14,9 @@ const socialCheckEmail = 'select mem_id, mem_name, mem_email, mem_registDevice, 
 const logout = `update device \
                    set status='OFF' \
                  where mem_id=? and dev_id=?`;        
-                           
+const addDevice = `update member \
+                      set mem_registDevice=? \
+                    where mem_id=?`;    
 
 
 
@@ -23,5 +25,6 @@ module.exports = {
     checkPassword,
     checkDevice,
     insertDevice,
-    logout
+    logout,
+    addDevice
 }

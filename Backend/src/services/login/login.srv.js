@@ -43,6 +43,13 @@ const basic = (req, res) => {
                   if (err) {
                     callback(err);
                   } else {
+                    result_mem[0].mem_registDevice = result_mem[0].mem_registDevice + 1;
+                    console.log(result_mem[0]);
+                    pool.query(LoginQuery.addDevice, [result_mem[0].mem_registDevice, result_mem[0].mem_id], (err, result) => {
+                      if (err) {
+                        callback(err);
+                      } 
+                    });
                     callback(null, result_mem[0], member);
                   }
                 });
@@ -193,6 +200,13 @@ const social = async (req, res) => {
                 if (err) {
                   callback(err);
                 } else {
+                    result_mem.mem_registDevice = result_mem.mem_registDevice + 1;
+                    console.log(result_mem);
+                    pool.query(LoginQuery.addDevice, [result_mem.mem_registDevice, result_mem.mem_id], (err, result) => {
+                      if (err) {
+                        callback(err);
+                      } 
+                    });
                   callback(null, result_mem, member);
                 }
               });
