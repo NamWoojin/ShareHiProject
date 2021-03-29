@@ -463,9 +463,9 @@ io.on('connection', (socket) => {
       return;
     }
     tmpfileSize += data.length;
-    console.log('data.length : ' + data.length);
+    console.log(data.length);
     let percent = getFilePercent();
-    console.log('percent : ' + percent);
+    console.log(percent);
     idMap.get(shareDevice).write(
       JSON.stringify({
         namespace: KEY.SEND_FILE,
