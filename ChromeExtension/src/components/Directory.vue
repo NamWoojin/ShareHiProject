@@ -1,11 +1,78 @@
 <template>
   <div>
+    <input type="file" @change="fileUploadTest">
     <div class="directory">
     </div>
   </div>
 </template>
 
 <script>
+import io from 'socket.io-client';
+
+const config = {
+  host: 'http://j4f001.p.ssafy.io:9002',
+  uploadedSize: 0,
+  uploadTotalSize: 0,
+  savePath: './',
+  saveName: 'sample',
+  saveExt: '.mp4',
+  saveFile: '',
+  filename: '',
+  downLoadSize: 0,
+  downLoadTotalSize: 0,
+}
+
+const file = {
+  name : '',
+  data : '',
+}
+
+const socket = io.connect(config.host, { transports: ['websocket'] });
+
+socket.on('connect', () => {
+  if (socket.connected) console.log('서버로 성공적으로 연결되었습니다 : ' + config.host);
+  else console.log('서버의 연결이 끊겼습니다 : ' + config.host);
+});
+
+socket.on(7000, (data) => {
+  console.log('7000')
+  data = JSON.parse(data)
+  console.log(data)
+  const rawData = new ArrayBuffer()
+  const reader = new FileReader()
+  // const slice = file.data.slice(0,100000)
+  // console.log('slice',file.data)
+  // reader.readAsArrayBuffer(slice)
+  reader.onload = (e) => {
+    rawData = e.target.result;
+    console.log('rawData',rawData)
+    // const arrayBuffer = reader.result
+    // socket.emit(7001,arrayBuffer)
+    socket.emit(7001,rawData)
+  }
+  reader.readAsArrayBuffer(file.data)
+})
+
+socket.on(4000, (data) => {
+  console.log('4000')
+  console.log(file)
+  data = JSON.parse(data)
+  // if (data.name === file.name) {
+  //   const reader = new FileReader()
+  //   const slice = file.data.slice(0,100000)
+  //   reader.readAsArrayBuffer(slice)
+  //   reader.onload = () => {
+  //     const arrayBuffer = reader.result
+  //     socket.emit(7001,arrayBuffer)
+  //   }
+  // }
+})
+
+socket.on(7001,(data) => {
+  console.log('7001')
+  console.log(data)
+})
+
 export default {
   name: "Directory",
   props: {
@@ -13,12 +80,30 @@ export default {
   },
   data() {
     return {
+      file : '',
     }
   },
   mounted () {
     this.rootDataParsing()
   },
   methods : {
+    fileUploadTest(e) {
+      console.log(e.target)
+      const fileName = e.target.value
+      const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
+        // 'path' : fileName.substr(0,fileName.lastIndexOf('\\')+1),
+      // const file = e.target.files[0],
+      const fileData = {
+        'path' : './',
+        'name' : fileNameWithoutPath.split('.')[0],
+        'ext' : fileNameWithoutPath.split('.')[1],
+        'size' : e.target.files[0].size,
+      }
+      file.data = e.target.files[0]
+      file.name = fileNameWithoutPath.split('.')[0]
+      console.log('fileData', fileData)
+      socket.emit(7000, JSON.stringify(fileData));
+    },
     onClickOpenAllDir() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
       const uls = directory.querySelectorAll('ul')
@@ -217,17 +302,14 @@ export default {
             alert('파일을 선택해주세요')
             return
             }
-
-          // 파일 전송
-          // let formData = new FormData()
-          // formData.append("data",modalObj.nameInput.files[0])
-
           const fileName = modalObj.nameInput.value
           const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
+          file.data = modalObj.nameInput.files[0]
+          file.name = fileNameWithoutPath.split('.')[0]
           const ul = target.nextElementSibling
           const li = document.createElement('li')
           const liDiv = document.createElement('div')
-          liDiv.setAttribute('class','file')
+          liDiv.setAttribute('class','file')  
           liDiv.innerText = fileNameWithoutPath
           liDiv.addEventListener('contextmenu', (e) => {
             e.preventDefault();
