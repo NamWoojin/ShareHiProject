@@ -463,8 +463,8 @@ io.on('connection', (socket) => {
       );
       return;
     }
-    tmpfileSize += data.length;
-    console.log(data.length);
+    tmpfileSize += stream.length;
+    console.log(stream.length);
     let percent = getFilePercent();
     console.log(percent);
     idMap.get(shareDevice).write(
