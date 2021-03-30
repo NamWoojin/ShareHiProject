@@ -449,82 +449,58 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
   });
-  /*
+
   ss(socket).on(7001, (stream, data) => {
     console.log(data);
     // 7001 파일 전송
-    if (!checkSocket(shareDevice)) {
-      // 4000 - 공유 디바이스 연결이 되어있지 않음.
-      io.to(socket.id).emit(
-        KEY.NOT_SHARE_DEVICE,
-        JSON.stringify({
-          status: 204,
-          message: 'NO SHARE DEVICE',
-        })
-      );
-      return;
-    }
-    tmpfileSize += stream.length;
-    console.log(stream.length);
-    let percent = getFilePercent();
-    console.log(percent);
-    idMap.get(shareDevice).write(
-      JSON.stringify({
-        namespace: KEY.SEND_FILE,
-        percent: percent,
-      }) + '\n'
-    );
-    io.to(socket.id).emit(
-      KEY.SEND_FILE,
-      JSON.stringify({
-        percent: percent,
-      })
-    );
+    // stream
+    stream.on('data', function (data) {
+      console.log(data);
+    });
 
-    
-     안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
-     
-    console.log('----stream----');
-    console.log(stream);
-    idMap.get(shareData).write(stream);
-    stream.pipe();
-});
-  */
+    //안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
 
-  socket.on(KEY.SEND_FILE, (data) => {
-    // 7001 파일 전송
-    if (!checkSocket(shareDevice)) {
-      // 4000 - 공유 디바이스 연결이 되어있지 않음.
-      io.to(socket.id).emit(
-        KEY.NOT_SHARE_DEVICE,
-        JSON.stringify({
-          status: 204,
-          message: 'NO SHARE DEVICE',
-        })
-      );
-      return;
-    }
-    tmpfileSize += data.length;
-    console.log(data.length);
-    let percent = getFilePercent();
-    console.log(percent);
-    idMap.get(shareDevice).write(
-      JSON.stringify({
-        namespace: KEY.SEND_FILE,
-        percent: percent,
-      }) + '\n'
-    );
-    io.to(socket.id).emit(
-      KEY.SEND_FILE,
-      JSON.stringify({
-        percent: percent,
-      })
-    );
-
-    // 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
-
-    idMap.get(shareData).write(data);
+    // console.log('----stream----');
+    // console.log(stream);
+    // idMap.get(shareData).write(stream);
+    // stream.pipe();
   });
+
+  // socket.on(KEY.SEND_FILE, (data) => {
+  //   //console.log(data);
+  //   // 7001 파일 전송
+  //   if (!checkSocket(shareDevice)) {
+  //     // 4000 - 공유 디바이스 연결이 되어있지 않음.
+  //     io.to(socket.id).emit(
+  //       KEY.NOT_SHARE_DEVICE,
+  //       JSON.stringify({
+  //         status: 204,
+  //         message: 'NO SHARE DEVICE',
+  //       })
+  //     );
+  //     return;
+  //   }
+  //   tmpfileSize += data.length;
+  //   console.log(data.length);
+  //   let percent = getFilePercent();
+  //   console.log(percent);
+  //   idMap.get(shareDevice).write(
+  //     JSON.stringify({
+  //       namespace: KEY.SEND_FILE,
+  //       percent: percent,
+  //     }) + '\n'
+  //   );
+  //   io.to(socket.id).emit(
+  //     KEY.SEND_FILE,
+  //     JSON.stringify({
+  //       percent: percent,
+  //     })
+  //   );
+
+  //   // 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
+  //   if (!data) return;
+  //   idMap.get(shareData).write(data);
+  // });
 });
 
 let getFilePercent = () => {
