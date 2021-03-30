@@ -57,6 +57,7 @@
     <string name="fragment_setting_user_delete_button_text">탈퇴하기</string>
     <string name="fragment_setting_ok_button_text">변경</string>
     <string name="fragment_setting_cancel_button_text">취소</string>
+    <string name="fragment_setting_edit_password_cant_open_text">비밀번호 변경은 일반 로그인만 가능합니다.</string>
     <string name="fragment_setting_edit_password_current_success_text">비밀번호를 변경했습니다.</string>
     <string name="fragment_setting_edit_password_current_fail_text">현재 비밀번호가 일치하지 않습니다.</string>
 

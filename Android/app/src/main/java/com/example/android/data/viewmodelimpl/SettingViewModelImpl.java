@@ -153,11 +153,17 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     @Override
     public void openEditPasswordDialog() {
-        currentPasswordLiveData.setValue("");
-        newPasswordLiveData.setValue("");
-        newCheckPasswordLiveData.setValue("");
-        mEditPasswordFragment = EditPasswordFragment.newInstance();
-        mEditPasswordFragment.show(mActivityRef.get().getFragmentManager(), "EDIT_PASSWORD");
+        SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
+        String login = loginInformation.getString("login", "none");
+        if (login.equals("basic")) {
+            currentPasswordLiveData.setValue("");
+            newPasswordLiveData.setValue("");
+            newCheckPasswordLiveData.setValue("");
+            mEditPasswordFragment = EditPasswordFragment.newInstance();
+            mEditPasswordFragment.show(mActivityRef.get().getFragmentManager(), "EDIT_PASSWORD");
+        }else{
+            Toast.makeText(mActivityRef.get(), R.string.fragment_setting_edit_password_cant_open_text, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
