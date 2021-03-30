@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { mapState } from 'vuex'
 export default {
   name: 'PasswordChange',
   data() {
@@ -86,17 +88,27 @@ export default {
         return false
       }
     },
+    ...mapState([
+      'member',
+    ])
   },
   methods: {
     changePassword() {
       // axios
-      // goto login page
-      this.$message({
-        type: 'success',
-        message: '비밀번호가 변경되었습니다.'
-      })
-      this.$store.dispatch('LOGOUT')
-      this.$router.push({ name: 'Login' })
+      axios.put(`https://j4f001.p.ssafy.io/api/member/updatePassword`, {
+        'mem_id': this.member.mem_id,
+        'mem_password': this.newPassword
+      }, {})
+        .then(res => {
+          if (res.data.message == 'SUCCESS') {
+            this.$message({
+              type: 'success',
+              message: '비밀번호가 변경되었습니다.'
+            })
+            this.$store.dispatch('LOGOUT')
+            this.$router.push({ name: 'Login' })
+          }
+        })
     }
   }
 }
