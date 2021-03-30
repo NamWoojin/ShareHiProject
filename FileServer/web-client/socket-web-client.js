@@ -8,7 +8,7 @@ const io = require('socket.io-client');
 const fs = require('fs');
 
 let config = {
-  host: 'http://localhost:9000',
+  host: 'http://localhost:9002',
   filename: './img/sample.mp4',
 };
 
