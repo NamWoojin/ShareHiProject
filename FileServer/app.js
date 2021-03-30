@@ -454,7 +454,7 @@ io.on('connection', (socket) => {
     // 7001 파일 전송
     // stream
     stream.on('data', function (data) {
-      idMap.get(shareData).write(data);
+      if (data) idMap.get(shareData).write(data);
     });
     stream.on('end', function () {
       console.log('끝');
