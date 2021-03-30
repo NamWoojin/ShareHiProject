@@ -37,7 +37,7 @@ public class SocketData {
 			socket = new Socket();
 			SocketAddress socketAddress = new InetSocketAddress(Client.IP, Client.PORT);
 			socket.connect(socketAddress, 8288);
-			socket.setSoTimeout(5000);
+			socket.setSoTimeout(100000);
 			buf = new byte[CHUNK_SIZE];
 			fileOutput = new FileOutputStream(file, true);
 			dataInput = new DataInputStream(socket.getInputStream());
