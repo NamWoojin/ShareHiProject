@@ -1,7 +1,6 @@
 <template>
-  <div style="position: fixed; left: 0; bottom: 0; width: 100%;">
+  <div style="position: relative; top: 70%; width: 100%;">
     <el-row>
-      <el-col :span="24"><el-divider /></el-col>
       <el-row style="width: 75%; margin: 0px auto;">
         <el-col
           :md="3"
@@ -46,9 +45,7 @@
         <!-- <el-col :span="24"><el-divider /></el-col> -->
       </el-row>
 
-      <div style="color: white; width=100%; background-color: #444444; margin-top: 2rem; padding: 0.25rem;">
-        Copyright © <strong style="color: #3ac569">SHARE HI</strong> {{ new Date().getFullYear() }} All Rights Reserved.
-      </div>
+
     </el-row>
   </div>
 </template>
