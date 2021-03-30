@@ -8,6 +8,7 @@
 
 <script>
 import io from 'socket.io-client';
+import ss from 'socket.io-stream';
 
 const config = {
   host: 'http://j4f001.p.ssafy.io:9002',
@@ -37,35 +38,30 @@ socket.on('connect', () => {
 socket.on(7000, (data) => {
   console.log('7000')
   data = JSON.parse(data)
-  console.log(data)
-  const rawData = new ArrayBuffer()
-  const reader = new FileReader()
-  // const slice = file.data.slice(0,100000)
-  // console.log('slice',file.data)
-  // reader.readAsArrayBuffer(slice)
-  reader.onload = (e) => {
-    rawData = e.target.result;
-    console.log('rawData',rawData)
-    // const arrayBuffer = reader.result
-    // socket.emit(7001,arrayBuffer)
-    socket.emit(7001,rawData)
-  }
-  reader.readAsArrayBuffer(file.data)
+  const fileData = file.data
+  const stream = ss.createStream();
+  ss(socket).emit(7001,stream, {size : fileData.size})
+  ss.createBlobReadStream(fileData).pipe(stream)
+
+  const blobStream = ss.createBlobReadStream(fileData)
+  let size = 0;
+  blobStream.on('data', function(chunk) {
+    size += chunk.length;
+    console.log(Math.floor(size / fileData.size * 100) + '%');
+    // -> e.g. '42%'
+  });
+  blobStream.pipe(stream);
+  // const reader = new FileReader()
+  // reader.onload = (e) => {
+  //   console.log('rawData',e.target.result)
+  //   socket.emit(7001,e.target.result)
+  // }
+  // reader.readAsArrayBuffer(fileData)
 })
 
 socket.on(4000, (data) => {
   console.log('4000')
-  console.log(file)
   data = JSON.parse(data)
-  // if (data.name === file.name) {
-  //   const reader = new FileReader()
-  //   const slice = file.data.slice(0,100000)
-  //   reader.readAsArrayBuffer(slice)
-  //   reader.onload = () => {
-  //     const arrayBuffer = reader.result
-  //     socket.emit(7001,arrayBuffer)
-  //   }
-  // }
 })
 
 socket.on(7001,(data) => {
@@ -91,15 +87,14 @@ export default {
       console.log(e.target)
       const fileName = e.target.value
       const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
-        // 'path' : fileName.substr(0,fileName.lastIndexOf('\\')+1),
-      // const file = e.target.files[0],
+
       const fileData = {
         'path' : './',
         'name' : fileNameWithoutPath.split('.')[0],
         'ext' : fileNameWithoutPath.split('.')[1],
         'size' : e.target.files[0].size,
       }
-      file.data = e.target.files[0]
+      file.data = e.target.files[0];
       file.name = fileNameWithoutPath.split('.')[0]
       console.log('fileData', fileData)
       socket.emit(7000, JSON.stringify(fileData));
