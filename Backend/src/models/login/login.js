@@ -18,7 +18,8 @@ const addDevice = `update member \
                       set mem_registDevice=? \
                     where mem_id=?`;    
 
-
+const insertSocial = 'insert into member (mem_name, mem_email, mem_password, mem_image) \
+                      values(?,?,?,?)';
 
 module.exports = {
     socialCheckEmail,
@@ -26,5 +27,6 @@ module.exports = {
     checkDevice,
     insertDevice,
     logout,
-    addDevice
+    addDevice,
+    insertSocial
 }

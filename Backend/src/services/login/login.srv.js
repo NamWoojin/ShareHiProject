@@ -156,11 +156,20 @@ const social = async (req, res) => {
             callback(err);
           } else if (result.length == 0) {
             console.log('>>>> 소셜회원등록');
-            pool.query(LoginQuery.insertSocial, member, function (err, result) {
+            console.log('>>>> 비밀번호암호화');
+            let mem_password = member.mem_email;
+            bcrypt.hash(mem_password, 10, async function (err, hash) {
               if (err) {
                 callback(err);
               } else {
-                callback(null, member);
+                mem_password = hash;
+                pool.query(LoginQuery.insertSocial, [member.mem_name, member.mem_email, mem_password, member.mem_image], function (err, result) {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, member);
+                  }
+                });
               }
             });
           } else {
