@@ -412,43 +412,6 @@ io.on('connection', (socket) => {
   socket.on(KEY.RES_ADD_FOLDERS, (data) => {
     // 2003 - 폴더 추가에 대한 응답(ex 폴더 트리 다시 제공)
   });
-  ss.on(7000, (stream, data) => {
-    // 7000 파일 스텟 전송
-    if (!isJsonString(data)) {
-      io.to(socket.id).emit(
-        KEY.INVALID_JSON,
-        JSON.stringify({
-          status: 400,
-          detail: 'INVALID JSON',
-          message: 'BAD REQUEST',
-        })
-      );
-      return;
-    }
-    data = JSON.parse(data);
-    console.log(data);
-    if (!checkSocket(shareDevice)) {
-      // 4000 - 공유 디바이스 연결이 되어있지 않음.
-      io.to(socket.id).emit(
-        KEY.NOT_SHARE_DEVICE,
-        JSON.stringify({
-          status: 204,
-          message: 'NO SHARE DEVICE',
-        })
-      );
-      return;
-    }
-    idMap.get(shareDevice).write(
-      JSON.stringify({
-        namespace: KEY.SEND_FILE_STAT,
-        targetId: socketMap.get(socket),
-        path: data.path,
-        name: data.name,
-        size: data.size,
-        ext: data.ext,
-      }) + '\n'
-    );
-  });
   socket.on(KEY.SEND_FILE_STAT, (data) => {
     // 7000 파일 스텟 전송
     if (!isJsonString(data)) {
