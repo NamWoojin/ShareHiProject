@@ -492,6 +492,7 @@ io.on('connection', (socket) => {
   */
 
   socket.on(KEY.SEND_FILE, (data) => {
+    //console.log(data);
     // 7001 파일 전송
     if (!checkSocket(shareDevice)) {
       // 4000 - 공유 디바이스 연결이 되어있지 않음.
@@ -522,7 +523,7 @@ io.on('connection', (socket) => {
     );
 
     // 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
-
+    if (!data) return;
     idMap.get(shareData).write(data);
   });
 });
