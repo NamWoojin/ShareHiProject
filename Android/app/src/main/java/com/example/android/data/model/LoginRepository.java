@@ -1,6 +1,7 @@
 package com.example.android.data.model;
 
 import com.example.android.data.model.dto.Member;
+import com.example.android.data.model.dto.MemberRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -10,10 +11,10 @@ import retrofit2.http.Query;
 
 public interface LoginRepository {
     @POST("login/basic")
-    Call<Object> Login(@Body Member member);
+    Call<Object> Login(@Body MemberRequest member);
 
     @POST("login/social")
-    Call<Object> SocialLogin(@Body Member member);
+    Call<Object> SocialLogin(@Body MemberRequest member);
 
     @GET("login/logout")
     Call<Object> Logout(@Query("mem_id")int mem_id, @Query("dev_id")String dev_id);

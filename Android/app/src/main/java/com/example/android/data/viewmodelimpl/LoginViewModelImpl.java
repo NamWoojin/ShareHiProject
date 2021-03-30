@@ -16,6 +16,7 @@ import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
+import com.example.android.data.model.dto.MemberRequest;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.ui.main.MainActivity;
@@ -100,7 +101,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     @Override
     public void onRequestedSignIn() {
         loadingLiveData.setValue(true);
-        Member member  =new Member();
+        MemberRequest member  =new MemberRequest();
         member.setMem_email(emailLiveData.getValue());
         member.setMem_password(passwordLiveData.getValue());
         member.setAd_id(advertId);
@@ -211,11 +212,12 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
     //구글 로그인 정보로 사용자 정보 조회
     private void googleLogin(String name, String email, String image){
-        Member mem = new Member();
+        MemberRequest mem = new MemberRequest();
         mem.setMem_name(name);
         mem.setMem_email(email);
         mem.setMem_image(image);
         mem.setAd_id(advertId);
+        Log.i(TAG, "googleLogin: "+mem);
         APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(mem), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();

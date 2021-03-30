@@ -21,6 +21,7 @@ import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
+import com.example.android.data.model.dto.MemberRequest;
 import com.example.android.data.viewmodel.IntroViewModel;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -149,7 +150,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
     //일반 로그인
     private void login(String email, String password) {
-        Member member = new Member();
+        MemberRequest member = new MemberRequest();
         member.setMem_email(email);
         member.setMem_password(password);
         member.setAd_id(advertId);
@@ -198,7 +199,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     //구글 계정으로 사용자 정보 얻어오기
     private void googleLogin(String name, String email, String image){
         Log.i(TAG, "googleLogin: dddd"+advertId);
-        Member member = new Member();
+        MemberRequest member = new MemberRequest();
         member.setMem_name(name);
         member.setMem_email(email);
         member.setMem_image(image);

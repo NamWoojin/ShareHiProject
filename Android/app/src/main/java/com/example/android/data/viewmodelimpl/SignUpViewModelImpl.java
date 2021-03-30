@@ -17,6 +17,7 @@ import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.EmailAuth;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
+import com.example.android.data.model.dto.MemberRequest;
 import com.example.android.ui.main.MainActivity;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SignUpViewModel;
@@ -109,7 +110,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     @Override
     public void checkEmailDuplicate() {
         loadingLiveData.setValue(true);
-        APIRequest.request(RetrofitClient.getUserApiService().checkEmail(emailLiveData.getValue()), objectResponse -> {
+        APIRequest.request(RetrofitClient.getUserApiService().CheckEmail(emailLiveData.getValue()), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -149,7 +150,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //이메일 인증 Activity 열기
     private void onRenderCheckEmail() {
 //        이메일 인증 요청 보내기
-        APIRequest.request(RetrofitClient.getUserApiService().requireEmailAuth(new EmailAuth(emailLiveData.getValue())),
+        APIRequest.request(RetrofitClient.getUserApiService().RequireEmailAuth(new EmailAuth(emailLiveData.getValue())),
                 (objectResponse -> {
                     loadingLiveData.setValue(false);
                     Gson gson = new Gson();
@@ -186,7 +187,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     @Override
     public void checkEmailAuth() {
         loadingLiveData.setValue(true);
-        APIRequest.request(RetrofitClient.getUserApiService().checkEmailAuth(new EmailAuth(emailLiveData.getValue(), checkEmailLiveData.getValue())),
+        APIRequest.request(RetrofitClient.getUserApiService().CheckEmailAuth(new EmailAuth(emailLiveData.getValue(), checkEmailLiveData.getValue())),
                 (objectResponse -> {
                     loadingLiveData.setValue(false);
                     Gson gson = new Gson();
@@ -260,7 +261,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //로그인 시도
     @Override
     public void onRequestedSignIn() {
-        Member mem  =new Member();
+        MemberRequest mem  =new MemberRequest();
         mem.setMem_email(emailLiveData.getValue());
         mem.setMem_password(passwordLiveData.getValue());
         mem.setAd_id(advertId);
@@ -335,7 +336,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //회원가입 요청
     @Override
     public void onRequestedSignUp() {
-        Member mem  =new Member();
+        MemberRequest mem  =new MemberRequest();
         mem.setMem_name(nameLiveData.getValue());
         mem.setMem_email(emailLiveData.getValue());
         mem.setMem_password(passwordLiveData.getValue());
@@ -423,7 +424,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
 
     //구글 로그인 정보로 사용자 정보 조회
     private void googleLogin(String name, String email, String image){
-        Member mem  =new Member();
+        MemberRequest mem  =new MemberRequest();
         mem.setMem_name(name);
         mem.setMem_email(email);
         mem.setMem_image(image);

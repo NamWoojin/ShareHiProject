@@ -18,6 +18,7 @@ import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
+import com.example.android.data.model.dto.MemberPassword;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SettingViewModel;
 import com.example.android.ui.user.EditPasswordFragment;
@@ -26,6 +27,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
@@ -70,8 +74,8 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     @Override
     public void getMemberInformation() {
         memberInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
-        mem_id = memberInformation.getInt("mem_id",-1);
-        dev_id = memberInformation.getString("dev_id","");
+        mem_id = memberInformation.getInt("mem_id", -1);
+        dev_id = memberInformation.getString("dev_id", "");
         if (mem_id != -1) {
             getUser(mem_id);
         }
@@ -79,7 +83,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     //사용자 정보 조회
     private void getUser(int mem_id) {
-        APIRequest.request(RetrofitClient.getUserApiService().getUser(mem_id), objectResponse -> {
+        APIRequest.request(RetrofitClient.getUserApiService().GetUser(mem_id), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -104,7 +108,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                         memberNameLiveData.setValue(member.getMem_name());
                         memberEmailLiveData.setValue(member.getMem_email());
                         memberImgLiveData.setValue(member.getMem_image());
-                        CircleImageView userImageView = (CircleImageView)mActivityRef.get().findViewById(R.id.fragment_setting_image_imageView);
+                        CircleImageView userImageView = (CircleImageView) mActivityRef.get().findViewById(R.id.fragment_setting_image_imageView);
                         Glide.with(mActivityRef.get()).load(member.getMem_image()).into(userImageView);
                         break;
                     case "FAIL":
@@ -143,12 +147,12 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     //이미지 변경하기
     @Override
-    public void editImage(){
+    public void editImage() {
 
     }
 
     @Override
-    public void openEditPasswordDialog(){
+    public void openEditPasswordDialog() {
         currentPasswordLiveData.setValue("");
         newPasswordLiveData.setValue("");
         newCheckPasswordLiveData.setValue("");
@@ -157,12 +161,87 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     }
 
     @Override
-    public void editPassword(){
-        mEditPasswordFragment.dismiss();
+    public void editPassword() {
+        checkCurrentPassword();
+    }
+
+    private void checkCurrentPassword() {
+        MemberPassword memberPassword = new MemberPassword();
+        memberPassword.setMem_id(mem_id);
+        memberPassword.setMem_password(currentPasswordLiveData.getValue());
+        APIRequest.request(RetrofitClient.getUserApiService().CheckPassword(memberPassword), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
+
+            if (code >= 500) {
+                //서버 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 400) {
+                //클라이언트 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_404_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 300) {
+
+            } else if (code >= 200) {
+                //성공
+                Type listType = new TypeToken<APIResponse<Object>>() {
+                }.getType();
+                APIResponse<Object> res = gson.fromJson(body, listType);
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        updatePassword();
+                        break;
+                    case "FAIL":
+                        Toast.makeText(mActivityRef.get(), R.string.fragment_setting_edit_password_current_fail_text, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, throwable -> {
+            Log.e(TAG, "onRequestedSignIn: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void updatePassword() {
+        MemberPassword memberPassword = new MemberPassword();
+        memberPassword.setMem_id(mem_id);
+        memberPassword.setMem_password(newPasswordLiveData.getValue());
+        APIRequest.request(RetrofitClient.getUserApiService().UpdatePassword(memberPassword), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
+
+            if (code >= 500) {
+                //서버 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 400) {
+                //클라이언트 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_404_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 300) {
+
+            } else if (code >= 200) {
+                //성공
+                Type listType = new TypeToken<APIResponse<Object>>() {
+                }.getType();
+                APIResponse<Object> res = gson.fromJson(body, listType);
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        Toast.makeText(mActivityRef.get(), R.string.fragment_setting_edit_password_current_success_text, Toast.LENGTH_SHORT).show();
+                        mEditPasswordFragment.dismiss();
+                        break;
+                    case "FAIL":
+                        Toast.makeText(mActivityRef.get(), R.string.fragment_setting_edit_password_current_fail_text, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, throwable -> {
+            Log.e(TAG, "onRequestedSignIn: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
-    public void closeEditPasswordDialog(){
+    public void closeEditPasswordDialog() {
         mEditPasswordFragment.dismiss();
     }
 
@@ -174,7 +253,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         new AlertDialog.Builder(mActivityRef.get())
                 .setTitle(R.string.fragment_setting_sign_out_button_text).setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("로그아웃", (dialog, whichButton) -> {
-                    APIRequest.request(RetrofitClient.getLoginApiService().Logout(mem_id,dev_id), objectResponse -> {
+                    APIRequest.request(RetrofitClient.getLoginApiService().Logout(mem_id, dev_id), objectResponse -> {
                         Gson gson = new Gson();
                         int code = objectResponse.code();
                         String body = gson.toJson(objectResponse.body());
@@ -321,54 +400,67 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     public MutableLiveData<String> getMemberNameLiveData() {
         return memberNameLiveData;
     }
+
     @Override
     public void setMemberNameLiveData(MutableLiveData<String> memberNameLiveData) {
         this.memberNameLiveData = memberNameLiveData;
     }
+
     @Override
     public MutableLiveData<String> getMemberEmailLiveData() {
         return memberEmailLiveData;
     }
+
     @Override
     public void setMemberEmailLiveData(MutableLiveData<String> memberEmailLiveData) {
         this.memberEmailLiveData = memberEmailLiveData;
     }
+
     @Override
     public MutableLiveData<String> getCurrentPasswordLiveData() {
         return currentPasswordLiveData;
     }
+
     @Override
     public void setCurrentPasswordLiveData(MutableLiveData<String> currentPasswordLiveData) {
         this.currentPasswordLiveData = currentPasswordLiveData;
     }
+
     @Override
     public MutableLiveData<String> getNewPasswordLiveData() {
         return newPasswordLiveData;
     }
+
     @Override
     public void setNewPasswordLiveData(MutableLiveData<String> newPasswordLiveData) {
         this.newPasswordLiveData = newPasswordLiveData;
     }
+
     @Override
     public MutableLiveData<String> getNewCheckPasswordLiveData() {
         return newCheckPasswordLiveData;
     }
+
     @Override
     public void setNewCheckPasswordLiveData(MutableLiveData<String> newCheckPasswordLiveData) {
         this.newCheckPasswordLiveData = newCheckPasswordLiveData;
     }
+
     @Override
     public MutableLiveData<Boolean> getIsOKNewPassword() {
         return isOKNewPassword;
     }
+
     @Override
     public void setIsOKNewPassword(MutableLiveData<Boolean> isOKNewPassword) {
         this.isOKNewPassword = isOKNewPassword;
     }
+
     @Override
     public MutableLiveData<Boolean> getIsOKNewCheckPassword() {
         return isOKNewCheckPassword;
     }
+
     @Override
     public void setIsOKNewCheckPassword(MutableLiveData<Boolean> isOKNewCheckPassword) {
         this.isOKNewCheckPassword = isOKNewCheckPassword;
