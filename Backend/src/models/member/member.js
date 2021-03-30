@@ -1,7 +1,7 @@
 'use strict';
 
-const signup = 'insert into member \
-                   set ?';
+const signup = 'insert into member (mem_name, mem_email, mem_password) \
+                values (?, ?, ?)';
 const signout = 'delete from member \
                   where mem_id=?';
 const getUser = 'select mem_id, mem_name, mem_email, mem_registDevice, mem_image, mem_joinDate \

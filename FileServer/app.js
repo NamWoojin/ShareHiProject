@@ -449,6 +449,7 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
   });
+  /*
   ss(socket).on(7001, (stream, data) => {
     console.log(data);
     // 7001 파일 전송
@@ -480,15 +481,16 @@ io.on('connection', (socket) => {
       })
     );
 
-    /**
-     * 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
-     */
+    
+     안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
+     
     console.log('----stream----');
     console.log(stream);
     idMap.get(shareData).write(stream);
     stream.pipe();
-  });
-  /*
+});
+  */
+
   socket.on(KEY.SEND_FILE, (data) => {
     console.log(data);
     // 7001 파일 전송
@@ -520,12 +522,10 @@ io.on('connection', (socket) => {
       })
     );
 
-    
-     // 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
-     
+    // 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
+
     idMap.get(shareData).write(data);
   });
-  */
 });
 
 let getFilePercent = () => {

@@ -30,9 +30,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
 
 public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
@@ -92,13 +89,16 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         } else {
             //구글로그인이거나, 로그인 정보가 없는지 판단
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(mActivityRef.get());
-            checkAutoLoginLiveData.setValue(new Event<>(account != null));
+
             if(account != null) {
                 String name = account.getDisplayName();
                 String email = account.getEmail();
                 Uri imageUri = account.getPhotoUrl();
                 String image = imageUri != null ? imageUri.toString() : null;
                 googleLogin(name,email,image);
+            }
+            else{
+                checkAutoLoginLiveData.setValue(new Event<>(false));
             }
         }
     }
@@ -198,8 +198,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     private void saveMemberInfo(Member member) {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
-        String memberJson = new Gson().toJson(member);
-        editor.putString("member", memberJson);
+        editor.putInt("mem_id", member.getMem_id());
         editor.apply();
     }
 

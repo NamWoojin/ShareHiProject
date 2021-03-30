@@ -2,132 +2,233 @@
 
 const pool = require('../../config/db/db_connect');
 const FollowQuery = require('../../models/follow/follow');
+const async = require('async');
 
 const getFollower = async (req, res) => {
-    let memId = req.query.mem_id;
-    await pool.query(FollowQuery.getFollower, memId, function (err, result) {
-        if (err) {
-          res.status(500).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        } else if (result.length == 0) {
-          return res.status(200).json({
-            message: 'SUCCESS',
-            detail: 'NO FOLLOWER',
-            content: {},
-          });
-        } else
-          return res.status(200).json({
-            message: 'SUCCESS',
-            detail: '',
-            content: { member: result },
-          });
-      });
-    
-
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 나를 친구추가한사람 조회');
+        let memId = req.query.mem_id;
+        pool.query(FollowQuery.getFollower, memId, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: 'NO FOLLOWER',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: { member: result },
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
 };
 const getFollowing = async (req, res) => {
-    let targetMemId = req.query.target_mem_id;
-    await pool.query(FollowQuery.getFollowing, targetMemId, function (err, result) {
-        if (err) {
-          res.status(500).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        } else if (result.length == 0) {
-          return res.status(200).json({
-            message: 'SUCCESS',
-            detail: 'NO FOLLOWING',
-            content: {},
-          });
-        } else
-          return res.status(200).json({
-            message: 'SUCCESS',
-            detail: '',
-            content: { member: result },
-          });
-      });
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 내가친구추가한목록조회');
+        let targetMemId = req.query.target_mem_id;
+        pool.query(FollowQuery.getFollowing, targetMemId, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: 'NO FOLLOWING',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: { member: result },
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
 };
 const insertFollowing = async (req, res) => {
-    let follow = req.body;
-
-    await pool.query(FollowQuery.checkFollowing, [follow.mem_id, follow.target_mem_id], function (err, result) {
-        if (err) {
-            console.log(err);
-            res.status(500).json({
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 친구추가');
+        let follow = req.body;
+        pool.query(FollowQuery.checkFollowing, [follow.mem_id, follow.target_mem_id], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length != 0) {
+            callback(true, {
               message: 'FAIL',
-              detail: err,
+              detail: 'EXIST FOLLOW',
               content: {},
             });
-          } else if (result.length != 0) {
-              res.status(200).json({
-                message: 'FAIL',
-                detail: "EXIST FOLLOW",
-                content: {},
-              });
           } else {
-            pool.query(FollowQuery.insertFollowing, follow, function (err, result) {
-                if (err) {
-                  console.log(err);
-                  res.status(200).json({
-                    message: 'FAIL',
-                    detail: err,
-                    content: {},
-                  });
-                }
-                res.status(200).json({
-                  message: 'SUCCESS',
-                  detail: "",
-                  content: {},
-                });
-              });
+            callback(null, follow);
           }
-      });
+        });
+      },
+      function (follow, callback) {
+        pool.query(FollowQuery.insertFollowing, follow, function (err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
 };
 const deleteFollowing = async (req, res) => {
-    let memId = req.query.mem_id;
-    let targetMemId = req.query.target_mem_id;
-
-    await pool.query(FollowQuery.checkFollowing, [memId, targetMemId], function (err, result) {
-        if (err) {
-            console.log(err);
-            res.status(500).json({
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 친구삭제');
+        let memId = req.query.mem_id;
+        let targetMemId = req.query.target_mem_id;
+        pool.query(FollowQuery.checkFollowing, [memId, targetMemId], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
               message: 'FAIL',
-              detail: err,
+              detail: 'NOT FOUND FOLLOW',
               content: {},
             });
-          } else if (result.length == 0) {
-              res.status(200).json({
-                message: 'FAIL',
-                detail: "NOT FOUND FOLLOW",
-                content: {},
-              });
           } else {
-            pool.query(FollowQuery.deleteFollowing, [memId, targetMemId], function (err, result) {
-                if (err) {
-                  console.log(err);
-                  res.status(200).json({
-                    message: 'FAIL',
-                    detail: err,
-                    content: {},
-                  });
-                }
-                res.status(200).json({
-                  message: 'SUCCESS',
-                  detail: "",
-                  content: {},
-                });
-              });
+            callback(null, memId, targetMemId);
           }
-      });
-   
+        });
+      },
+      function (memId, targetMemId, callback) {
+        pool.query(FollowQuery.deleteFollowing, [memId, targetMemId], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'NOT FOUND FOLLOW',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
+};
+
+const searchMember = async (req, res) => {
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 친구검색');
+        let searchWord = "%" + req.query.searchWord + "%";
+        pool.query(FollowQuery.searchMember, [searchWord, searchWord], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'NOT FOUND MEMBER',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: { member: result },
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
 };
 module.exports = {
-    getFollower,
-    getFollowing,
-    insertFollowing,
-    deleteFollowing,
+  getFollower,
+  getFollowing,
+  insertFollowing,
+  deleteFollowing,
+  searchMember,
 };

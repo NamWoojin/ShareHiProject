@@ -18,11 +18,11 @@
               
             </div>
           </v-col>
-          <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0;">
-            <div style="display: flex; justify-content: space-between">
+          <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0; padding-top: 0; padding-bottom: 0;">
+            <div style="display: flex; justify-content: space-between" class="icon-container">
 
               <div>
-                This is node path
+                <span style="font-size: 1.5rem;">{{customPath}}</span>
               </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
@@ -63,27 +63,14 @@
                     <v-icon x-large color="black" style="margin-top: 5px !important">mdi-folder-edit-outline</v-icon>
                   </div>
                 </v-btn>
-                <!-- <v-btn class="navicon" disabled>
-                  <div style="width: 50px; height: 50px;">
-                    <p style="margin-top: 15px;">복사</p>
-                  </div>
-                </v-btn>
-                
-                <v-btn class="navicon" disabled>
-                  <div style="width: 50px; height: 50px;">
-                    <p style="margin-top: 15px;">잘라내기</p>
-                  </div>
-                </v-btn> -->
               </div>
-
-              
             </div>
           </v-col>
           <v-col
-            cols="2"
+            cols="3"
             style="border: 1px solid black; margin: 0;"
           >
-            <el-tree
+            <!-- <el-tree
               :data="data"
               
               :default-expanded-keys="[0]"
@@ -92,10 +79,37 @@
               @node-click="nodeClick"
               :key="componentKey"
             >
-            </el-tree>
+            </el-tree> -->
+            <v-treeview
+              v-model="tree"
+              :items="data"
+              item-children="directory"
+              open-on-click
+              hoverable
+              :open="initiallyOpen"
+              :key="componentKey"
+            >
+              <!-- <template v-slot:append="{ item }">
+                <span @click="selectFolder(item)">{{item.name}}</span>
+              </template> -->
+              <template v-slot:label="{ item }">
+                <span @click="selectFolder(item)">{{item.name}}</span>
+              </template>
+              <template v-slot:prepend="{ item, open }">
+                <v-icon @click="selectFolder(item)" v-if="item.type=='folder' && open && item.directory">
+                  mdi-folder-open
+                </v-icon>
+                <v-icon @click="selectFolder(item)" v-else-if="item.type=='folder'">
+                  mdi-folder
+                </v-icon>
+                <!-- <v-icon v-else>
+                  {{ files[item.file] }}
+                </v-icon> -->
+              </template>
+            </v-treeview>
           </v-col>
           <v-col 
-            cols="10"
+            cols="9"
             style="border: 1px solid black; border-left-style: none;"
             @contextmenu="openMenu($event)"
             @click="clickOuter"
@@ -164,10 +178,9 @@
   </div>
 </template>
 
+
 <script>
-
-
-
+/*eslint-disable*/
 export default {
   name: 'FileBrowser',
   data() {
@@ -194,6 +207,10 @@ export default {
       left: '0px',
       fileList: null,
       browsersize: false,
+      selection: [],
+      initiallyOpen: [0],
+      active: [],
+      tree: [],
     };
   },
   methods: {
@@ -322,6 +339,7 @@ export default {
         {
           name: name,
           // directory: [],
+          path: this.node.path + '\/' + name,
           type: 'folder'
         }
         )
@@ -374,6 +392,9 @@ export default {
     },
     downloadFile() {
       console.log('this is downloadFile')
+    },
+    selectFolder(i) {
+      this.node = i
     }
   },
   mounted() {
@@ -381,18 +402,24 @@ export default {
   },
   watch: {
     fileList: function () {
-      if (this.fileList) {
+      if (this.fileList && this.fileList.length > 0) {
         let cnt = 0;
         for(let i=0; i<this.fileList.length; i++) {
           if (this.checkFolder(this.fileList[i].name)) {
-            this.node.directory.push({
-              name: this.fileList[i].name
-            })
+            if (this.node.directory) {
+              this.node.directory.push({
+                name: this.fileList[i].name
+              })
+            } else {
+              this.node.directory = [{
+                name: this.fileList[i].name
+              }]
+            }
             cnt++
           } else {
             this.$message({
               type: 'info',
-              message: this.fileList[i].name + '은 이미 있는 파일입니다.'
+              message: this.fileList[i].name + '은 이미 존재하는 파일입니다.'
             })
           }
         }
@@ -406,64 +433,72 @@ export default {
       }
     }
   },
+  computed: {
+    customPath() {
+      if (this.node.path)
+      return this.node.path.split('\/').slice(3).join(' > ')
+      
+    }
+  },
   created() {
     this.data.push(
       {
         "name":"0",
-        // "path":"\/storage\/emulated\/0",
+        "path":"\/storage\/emulated\/0",
         "directory":[
           {
             "name":"Music",
-            // "path":"\/storage\/emulated\/0\/Music",
+            "path":"\/storage\/emulated\/0\/Music",
             "type":"folder"
           },
           {
             "name":"Podcasts",
-            // "path":"\/storage\/emulated\/0\/Podcasts",
+            "path":"\/storage\/emulated\/0\/Podcasts",
             "type":"folder"
           },
           {
             "name":"Ringtones",
-            // "path":"\/storage\/emulated\/0\/Ringtones",
+            "path":"\/storage\/emulated\/0\/Ringtones",
             "type":"folder"
           },
           {
             "name":"Alarms",
-            // "path":"\/storage\/emulated\/0\/Alarms",
+            "path":"\/storage\/emulated\/0\/Alarms",
             "type":"folder"
           },
           {
             "name":"Notifications",
-            // "path":"\/storage\/emulated\/0\/Notifications",
+            "path":"\/storage\/emulated\/0\/Notifications",
             "type":"folder"
           },
           {
             "name":"Pictures",
-            // "path":"\/storage\/emulated\/0\/Pictures",
+            "path":"\/storage\/emulated\/0\/Pictures",
             "type":"folder"
           },
           {
             "name":"Movies",
-            // "path":"\/storage\/emulated\/0\/Movies",
+            "path":"\/storage\/emulated\/0\/Movies",
             "type":"folder"
           },
           {
             "name":"Download",
-            // "path":"\/storage\/emulated\/0\/Download",
+            "path":"\/storage\/emulated\/0\/Download",
             "type":"folder"
           },
           {
             "name":"DCIM",
-            // "path":"\/storage\/emulated\/0\/DCIM",
+            "path":"\/storage\/emulated\/0\/DCIM",
             "type":"folder"
           },
           {
             "name":"Android",
-            // "path":"\/storage\/emulated\/0\/Android",
+            "path":"\/storage\/emulated\/0\/Android",
             "type":"folder"
           }
         ]
       })
+    this.data[0].type = 'folder'
     this.data[0].id = 0
   }
 };
@@ -517,7 +552,7 @@ export default {
     width: 50px !important;
     height: 50px !important;
     padding: 0;
-    margin: 0 10px;
+    
   }
 
   /* .navicon > .v-btn__content {
@@ -554,5 +589,13 @@ export default {
 
   .headercolor {
     background-color: palegoldenrod;
+  }
+
+  .icon-container >>> button {
+    transform: scale(0.7);
+  }
+
+  >>> .v-treeview-node__label {
+    text-align: left;
   }
 </style>

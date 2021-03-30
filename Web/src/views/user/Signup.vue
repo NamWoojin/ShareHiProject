@@ -241,8 +241,6 @@ export default {
         'authNum': this.authNum
       }, {})
         .then(res => {
-          console.log(res)
-          console.log(res.data)
           // if success : 
           if (res.data.message == 'SUCCESS') {
             this.emailCertification = true;
