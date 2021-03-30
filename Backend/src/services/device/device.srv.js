@@ -2,78 +2,155 @@
 
 const pool = require('../../config/db/db_connect');
 const DeviceQuery = require('../../models/device/device');
+const async = require('async');
 
 const getOnlineDevice = async (req, res) => {
-  let memId = req.query.mem_id;
-  await pool.query(DeviceQuery.getOnlineDevice, memId, function (err, result) {
-    if (err) {
-      return res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 온라인디바이스가져오기');
+        let memId = req.query.mem_id;
+        pool.query(DeviceQuery.getOnlineDevice, memId, function (err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: { device: result },
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
     }
-    return res.status(200).json({
-      message: 'SUCCESS',
-      detail: '',
-      content: { device: result },
-    });
-  });
+  );
 };
 const getOfflineDevice = async (req, res) => {
-    let memId = req.query.mem_id;
-    await pool.query(DeviceQuery.getOfflineDevice, memId, function (err, result) {
-        if (err) {
-          return res.status(500).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        }
-        return res.status(200).json({
-          message: 'SUCCESS',
-          detail: '',
-          content: { device: result },
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 오프라인디바이스가져오기');
+        let memId = req.query.mem_id;
+        pool.query(DeviceQuery.getOfflineDevice, memId, function (err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: { device: result },
+            });
+          }
         });
-      });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );  
 };
 const insertDevice = async (req, res) => {
-    let device = req.body;
-
-    await pool.query(checkDevice.checkDevice,[device.mem_id, device.dev_name, device.dev_type], function (err, result) {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        } else if (result.length == 0) {
-          pool.query(checkDevice.insertDevice, device, function (err, result) {
-            if (err) {
-              console.log(err);
-              return res.status(200).json({
-                message: 'FAIL',
-                detail: err,
-                content: {},
-              });
-            }
-            return res.status(200).json({
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 디바이스추가');
+        let device = req.body;
+        pool.query(checkDevice.checkDevice,[device.mem_id, device.dev_name, device.dev_type], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(null, device);
+          }else {
+            callback(true,{
+              message: 'FAIL',
+              detail: 'DUPLICATE DEV_NAME',
+              content: {},
+            });
+          }
+        });
+      },
+      function(device, callback) {
+        pool.query(checkDevice.insertDevice, device, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
               message: 'SUCCESS',
               detail: '',
               content: {},
             });
-          });
-        } else {
-            return res.status(200).json({
-            message: 'FAIL',
-            detail: 'DUPLICATE DEV_NAME',
-            content: {},
-          });
-        }
-    });
+          }
+        });
+      }
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );  
 };
-const deletetDevice = async (req, res) => {};
+const deletetDevice = async (req, res) => {
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 디바이스삭제');
+        let devId = req.query.dev_id;
+        pool.query(DeviceQuery.deletetDevice, devId, function (err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );  
+};
 const checkDevice = async (req, res) => {};
 const updateStatus = async (req, res) => {};
 
