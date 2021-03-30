@@ -4,11 +4,11 @@ const pool = require('../../config/db/db_connect');
 const ShareQuery = require('../../models/device/device');
 const async = require('async');
 
-const getOnlineDevice = async (req, res) => {
+const insertShareInfo = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 온라인디바이스가져오기');
+        console.log('>>>> 파일공유정보입력');
         let memId = req.query.mem_id;
         pool.query(ShareQuery.getOnlineDevice, memId, function (err, result) {
           if (err) {
@@ -40,6 +40,6 @@ const getOnlineDevice = async (req, res) => {
 
 
 module.exports = {
-  getOnlineDevice,
+    insertShareInfo,
 
 };
