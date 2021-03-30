@@ -13,6 +13,7 @@ const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
 //////////////// socket map system /////////////
+let flag = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
   this.id = id;
   this.name = name;
@@ -22,6 +23,8 @@ function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, t
   this.fileSender = fileSender;
   this.fileReceiver = fileReceiver;
   this.targetId = targetId;
+  this.size = 0;
+  this.flag = 0;
 }
 let sockets = [];
 
@@ -39,6 +42,15 @@ let andServer = net.createServer((socket) => {
   registSocket(socket, 'android');
   responseOK(socket, 'android');
   printSocket();
+
+  /**
+   * @type Android
+   * @Init 파일 전송인지, JSON 제어인지 확인한다
+   * @description 서버의 flag를 본다
+   */
+  if (flag === 1) {
+    setFileReceiver(socket);
+  }
 
   /**
    * Android
@@ -66,6 +78,11 @@ let andServer = net.createServer((socket) => {
    */
 
   socket.on('data', (data) => {
+    /**
+     * @type Android
+     * @description 데이터 전송 socket인지 구분한다.
+     */
+
     /**
      * Android
      * 4001
@@ -177,8 +194,8 @@ let andServer = net.createServer((socket) => {
        * 메시지 :{"namespace":2001,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
        */
       case KEY.UPDATE_NAME_OF_FOLDER:
-        let targetSocket = getTargetSocket(socket);
-        targetSocket.write(
+        let targetSocket2 = getTargetSocket(socket);
+        targetSocket2.write(
           JSON.stringify({
             namespace: 2101,
             targetId: getId(socket),
@@ -195,8 +212,8 @@ let andServer = net.createServer((socket) => {
        * 메시지 :{"namespace":2002,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
        */
       case KEY.DELETE_FOLDERS:
-        let targetSocket = getTargetSocket(socket);
-        targetSocket.write(
+        let targetSocket3 = getTargetSocket(socket);
+        targetSocket3.write(
           JSON.stringify({
             namespace: 2102,
             targetId: getId(socket),
@@ -212,8 +229,8 @@ let andServer = net.createServer((socket) => {
        * 메시지 :{"namespace":2002,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
        */
       case KEY.ADD_FOLDERS:
-        let targetSocket = getTargetSocket(socket);
-        targetSocket.write(
+        let targetSocket4 = getTargetSocket(socket);
+        targetSocket4.write(
           JSON.stringify({
             namespace: 2103,
             targetId: getId(socket),
@@ -259,8 +276,8 @@ andServer.listen(9003, () => {
 io.on('connection', (socket) => {
   /**
    * Web
-   * 연결된 직후 수행되는 코드
-   * 설명 : 소켓을 등록하고, 연결이 잘 되었다는 메시지를 클라이언트로 전송한다
+   * 요청이 성공할 때 수행되는 코드
+   * 설명 : 요청에 대한 성공 응답
    * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
    */
   console.log('Success Web Connect');
@@ -282,10 +299,11 @@ io.on('connection', (socket) => {
    * Web
    * 1050
    * 설명 : 내 디바이스를 제외한 공유중인 모든 디바이스들의 정보를 클라이언트에게 제공한다
-   * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
+   * 메시지 : {"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
    */
-  socket.on(1050, (data) => {
+  socket.on(1050, () => {
     let val = getShareDevices(socket);
+    console.log(val);
     socket.emit(
       1050,
       JSON.stringify({
@@ -319,8 +337,7 @@ io.on('connection', (socket) => {
   socket.on(1070, (data) => {
     data = JSON.parse(data);
     connectToShareDevice(socket, data.id);
-    //responseOK(socket);
-    socket.emit(1111);
+    socket.emit();
   });
 
   /**
@@ -431,36 +448,35 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
   });
+
+  /**
+   * @type Web
+   * @namespace 7000
+   * @param {path, name, ext, size} : 저장할 안드로이드 스토리지 경로, 파일 이름, 파일 확장자, 파일 총 사이즈
+   * @description 파일 전송을 실시한다
+   * @data
+   */
   socket.on(KEY.SEND_FILE_STAT, (data) => {
-    // 7000 파일 스텟 전송
     if (!isJsonString(data)) {
-      io.to(socket.id).emit(
-        KEY.INVALID_JSON,
-        JSON.stringify({
-          status: 400,
-          detail: 'INVALID JSON',
-          message: 'BAD REQUEST',
-        })
-      );
+      responseBad(socket, 'web');
       return;
     }
     data = JSON.parse(data);
-    console.log(data);
-    if (!checkSocket(shareDevice)) {
-      // 4000 - 공유 디바이스 연결이 되어있지 않음.
-      io.to(socket.id).emit(
-        KEY.NOT_SHARE_DEVICE,
-        JSON.stringify({
-          status: 204,
-          message: 'NO SHARE DEVICE',
-        })
-      );
+    if (!checkSocket(getId(getTargetSocket(socket)))) {
+      responseBad(socket, 'web');
       return;
     }
-    idMap.get(shareDevice).write(
+
+    /**
+     * 파일 전송 전처리 작업
+     */
+    setSocketFlag(socket);
+
+    let targetSocket = getTargetSocket(socket);
+    targetSocket.write(
       JSON.stringify({
-        namespace: KEY.SEND_FILE_STAT,
-        targetId: socketMap.get(socket),
+        namespace: 7100,
+        targetId: getId(socket),
         path: data.path,
         name: data.name,
         size: data.size,
@@ -697,5 +713,29 @@ let getSocket = (id, data) => {
         data: data,
       })
     );
+  }
+};
+
+let setSocketFlag = (socket) => {
+  flag = 1;
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      sockets[i]['flag'] = 1;
+      sockets[i]['fileSender'] = sockets[i]['id'];
+      return;
+    }
+  }
+};
+
+let setFileReceiver = (socket) => {
+  flag = 0;
+
+  let id = getId(socket);
+
+  for (let i in sockets) {
+    if (sockets[i]['flag'] === 1) {
+      sockets[i]['flag'] = 0;
+      sockets[i]['fileReceiver'] = id;
+    }
   }
 };

@@ -9,16 +9,82 @@
   <body>
     <h1>웹 테스트</h1>
 
+    <!--
+      소켓 연결 버튼
+    -->
     <input type="button" value="소켓 연결하기" id="connect" />
     <div id="connect-div"></div>
+    <br />
+    <!--
+      소켓 연결 끊기 버튼
+    -->
+    <input type="button" value="소켓 연결 끊기" id="disconnect" />
+    <div id="disconnect-div"></div>
+    <br />
+    <!--
+      내 디바이스를 제외한 공유중인 모든 디바이스들의 정보를 클라이언트에게 제공한다
+    -->
+    <input type="button" value="나를 제외한 모든 디바이스 정보 출력" id="info" />
+    <div id="info-div"></div>
+    <br />
   </body>
 
-  <script src="/socket.io/socket.io.js"></script>
+  <script
+    src="https://cdn.socket.io/3.1.3/socket.io.min.js"
+    integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
+    crossorigin="anonymous"
+  ></script>
   <script>
-    var socket = io();
+    var socket = io('http://localhost:9002', { transports: ['websocket'] });
 
+    /**
+     * 소켓 연결 버튼
+     */
     let btn = document.querySelector('#connect');
-
-    btn.addEventListener('click', (e) => {});
+    let btnDiv = document.querySelector('#connect-div');
+    btn.addEventListener('click', (e) => {
+      socket = io('http://localhost:9002', { transports: ['websocket'] });
+      btnDiv.innerHTML = 'hello';
+    });
+    /**
+     * 소켓 연결 끊기 버튼
+     */
+    let btn2 = document.querySelector('#disconnect');
+    let btnDiv2 = document.querySelector('#disconnect-div');
+    btn2.addEventListener('click', (e) => {
+      socket.close();
+      btnDiv2.innerHTML = 'hello';
+    });
+    /**
+     * Web
+     * 버튼
+     * 설명 : 내 디바이스를 제외한 공유중인 모든 디바이스들의 정보를 클라이언트에게 제공한다
+     */
+    let btn3 = document.querySelector('#info');
+    let btnDiv3 = document.querySelector('#info-div');
+    btn3.addEventListener('click', (e) => {
+      socket.emit(1050);
+      btnDiv3.innerHTML = 'hello';
+    });
+    /**
+     * Web
+     * 요청이 성공할 때 수행되는 코드
+     * 설명 : 요청에 대한 성공 응답
+     * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
+     */
+    socket.on(1010, (data) => {
+      console.log(1010);
+      console.log(data);
+    });
+    /**
+     * Web
+     * 1050
+     * 설명 : 내 디바이스를 제외한 공유중인 모든 디바이스들의 정보를 클라이언트에게 제공한다
+     * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
+     */
+    socket.on(1050, (data) => {
+      console.log(1010);
+      console.log(data);
+    });
   </script>
 </html>

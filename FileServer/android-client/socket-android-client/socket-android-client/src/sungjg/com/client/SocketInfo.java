@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.Scanner;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -204,7 +203,7 @@ public class SocketInfo {
 						/**
 						 * LOGIC
 						 */
-					case 7000: // 파일 스텟 확인
+					case 7100: // 파일 스텟 확인
 
 						/**
 						 * TODO 파일 스텟 로직
@@ -224,7 +223,7 @@ public class SocketInfo {
 							jobj.addProperty("status", "400"); // or 403 FORBIDDEN
 							jobj.addProperty("message", "BAD REQUEST");
 							jobj.addProperty("detail", "");
-							jobj.addProperty("content", "");
+							jobj.addProperty("content", "이미 파일이 있습니다.");
 							json = gson.toJson(jobj);
 							write(json);
 							break;
@@ -241,9 +240,9 @@ public class SocketInfo {
 							fs = new FileStat(name, path, ext, size, tmpfileSize);
 							// 새로운 TCP 연결 시도
 							targetId = element.getAsJsonObject().get("targetId").getAsString();
-							SocketData sd = new SocketData(fs);
-							sd.connect();
 						}
+						SocketData sd = new SocketData(fs);
+						sd.connect();
 					case 7001: // 파일 전송
 
 						/**
