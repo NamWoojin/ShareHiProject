@@ -180,6 +180,9 @@
 
 
 <script>
+// import io from 'socket.io-client'
+
+
 /*eslint-disable*/
 export default {
   name: 'FileBrowser',
@@ -441,6 +444,15 @@ export default {
     }
   },
   created() {
+    this.$socket.emit(2000, JSON.stringify({
+      path: 'root'
+    }))
+    this.$socket.on(2000, (data) => {
+      data = JSON.parse(data)
+      console.log(data.data)
+    })
+    
+
     this.data.push(
       {
         "name":"0",

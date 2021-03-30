@@ -6,6 +6,11 @@ import './plugins/element.js'
 import vuetify from './plugins/vuetify';
 import VueFullPage from 'vue-fullpage.js'
 
+import io from 'socket.io-client'
+const socket = io('http://192.168.0.2:9002')
+
+Vue.prototype.$socket = socket;
+
 Vue.use(VueFullPage);
 
 Vue.config.productionTip = false
