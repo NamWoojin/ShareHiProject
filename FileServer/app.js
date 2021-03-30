@@ -483,7 +483,10 @@ io.on('connection', (socket) => {
     /**
      * 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
      */
+    console.log('----stream----');
+    console.log(stream);
     idMap.get(shareData).write(stream);
+    stream.pipe();
   });
   /*
   socket.on(KEY.SEND_FILE, (data) => {
