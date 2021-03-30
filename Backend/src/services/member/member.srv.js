@@ -6,6 +6,8 @@ const transport = require('../../util/mail/mail.transport');
 const redis = require('../../config/redis/redis.emailAuth');
 const bcrypt = require('bcrypt');
 const async = require('async');
+// const multer = require('../../util/multer/multer');
+const multer = require('multer');
 
 const signup = async (req, res) => {
   async.waterfall(
@@ -414,6 +416,75 @@ const checkEmailAuth = async (req, res) => {
   );
 };
 
+const upload = async(req, res) => {
+  // async.waterfall([
+  //   function(callback) {
+  //     console.log('>>>> 프로필이미지업로드');
+  //     multer.upload(req, res, (file) => {
+  //       console.log(file);
+  //       if (err) {
+  //         callback(err);
+  //       } else {
+  //         callback(true, {
+  //           message: 'SUCCESS',
+  //           detail: '',
+  //           content: { device: result },
+  //         });
+  //       }
+  //     });
+  //   }
+  // ], function(err, data) {
+  //   if (!data) {
+  //     console.log(err);
+  //     return res.status(500).json({
+  //       message: 'FAIL',
+  //       detail: err,
+  //       content: {},
+  //     });
+  //   } else {
+  //     res.status(200).json(data);
+  //   }
+  // })
+
+  async.waterfall([
+    function(callback) {
+      console.log(">>> upload")
+      var storage = multer.diskStorage({
+        // 서버에 저장할 폴더
+        destination: function (req, file, cb) {
+          cb(null, './volumese/profile/');
+        },
+    
+        // 서버에 저장할 파일 명
+        filename: function (req, file, cb) {
+          console.log(file);
+          file.uploadedFile = {
+            name: req.params.filename,
+            ext: file.mimetype.split('/')[1]
+          };
+          cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
+        }
+      });
+      callback(null, storage);
+    },
+    function(storage, callback) {
+      multer({
+        storage: storage
+      }).single('myfile');
+    }
+  ], function(err, data) {
+    if (!data) {
+      console.log(err);
+      return res.status(500).json({
+        message: 'FAIL',
+        detail: err,
+        content: {},
+      });
+    } else {
+      res.status(200).json(data);
+    }
+  })
+}
 module.exports = {
   signup,
   signout,
@@ -424,4 +495,5 @@ module.exports = {
   requireEmailAuth,
   checkEmailAuth,
   checkPassword,
+  upload
 };
