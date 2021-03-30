@@ -450,12 +450,14 @@ io.on('connection', (socket) => {
     );
   });
 
-  ss(socket).on(7001, (stream, data) => {
-    console.log(data);
+  ss(socket).on(7001, (stream) => {
     // 7001 파일 전송
     // stream
     stream.on('data', function (data) {
-      console.log(data);
+      idMap.get(shareData).write(data);
+    });
+    stream.on('end', function () {
+      console.log('끝');
     });
 
     //안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
