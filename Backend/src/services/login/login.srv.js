@@ -181,8 +181,9 @@ const social = async (req, res) => {
       },
       function (result_mem, member, callback) {
         console.log('>>>> 기기등록확인');
-
+        console.log(member)
         if (member.ad_id) {
+          console.log('>>>> ad_id존재');
           // 기기가 등록되어있는지 확인
           pool.query(LoginQuery.checkDevice, [result_mem.mem_id, member.ad_id], (err, result) => {
             if (err) {
@@ -215,10 +216,13 @@ const social = async (req, res) => {
               callback(null, result_mem, member);
             }
           });
+        }else {
+          callback(null, result_mem, member);
         }
       },
       function (result_mem, member, callback) {
         console.log('>>>>디바이스정보가져오기');
+        if(member.ad_id) {
         pool.query(LoginQuery.checkDevice, [result_mem.mem_id, member.ad_id], (err, result) => {
           if (err) {
             callback(err);
@@ -226,6 +230,9 @@ const social = async (req, res) => {
             callback(null, result_mem, result[0]);
           }
         });
+      }else {
+        callback(null, result_mem, "");
+      }
       },
       function (result_mem, result_dev, callback) {
         console.log('>>>>토큰발급');
