@@ -14,21 +14,23 @@ import com.example.android.R;
 import com.example.android.data.connection.APIRequest;
 import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.dto.APIResponse;
-import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
-import com.example.android.data.model.dto.User;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.ui.main.MainActivity;
 import com.example.android.ui.user.SignupActivity;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
@@ -39,6 +41,8 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private static final int REQ_CODE_GOOGLE_SIGN_IN = 2;
 
     private WeakReference<Activity> mActivityRef;
+
+    private String advertId = null;
 
     //LiveData
     private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
@@ -57,6 +61,34 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         mActivityRef = new WeakReference<>(parentContext);
     }
 
+    @Override
+    public void getAdID(){
+        getadid.start();
+    }
+
+    private Thread getadid = new Thread(){
+        @Override
+        public void run() {
+            super.run();
+            AdvertisingIdClient.Info idInfo = null;
+            try {
+                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(mActivityRef.get().getApplicationContext());
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try{
+                advertId = idInfo.getId();
+                Log.i("TAG", "run: "+advertId);
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+    };
+
 
     //GoogleLoginExecutor지정
     @Override
@@ -68,7 +100,11 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     @Override
     public void onRequestedSignIn() {
         loadingLiveData.setValue(true);
-        APIRequest.request(RetrofitClient.getLoginApiService().Login(new User(emailLiveData.getValue(), passwordLiveData.getValue())), objectResponse -> {
+        Member member  =new Member();
+        member.setMem_email(emailLiveData.getValue());
+        member.setMem_password(passwordLiveData.getValue());
+        member.setAd_id(advertId);
+        APIRequest.request(RetrofitClient.getLoginApiService().Login(member), objectResponse -> {
             loadingLiveData.setValue(false);
             Gson gson = new Gson();
             int code = objectResponse.code();
@@ -91,9 +127,9 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                         //로그인 성공
                         Toast.makeText(mActivityRef.get(), R.string.toast_login_success_message, Toast.LENGTH_SHORT).show();
                         String token = res.getContent().getToken();
-                        Member member = res.getContent().getMember();
+                        Member mem = res.getContent().getMember();
                         Log.i(TAG, "onRequestedSignIn: " + res.getContent().getToken());
-                        saveMemberInfo(member);
+                        saveMemberInfo(mem);
                         saveLoginToken(token);
                         saveAutoLoginInfo();
                         updateUI();
@@ -116,6 +152,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
         editor.putInt("mem_id", member.getMem_id());
+        editor.putString("dev_id",member.getDev_id());
         editor.apply();
     }
 
@@ -131,7 +168,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private void saveAutoLoginInfo() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = loginInformation.edit();
-        editor.putBoolean("basicLogin", true);
+        editor.putString("login","basic");
         editor.putString("email", emailLiveData.getValue());
         editor.putString("password", passwordLiveData.getValue());
         editor.apply();
@@ -174,11 +211,12 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
     //구글 로그인 정보로 사용자 정보 조회
     private void googleLogin(String name, String email, String image){
-        User user = new User();
-        user.setMem_name(name);
-        user.setMem_email(email);
-        user.setMem_image(image);
-        APIRequest.request(RetrofitClient.getLoginApiService().socialLogin(user), objectResponse -> {
+        Member mem = new Member();
+        mem.setMem_name(name);
+        mem.setMem_email(email);
+        mem.setMem_image(image);
+        mem.setAd_id(advertId);
+        APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(mem), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -221,7 +259,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private void saveGoogleLoginInfo() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = loginInformation.edit();
-        editor.putBoolean("basicLogin", false);
+        editor.putString("login", "google");
         editor.apply();
     }
 

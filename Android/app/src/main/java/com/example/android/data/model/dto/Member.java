@@ -1,20 +1,47 @@
 package com.example.android.data.model.dto;
 
-public class Member {
-    private int mem_id;
-    private String mem_name;
-    private String mem_email;
-    private int mem_registDevice;
-    private String mem_image;
-    private String mem_joinDate;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Member(int mem_id, String mem_name, String mem_email, int mem_registDevice, String mem_image, String mem_joinDate) {
+public class Member {
+    @Expose
+    @SerializedName("mem_id")
+    private int mem_id;
+    @Expose
+    @SerializedName("mem_name")
+    private String mem_name;
+    @Expose
+    @SerializedName("mem_email")
+    private String mem_email;
+    @Expose
+    @SerializedName("mem_password")
+    private String mem_password;
+    @Expose
+    @SerializedName("mem_registDevice")
+    private int mem_registDevice;
+    @Expose
+    @SerializedName("mem_image")
+    private String mem_image;
+    @Expose
+    @SerializedName("mem_joinDate")
+    private String mem_joinDate;
+    @Expose
+    @SerializedName("ad_id")
+    private String ad_id;
+    @Expose
+    @SerializedName("dev_id")
+    private String dev_id;
+
+    public Member(int mem_id, String mem_name, String mem_email, String mem_password, int mem_registDevice, String mem_image, String mem_joinDate, String ad_id, String dev_id) {
         this.mem_id = mem_id;
         this.mem_name = mem_name;
         this.mem_email = mem_email;
+        this.mem_password = mem_password;
         this.mem_registDevice = mem_registDevice;
         this.mem_image = mem_image;
         this.mem_joinDate = mem_joinDate;
+        this.ad_id = ad_id;
+        this.dev_id = dev_id;
     }
 
     public Member() {
@@ -68,15 +95,42 @@ public class Member {
         this.mem_joinDate = mem_joinDate;
     }
 
+    public String getDev_id() {
+        return dev_id;
+    }
+
+    public void setDev_id(String dev_id) {
+        this.dev_id = dev_id;
+    }
+
+    public String getMem_password() {
+        return mem_password;
+    }
+
+    public void setMem_password(String mem_password) {
+        this.mem_password = mem_password;
+    }
+
+    public String getAd_id() {
+        return ad_id;
+    }
+
+    public void setAd_id(String ad_id) {
+        this.ad_id = ad_id;
+    }
+
     @Override
     public String toString() {
         return "Member{" +
                 "mem_id=" + mem_id +
                 ", mem_name='" + mem_name + '\'' +
                 ", mem_email='" + mem_email + '\'' +
+                ", mem_password='" + mem_password + '\'' +
                 ", mem_registDevice=" + mem_registDevice +
                 ", mem_image='" + mem_image + '\'' +
                 ", mem_joinDate='" + mem_joinDate + '\'' +
+                ", ad_id='" + ad_id + '\'' +
+                ", dev_id='" + dev_id + '\'' +
                 '}';
     }
 }

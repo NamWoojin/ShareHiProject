@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         //ViewModel 요청
         mLoginViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(LoginViewModelImpl.class);
         mLoginViewModel.setParentContext(this);
+        mLoginViewModel.getAdID();
 
         //observe 등록
         mLoginViewModel.getEmailLivedata().observe(this, s -> canLogin());

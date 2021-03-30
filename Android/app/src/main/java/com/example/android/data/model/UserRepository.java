@@ -1,20 +1,19 @@
 package com.example.android.data.model;
 
 import com.example.android.data.model.dto.EmailAuth;
-import com.example.android.data.model.dto.User;
+import com.example.android.data.model.dto.Member;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface UserRepository {
     //회원가입
     @POST("member/signup")
-    Call<Object> SignUp(@Body User user);
+    Call<Object> SignUp(@Body Member member);
 
     //회원탈퇴
     @DELETE("member/signout")

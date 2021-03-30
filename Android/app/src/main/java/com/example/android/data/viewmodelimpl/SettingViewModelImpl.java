@@ -2,7 +2,6 @@ package com.example.android.data.viewmodelimpl;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -19,10 +18,8 @@ import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
-import com.example.android.data.model.dto.User;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SettingViewModel;
-import com.example.android.ui.user.EditNameFragment;
 import com.example.android.ui.user.EditPasswordFragment;
 import com.example.android.ui.user.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,7 +31,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.http.POST;
 
 public class SettingViewModelImpl extends ViewModel implements SettingViewModel {
 
@@ -46,6 +42,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     //LiveData
     private int mem_id;
+    private String dev_id;
     private MutableLiveData<String> memberNameLiveData = new MutableLiveData<>();
     private MutableLiveData<String> memberImgLiveData = new MutableLiveData<>();
     private MutableLiveData<String> memberEmailLiveData = new MutableLiveData<>();
@@ -74,6 +71,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     public void getMemberInformation() {
         memberInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         mem_id = memberInformation.getInt("mem_id",-1);
+        dev_id = memberInformation.getString("dev_id","");
         if (mem_id != -1) {
             getUser(mem_id);
         }
@@ -176,20 +174,53 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         new AlertDialog.Builder(mActivityRef.get())
                 .setTitle(R.string.fragment_setting_sign_out_button_text).setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("로그아웃", (dialog, whichButton) -> {
-                    if (isBagicLogin) {
-                        //기본 로그인인지 판단
-                        removeUserInformation();
-                        goLoginActivity();
-                    } else {
-                        //구글 로그인
-                        mGoogleLoginExecutor.getGoogleSignInClient().signOut().addOnCompleteListener(mActivityRef.get(), new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                removeUserInformation();
-                                goLoginActivity();
+                    APIRequest.request(RetrofitClient.getLoginApiService().Logout(mem_id,dev_id), objectResponse -> {
+                        Gson gson = new Gson();
+                        int code = objectResponse.code();
+                        String body = gson.toJson(objectResponse.body());
+
+                        if (code >= 500) {
+                            //서버 에러
+                            Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+                        } else if (code >= 400) {
+                            //클라이언트 에러
+                            Toast.makeText(mActivityRef.get(), R.string.toast_404_fail_message, Toast.LENGTH_SHORT).show();
+                        } else if (code >= 300) {
+
+                        } else if (code >= 200) {
+                            //성공
+                            Type listType = new TypeToken<APIResponse<Object>>() {
+                            }.getType();
+                            APIResponse<Object> res = gson.fromJson(body, listType);
+                            switch (res.getMessage()) {
+                                case "SUCCESS":
+                                    //로그아웃 성공
+                                    if (isBagicLogin) {
+                                        //기본 로그인인지 판단
+                                        removeUserInformation();
+                                        goLoginActivity();
+                                    } else {
+                                        //구글 로그인
+                                        mGoogleLoginExecutor.getGoogleSignInClient().signOut().addOnCompleteListener(mActivityRef.get(), new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                removeUserInformation();
+                                                goLoginActivity();
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case "FAIL":
+                                    //회원탈퇴 실패
+                                    Toast.makeText(mActivityRef.get(), R.string.toast_setting_user_delete_fail_message, Toast.LENGTH_SHORT).show();
+                                    break;
                             }
-                        });
-                    }
+                        }
+                    }, throwable -> {
+                        Log.e(TAG, "onRequestedSignIn: " + throwable);
+                        Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+                    });
+
                 })
                 .setNegativeButton("취소", (dialog, whichButton) -> {
 

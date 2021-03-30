@@ -13,7 +13,11 @@ import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.IntroViewModel;
 import com.example.android.data.viewmodelimpl.IntroViewModelImpl;
 import com.example.android.ui.user.LoginActivity;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
+import java.io.IOException;
 import java.util.UUID;
 
 public class IntroActivity extends AppCompatActivity {
@@ -29,24 +33,10 @@ public class IntroActivity extends AppCompatActivity {
 
         mIntroViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(IntroViewModelImpl.class);
         mIntroViewModel.setParentContext(this);
-        mIntroViewModel.getPermissionAndLogin();
+        mIntroViewModel.getAdID();
+//        mIntroViewModel.getPermissionAndLogin();
         mIntroViewModel.getCheckAutoLoginLiveData().observe(this,this::setHandler);
-
-        String useruuid = null;
-        useruuid = UUID.randomUUID().toString();
-        Log.i(TAG, "onCreate: "+useruuid);
     }
-
-//    private String GetDevicesUUID(Context mContext){
-//        final TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-//        final String tmDevice, tmSerial, androidId;
-//        tmDevice = "" + tm.getDeviceId();
-//        tmSerial = "" + tm.getSimSerialNumber();
-//        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-//        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-//        String deviceId = deviceUuid.toString();
-//        return deviceId;
-//    }
 
     
     //권한 허용에 대한 결과 전달

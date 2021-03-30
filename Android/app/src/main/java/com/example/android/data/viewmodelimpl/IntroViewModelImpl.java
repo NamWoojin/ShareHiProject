@@ -21,13 +21,16 @@ import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
-import com.example.android.data.model.dto.User;
 import com.example.android.data.viewmodel.IntroViewModel;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
@@ -36,6 +39,8 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     private final int WRITE_EXTERNAL_STORAGE = 1;
 
     private static final String TAG = "IntroViewModelImpl";
+
+    private String advertId = null;
 
     private WeakReference<Activity> mActivityRef;
 
@@ -46,9 +51,46 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     public void setParentContext(Activity parentContext) {
         mActivityRef = new WeakReference<>(parentContext);
     }
-
     @Override
-    public void getPermissionAndLogin() {
+    public void getAdID(){
+        getadid.start();
+    }
+
+    private Thread getadid = new Thread(){
+        @Override
+        public void run() {
+            super.run();
+            AdvertisingIdClient.Info idInfo = null;
+            try {
+                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(mActivityRef.get().getApplicationContext());
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try{
+                advertId = idInfo.getId();
+                Log.i("TAG", "run: "+advertId);
+                mActivityRef.get().runOnUiThread(() -> {    //현재 스레드가 UI스레드가 아니니 UI스레드에서 실행하도록 runOnUiThread설정
+                    // TODO.
+                    getPermissionAndLogin();
+                }) ;
+
+            }catch (NullPointerException e){
+                e.printStackTrace();
+                mActivityRef.get().runOnUiThread(() -> {
+                    // TODO.
+                    getPermissionAndLogin();
+                }) ;
+
+            }
+        }
+    };
+
+
+    private void getPermissionAndLogin() {
         if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //파일 접근 권한 허용되지 않았을 때
             //권한 요청
@@ -80,13 +122,13 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     //자동로그인 판단
     private void startIntro() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
-        Boolean isBagicLogin = loginInformation.getBoolean("basicLogin", false);
+        String login =  loginInformation.getString("login", "none");
         //기본 로그인인지 판단
-        if (isBagicLogin) {
+        if (login.equals("basic")) {
             String email = loginInformation.getString("email", "");
             String password = loginInformation.getString("password", "");
             login(email, password);
-        } else {
+        } else if(login.equals("google")){
             //구글로그인이거나, 로그인 정보가 없는지 판단
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(mActivityRef.get());
 
@@ -100,12 +142,18 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
             else{
                 checkAutoLoginLiveData.setValue(new Event<>(false));
             }
+        }else{
+            checkAutoLoginLiveData.setValue(new Event<>(false));
         }
     }
 
     //일반 로그인
     private void login(String email, String password) {
-        APIRequest.request(RetrofitClient.getLoginApiService().Login(new User(email, password)), objectResponse -> {
+        Member member = new Member();
+        member.setMem_email(email);
+        member.setMem_password(password);
+        member.setAd_id(advertId);
+        APIRequest.request(RetrofitClient.getLoginApiService().Login(member), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -127,9 +175,9 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                     case "SUCCESS":
                         //로그인 성공
                         String token = res.getContent().getToken();
-                        Member member = res.getContent().getMember();
+                        Member mem = res.getContent().getMember();
                         Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
-                        saveMemberInfo(member);
+                        saveMemberInfo(mem);
                         saveLoginToken(token);
                         checkAutoLoginLiveData.setValue(new Event<>(true));
                         break;
@@ -149,11 +197,14 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
     //구글 계정으로 사용자 정보 얻어오기
     private void googleLogin(String name, String email, String image){
-        User user = new User();
-        user.setMem_name(name);
-        user.setMem_email(email);
-        user.setMem_image(image);
-        APIRequest.request(RetrofitClient.getLoginApiService().socialLogin(user), objectResponse -> {
+        Log.i(TAG, "googleLogin: dddd"+advertId);
+        Member member = new Member();
+        member.setMem_name(name);
+        member.setMem_email(email);
+        member.setMem_image(image);
+        member.setAd_id(advertId);
+        Log.i(TAG, "googleLogin: "+advertId);
+        APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(member), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -174,9 +225,9 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                     case "SUCCESS":
                         //로그인 성공
                         String token = res.getContent().getToken();
-                        Member member = res.getContent().getMember();
+                        Member mem = res.getContent().getMember();
                         Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
-                        saveMemberInfo(member);
+                        saveMemberInfo(mem);
                         saveLoginToken(token);
                         checkAutoLoginLiveData.setValue(new Event<>(true));
                         break;
@@ -199,6 +250,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
         editor.putInt("mem_id", member.getMem_id());
+        editor.putString("dev_id",member.getDev_id());
         editor.apply();
     }
 

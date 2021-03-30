@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity { // public class MainActivi
 
         setContentView(R.layout.activity_main);
 
+        AdUtil adUtil = new AdUtil(getApplicationContext());
+        String st = adUtil.getAdID();
+        Log.i("TAG", "runnnn: "+st);
 
 
         mPath = (TextView) findViewById(R.id.tvPath);
@@ -87,32 +90,8 @@ public class MainActivity extends AppCompatActivity { // public class MainActivi
             }
         });
 
-        thread.start();
     }
-    Thread thread = new Thread(){
 
-        @Override
-        public void run() {
-            super.run();
-            AdvertisingIdClient.Info idInfo = null;
-            try {
-                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(getApplicationContext());
-            } catch (GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
-            } catch (GooglePlayServicesRepairableException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String advertId = null;
-            try{
-                advertId = idInfo.getId();
-                Log.i("TAG", "run: "+advertId);
-            }catch (NullPointerException e){
-                e.printStackTrace();
-            }
-        }
-    };
 
 
 

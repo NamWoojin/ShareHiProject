@@ -15,6 +15,7 @@ public interface LoginViewModel {
     MutableLiveData<Boolean> getLoadingLiveData();
     void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData);
     void setParentContext(Activity parentContext);
+    void getAdID();
     void setGoogleLoginExecutor(GoogleLoginExecutor executor);
     void onActivityResult(int requestCode, int resultCode, Intent data);
     void onRequestedSignIn();
