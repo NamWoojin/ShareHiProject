@@ -28,7 +28,7 @@
         
         <el-col :md="6" :sm="24">
           <div style="text-align: left;">
-            <span>emailaddress@gmail.com</span>
+            <span>whxorb44@gmail.com</span>
             <br>
             <span>© Share Hi</span>
           </div>
@@ -38,10 +38,8 @@
         </el-col>
         <el-col :md="{span: 12, offset: 6}" :sm="24" >
           <el-row>
-            <el-col :span="12">Item1</el-col>
-            <el-col :span="12">Item2</el-col>
-            <el-col :span="12">Item3</el-col>
-            <el-col :span="12">Item4</el-col>
+            <el-col :span="12">App Link</el-col>
+            <el-col :span="12">Chr Link</el-col>
           </el-row>
         </el-col>
         

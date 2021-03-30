@@ -89,9 +89,11 @@
                         >
                       </v-avatar>
                     </div>
-                    <v-list-item-title style="margin-top: 4px;">{{member.mem_name}}</v-list-item-title>
+                    <div class="mx-3" style="text-align: left;">
+                      <v-list-item-title style="margin-top: 4px;">{{member.mem_name}}</v-list-item-title>
+                      {{member.mem_email}}
+                    </div>
                   </div>
-                  {{member.mem_email}}
                 </router-link>
               </v-list-item>
               <v-divider style="margin: 1rem 0;"></v-divider>

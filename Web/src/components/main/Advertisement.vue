@@ -1,16 +1,22 @@
 <template>
   <div>
-    <el-carousel trigger="click" indicator-position="outside">
-      <el-carousel-item v-for="item in 4" :key="item">
-        <h3>{{ item }}</h3>
-      </el-carousel-item>
-    </el-carousel>
+    <v-carousel hide-delimiters>
+      <v-carousel-item src="@/assets/main_ad/main.png" />
+      <v-carousel-item src="@/assets/main_ad/1.png" />
+      <v-carousel-item src="@/assets/main_ad/2.jpg" />
+      <v-carousel-item src="@/assets/main_ad/3.jpg" />
+    </v-carousel>
   </div>
 </template>
 
 <script>
 export default {
-
+  name: 'Advertisement',
+  data() {
+    return {
+      
+    }
+  }
 }
 </script>
 
