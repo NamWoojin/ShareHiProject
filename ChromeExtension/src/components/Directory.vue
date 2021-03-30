@@ -224,6 +224,8 @@ export default {
 
           const fileName = modalObj.nameInput.value
           const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
+
+          
           const ul = target.nextElementSibling
           const li = document.createElement('li')
           const liDiv = document.createElement('div')
