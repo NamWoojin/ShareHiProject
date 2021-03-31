@@ -12,6 +12,8 @@
     "core-js": "^3.6.5",
     "socket.io": "^4.0.0",
     "socket.io-client": "^4.0.0",
+    "socket.io-stream": "^0.9.1",
+    "socketio-file-upload": "^0.7.3",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"

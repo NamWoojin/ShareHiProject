@@ -15,17 +15,19 @@ const KEY = require('./src/config/key/key');
 //////////////// socket map system /////////////
 let flag = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
-  this.id = id;
-  this.name = name;
-  this.socket = socket;
-  this.type = type;
+  this.id = id; // 소켓 자체를 유일하게 구분하는 PK
+  this.name = name; // ad_id
+  this.socket = socket; // 소켓 자체의 객체
+  this.type = type; // android web
   this.isShare = isShare;
   this.fileSender = fileSender;
   this.fileReceiver = fileReceiver;
-  this.targetId = targetId;
+  this.targetId = targetId; // 웹이나 안드로이드가 공유중인 디바이스에 접근하고 싶을 때 공유중인 디바이스의 id를 저장하는 변수
   this.size = 0;
+  this.tmpfileSize = 0;
   this.flag = 0;
-}
+} // 오프라인인 것은 못봄 : -> 소켓 연결이 되면 => 조회 : 현재 공유 중인 디바이스를(나를 제외한), 공유 중이 아닌것들(나를 제외한)
+// API => 오프라인,
 let sockets = [];
 
 console.log('서버 가동중...');
@@ -40,7 +42,6 @@ let andServer = net.createServer((socket) => {
    */
   console.log('Success - Android Connect');
   registSocket(socket, 'android');
-  responseOK(socket, 'android');
   printSocket();
 
   /**
@@ -50,7 +51,16 @@ let andServer = net.createServer((socket) => {
    */
   if (flag === 1) {
     setFileReceiver(socket);
+    let controlSocket = getControlSocket(socket);
+    if (controlSocket === undefined) return;
+    controlSocket.write(
+      JSON.stringify({
+        namespace: 7200,
+      }) + '\n'
+    );
+    return;
   }
+  responseOK(socket, 'android');
 
   /**
    * Android
@@ -109,8 +119,13 @@ let andServer = net.createServer((socket) => {
         //responseOK(socket, 'android');
         printSocket(socket);
         break;
+
+      /**
+       * @type Android
+       * @namespace 7200
+       * @description 파일 전송 전처리 작업
+       */
       case KEY.SET_SHARE_DATA:
-        // 1030 공유할 데이터 tcp를 연다
         shareData = socketMap.get(socket);
         console.log('share data : ' + shareData);
         idMap.get(shareDevice).write(
@@ -240,26 +255,25 @@ let andServer = net.createServer((socket) => {
         );
         break;
 
-      case KEY.SEND_FILE_STAT:
-        // 7000 파일 스텟에 대한 응답
-        size = data.size;
-        tmpfileSize = data.tmpfileSize;
+      /**
+       * @type Android
+       * @namespace 7100
+       * @description 파일 전송 전처리 최종작업
+       */
+      case 7100:
+        console.log('7100');
+        setSenderTmpfileSize(socket, data.tmpfileSize, data.size);
 
-        io.to(idMap.get(data.targetId).id).emit(
+        let sender = getSender(socket);
+        if (sender === undefined) break;
+        sender.emit(
           KEY.SEND_FILE_STAT,
           JSON.stringify({
             tmpfileSize: data.tmpfileSize,
-            status: data.status,
-            message: data.message,
-            detail: data.detail,
-            content: data.content,
           })
         );
         break;
     }
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-    //////////////////////////////////////////
   });
 });
 
@@ -337,7 +351,7 @@ io.on('connection', (socket) => {
   socket.on(1070, (data) => {
     data = JSON.parse(data);
     connectToShareDevice(socket, data.id);
-    socket.emit();
+    socket.emit(1070);
   });
 
   /**
@@ -467,9 +481,6 @@ io.on('connection', (socket) => {
       return;
     }
 
-    /**
-     * 파일 전송 전처리 작업
-     */
     setSocketFlag(socket);
 
     let targetSocket = getTargetSocket(socket);
@@ -484,47 +495,47 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
   });
+
+  /**
+   * @type Web
+   * @namespace 7001
+   * @description 파일 전송을 실시한다
+   * @data
+   */
   socket.on(KEY.SEND_FILE, (data) => {
-    console.log(data);
-    // 7001 파일 전송
-    if (!checkSocket(shareDevice)) {
-      // 4000 - 공유 디바이스 연결이 되어있지 않음.
-      io.to(socket.id).emit(
-        KEY.NOT_SHARE_DEVICE,
-        JSON.stringify({
-          status: 204,
-          message: 'NO SHARE DEVICE',
-        })
-      );
+    if (!checkSocket(getId(getTargetSocket(socket)))) {
+      responseBad(socket, 'web');
       return;
     }
-    tmpfileSize += data.length;
-    console.log(data.length);
-    let percent = getFilePercent();
-    console.log(percent);
-    idMap.get(shareDevice).write(
-      JSON.stringify({
-        namespace: KEY.SEND_FILE,
-        percent: percent,
-      }) + '\n'
-    );
-    io.to(socket.id).emit(
+
+    let percent = getFilePercent(socket, data.length);
+
+    socket.emit(
       KEY.SEND_FILE,
       JSON.stringify({
         percent: percent,
       })
     );
 
-    /**
-     * 안드로이드와 새로운 TCP 연결 후, 전송 로직이 필요
-     */
-    idMap.get(shareData).write(data);
+    getFileReceiver(socket).write(data);
   });
 });
 
-let getFilePercent = () => {
+let getFilePercent = (socket, length) => {
+  let size = 0;
+  let tmpfileSize = 0;
+
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      size = sockets[i]['size'];
+      sockets[i]['tmpfileSize'] += length;
+      tmpfileSize = sockets[i]['tmpfileSize'];
+      break;
+    }
+  }
+
   let ans = Math.floor((tmpfileSize / size) * 100);
-  //console.log(ans);
+  console.log(ans);
   return ans;
 };
 
@@ -736,6 +747,77 @@ let setFileReceiver = (socket) => {
     if (sockets[i]['flag'] === 1) {
       sockets[i]['flag'] = 0;
       sockets[i]['fileReceiver'] = id;
+    }
+  }
+};
+
+let getControlSocket = (socket) => {
+  let targetId;
+  let receiverId;
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      receiverId = sockets[i]['id'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['fileReceiver'] === receiverId) {
+      targetId = sockets[i]['targetId'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['id'] === targetId) {
+      return sockets[i]['socket'];
+    }
+  }
+  return undefined;
+};
+
+let setSenderTmpfileSize = (socket, tmpfileSize, size) => {
+  let receiver = '';
+  let targetId = '';
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      targetId = sockets[i]['id'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['targetId'] === targetId) {
+      sockets[i]['tmpfileSize'] = tmpfileSize;
+      sockets[i]['size'] = size;
+      break;
+    }
+  }
+};
+
+let getSender = (socket) => {
+  let targetId = '';
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      targetId = sockets[i]['id'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['targetId'] === targetId) {
+      return sockets[i]['socket'];
+    }
+  }
+};
+
+let getFileReceiver = (socket) => {
+  let receiverId = '';
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      receiverId = sockets[i]['fileReceiver'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['id'] === receiverId) {
+      return sockets[i]['socket'];
     }
   }
 };

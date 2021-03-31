@@ -1,172 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/backdrop_framelayout_radius">
+<layout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.android.data.viewmodel.SettingViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragment_setting_info_layout"
-        android:layout_marginHorizontal="@dimen/fragment_setting_marginHorizontal"
-        android:layout_marginTop="@dimen/fragment_setting_info_marginTop"
-        android:paddingVertical="@dimen/fragment_setting_info_paddingVertical"
-        android:paddingHorizontal="@dimen/fragment_setting_info_paddingHorizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_layout"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0">
-<!--        <ImageView-->
-<!--            android:layout_width="@dimen/fragment_setting_imageView_height"-->
-<!--            android:layout_height="@dimen/fragment_setting_imageView_height"-->
-<!--            android:id="@+id/fragment_setting_image_imageView"-->
-<!--            android:background="@color/gray"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="@dimen/fragment_setting_imageView_height"
-            android:layout_height="@dimen/fragment_setting_imageView_height"
-            android:id="@+id/fragment_setting_image_imageView"
-            android:src="@color/gray"
-            app:civ_border_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/backdrop_framelayout_radius">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragment_setting_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/fragment_setting_marginHorizontal"
+            android:layout_marginTop="@dimen/fragment_setting_info_marginTop"
+            android:paddingHorizontal="@dimen/fragment_setting_info_paddingHorizontal"
+            android:paddingVertical="@dimen/fragment_setting_info_paddingVertical"
+            app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_setting_name_textView"
-            android:textStyle="bold"
-            android:text="남우진"
-            android:textColor="@color/textBlack"
-            android:textSize="@dimen/fragment_setting_name_textView_textSize"
-            android:layout_marginStart="@dimen/fragment_setting_info_textView_marginStart"
-            app:layout_constraintTop_toTopOf="@id/fragment_setting_image_imageView"
-            app:layout_constraintStart_toEndOf="@id/fragment_setting_image_imageView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/fragment_setting_email_textView"
-            app:layout_constraintVertical_chainStyle="packed"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_setting_email_textView"
-            android:text="nam9904@naver.com"
-            android:textColor="@color/textBlack"
-            android:layout_marginStart="@dimen/fragment_setting_info_textView_marginStart"
-            app:layout_constraintTop_toBottomOf="@id/fragment_setting_name_textView"
-            app:layout_constraintStart_toEndOf="@id/fragment_setting_image_imageView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/fragment_setting_image_imageView"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/fragment_setting_image_imageView"
+                android:layout_width="@dimen/fragment_setting_imageView_height"
+                android:layout_height="@dimen/fragment_setting_imageView_height"
+                android:src="@color/gray"
+                app:civ_border_width="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/fragment_setting_name_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/fragment_setting_info_textView_marginStart"
+                android:text="@{viewModel.memberNameLiveData}"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/fragment_setting_name_textView_textSize"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/fragment_setting_email_textView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fragment_setting_image_imageView"
+                app:layout_constraintTop_toTopOf="@id/fragment_setting_image_imageView"
+                app:layout_constraintVertical_chainStyle="packed" />
 
-<!--    <Button-->
-<!--        android:id="@+id/fragment_setting_signout_button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        android:text="로그아웃"/>-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragment_setting_edit_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:layout_marginHorizontal="@dimen/fragment_setting_marginHorizontal"
-        app:layout_constraintTop_toBottomOf="@id/fragment_setting_info_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
-        <Button
-            android:id="@+id/fragment_setting_edit_name_button"
+            <TextView
+                android:id="@+id/fragment_setting_email_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/fragment_setting_info_textView_marginStart"
+                android:text="@{viewModel.memberEmailLiveData}"
+                android:textColor="@color/textBlack"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_setting_image_imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fragment_setting_image_imageView"
+                app:layout_constraintTop_toBottomOf="@id/fragment_setting_name_textView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragment_setting_edit_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/fragment_setting_button_textSize"
-            android:drawableLeft="@drawable/ic_drive_file_rename_outline_black_24dp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/textBlack"
-            android:gravity="center_vertical|left"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_image_button"
-            android:text="@string/fragment_setting_edit_name_button_text"
-            android:stateListAnimator="@null"/>
-
-        <Button
-            android:id="@+id/fragment_setting_edit_image_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/fragment_setting_button_textSize"
-            android:drawableLeft="@drawable/ic_account_circle_black_24dp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/textBlack"
-            android:gravity="center_vertical|left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_name_button"
-            app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_password_button"
-            android:text="@string/fragment_setting_edit_image_button_text"
-            android:stateListAnimator="@null"/>
-
-        <Button
-            android:id="@+id/fragment_setting_edit_password_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/fragment_setting_button_textSize"
-            android:drawableLeft="@drawable/ic_password_black_24dp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/textBlack"
-            android:gravity="center_vertical|left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_image_button"
-            app:layout_constraintBottom_toTopOf="@id/fragment_setting_sign_out_button"
-            android:text="@string/fragment_setting_edit_password_button_text"
-            android:stateListAnimator="@null"/>
-
-        <Button
-            android:id="@+id/fragment_setting_sign_out_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/fragment_setting_button_textSize"
-            android:drawableLeft="@drawable/ic_logout_black_24dp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/textBlack"
-            android:gravity="center_vertical|left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_password_button"
-            app:layout_constraintBottom_toTopOf="@id/fragment_setting_user_delete_button"
-            android:text="@string/fragment_setting_sign_out_button_text"
-            android:stateListAnimator="@null"/>
-
-        <Button
-            android:id="@+id/fragment_setting_user_delete_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/fragment_setting_button_textSize"
-            android:drawableLeft="@drawable/ic_remove_circle_outline_black_24dp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/textBlack"
-            android:gravity="center_vertical|left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_setting_sign_out_button"
+            android:layout_marginHorizontal="@dimen/fragment_setting_marginHorizontal"
+            android:paddingVertical="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/fragment_setting_user_delete_button_text"
-            android:stateListAnimator="@null"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_setting_info_layout">
+
+<!--            <Button-->
+<!--                android:id="@+id/fragment_setting_edit_name_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/fragment_setting_button_height"-->
+<!--                android:backgroundTint="@color/white"-->
+<!--                android:drawableLeft="@drawable/ic_drive_file_rename_outline_black_24dp"-->
+<!--                android:gravity="center_vertical|start"-->
+<!--                android:stateListAnimator="@null"-->
+<!--                android:text="@string/fragment_setting_edit_name_button_text"-->
+<!--                android:textColor="@color/textBlack"-->
+<!--                android:textSize="@dimen/fragment_setting_button_textSize"-->
+<!--                android:onClick="@{() -> viewModel.openEditNameDialog()}"-->
+<!--                app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_image_button"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+            <Button
+                android:id="@+id/fragment_setting_edit_image_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fragment_setting_button_height"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/ic_account_circle_black_24dp"
+                android:gravity="center_vertical|start"
+                android:stateListAnimator="@null"
+                android:text="@string/fragment_setting_edit_image_button_text"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/fragment_setting_button_textSize"
+                android:onClick="@{() -> viewModel.editImage()}"
+                app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_password_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/fragment_setting_edit_password_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fragment_setting_button_height"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/ic_password_black_24dp"
+                android:gravity="center_vertical|start"
+                android:stateListAnimator="@null"
+                android:text="@string/fragment_setting_edit_password_button_text"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/fragment_setting_button_textSize"
+                android:onClick="@{() -> viewModel.openEditPasswordDialog()}"
+                app:layout_constraintBottom_toTopOf="@id/fragment_setting_sign_out_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_image_button" />
+
+            <Button
+                android:id="@+id/fragment_setting_sign_out_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fragment_setting_button_height"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/ic_logout_black_24dp"
+                android:gravity="center_vertical|start"
+                android:stateListAnimator="@null"
+                android:text="@string/fragment_setting_sign_out_button_text"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/fragment_setting_button_textSize"
+                app:layout_constraintBottom_toTopOf="@id/fragment_setting_user_delete_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_password_button"
+                android:onClick="@{() -> viewModel.onRequestedSignOut()}"/>
+
+            <Button
+                android:id="@+id/fragment_setting_user_delete_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fragment_setting_button_height"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/ic_remove_circle_outline_black_24dp"
+                android:gravity="center_vertical|start"
+                android:stateListAnimator="@null"
+                android:text="@string/fragment_setting_user_delete_button_text"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/fragment_setting_button_textSize"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fragment_setting_sign_out_button"
+                android:onClick="@{() -> viewModel.onRequestedRevokeAccess()}"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

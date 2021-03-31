@@ -75,7 +75,8 @@ socket.on(1070, () => {
  * 설명 : 데이터를 주고받았고, 전송해야 한다
  */
 socket.on(7000, (data) => {
-  console.log('7000');
+  console.log(7000);
+  console.log(data);
   //데이터를 보내야 한다
   data = JSON.parse(data);
   let file = fs.createReadStream(config.filename, { flags: 'r', start: data.tmpfileSize }); // default : 64 * 1024

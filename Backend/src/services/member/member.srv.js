@@ -5,145 +5,199 @@ const UserQuery = require('../../models/member/member');
 const transport = require('../../util/mail/mail.transport');
 const redis = require('../../config/redis/redis.emailAuth');
 const bcrypt = require('bcrypt');
+const async = require('async');
+// const multer = require('../../util/multer/multer');
+const multer = require('multer');
 
 const signup = async (req, res) => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>singup');
-  let member = req.body;
-
-  bcrypt.hash(member.mem_password, 10, async function (err, hash) {
-    if (err) {
-      console.log(err);
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    }
-    member.mem_password = hash;
-    await pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
-      if (err) {
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 비밀번호암호화');
+        let member = req.body;
+        bcrypt.hash(member.mem_password, 10, async function (err, hash) {
+          if (err) {
+            callback(err);
+          } else {
+            member.mem_password = hash;
+            callback(null, member);
+          }
+        });
+      },
+      function (member, callback) {
+        console.log('>>>> 이메일확인');
+        pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(null, member);
+          } else {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'DUPLICATE EMAIL',
+              content: {},
+            });
+          }
+        });
+      },
+      function (member, callback) {
+        console.log('>>>> 회원가입');
+        pool.query(UserQuery.signup, [member.mem_name, member.mem_email, member.mem_password], function (err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
         console.log(err);
-        res.status(500).json({
+        return res.status(500).json({
           message: 'FAIL',
           detail: err,
           content: {},
         });
-      } else if (result.length == 0) {
-        pool.query(UserQuery.signup, member, function (err, result) {
-          if (err) {
-            console.log(err);
-            res.status(200).json({
-              message: 'FAIL',
-              detail: err,
-              content: {},
-            });
-          }
-          res.status(200).json({
-            message: 'SUCCESS',
-            detail: '',
-            content: {},
-          });
-        });
       } else {
-        res.status(200).json({
-          message: 'FAIL',
-          detail: 'DUPLICATE EMAIL',
-          content: {},
-        });
+        res.status(200).json(data);
       }
-    });
-  });
-  // console.log('>>>member');
-  // console.log(member);
-  
+    }
+  );
 };
 
 const signout = async (req, res) => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>signout');
-  let memId = req.query.mem_id;
-  console.log(memId);
-  await pool.query(UserQuery.getUser, memId, async function (err, result) {
-    if (err) {
-      // console.log(err);
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else if (result.length == 0) {
-      res.status(200).json({
-        message: 'FAIL',
-        detail: '',
-        content: {},
-      });
-    } else {
-      await pool.query(UserQuery.signout, memId, function (err, result) {
-        if (err) {
-          res.status(500).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        }
-        res.status(200).json({
-          message: 'SUCCESS',
-          detail: '',
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 회원정보가져오기');
+        let memId = req.query.mem_id;
+        pool.query(UserQuery.getUser, memId, async function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: '',
+              content: {},
+            });
+          } else {
+            callback(null, memId);
+          }
+        });
+      },
+      function (mem_id, callback) {
+        console.log('>>>> 회원탈퇴');
+        pool.query(UserQuery.signout, mem_id, function (err, result) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
           content: {},
         });
-      });
+      } else {
+        res.status(200).json(data);
+      }
     }
-  });
+  );
 };
 
 const getUser = async (req, res) => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>getUser');
-  let memId = req.query.mem_id;
-  await pool.query(UserQuery.getUser, memId, function (err, result) {
-    if (err) {
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else if (result.length == 0) {
-      return res.status(200).json({
-        message: 'FAIL',
-        detail: '',
-        content: {},
-      });
-    } else
-      return res.status(200).json({
-        message: 'SUCCESS',
-        detail: '',
-        content: { member: result[0] },
-      });
-  });
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 회원정보가져오기');
+        let memId = req.query.mem_id;
+        pool.query(UserQuery.getUser, memId, async function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: '',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: { member: result[0] },
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
 };
 
 const checkEmail = async (req, res) => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>checkEmail');
-  let memEmail = req.query.mem_email;
-  await pool.query(UserQuery.checkEmail, memEmail, function (err, result) {
-    if (err) {
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else if (result.length == 0) {
-      res.status(200).json({
-        message: 'SUCCESS',
-        detail: '',
-        content: {},
-      });
-    } else {
-      res.status(200).json({
-        message: 'FAIL',
-        detail: 'DUPLICATE EMAIL',
-        content: {},
-      });
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 이메일중복확인');
+        let memEmail = req.query.mem_email;
+        pool.query(UserQuery.checkEmail, memEmail, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'DUPLICATE EMAIL',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
     }
-  });
+  );
 };
 
 const update = async (req, res) => {
@@ -151,162 +205,286 @@ const update = async (req, res) => {
 };
 
 const checkPassword = async (req, res) => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>checkPassword');
-  let member = req.body;
-  await pool.query(UserQuery.getUser, member.mem_id, async function (err, result) {
-    if (err) {
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else if (result.length == 0) {
-      return res.status(200).json({
-        message: 'FAIL',
-        detail: 'CHECK MEM_ID',
-        content: {},
-      });
-    } else {
-      await pool.query(UserQuery.checkPassword, member.mem_id, function (err, result) {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: 'FAIL',
-            detail: err,
-            content: {},
-          });
-        } else if (result.length == 0) {
-          return res.status(200).json({
-            message: 'FAIL',
-            detail: 'CHECK PASSWORD',
-            content: {},
-          });
-        } else if (bcrypt.compareSync(member.mem_password, result[0].mem_password)) {
-          return res.status(200).json({
-            message: 'SUCCESS',
-            detail: '',
-            content: {},
-          });
-        } else {
-          return res.status(200).json({
-            message: 'FAIL',
-            detail: 'CHECK PASSWORD',
-            content: {},
-          });
-        }
-      });
-    }
-  });
-};
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 비밀번호확인');
+        console.log('>>>> 아이디존재유무확인');
+        let member = req.body;
 
-const updatePassword = async (req, res) => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>updatePassword');
-  let member = req.body;
-  bcrypt.hash(member.mem_password, 10, async function (err, hash) {
-    if (err) {
-      console.log(err);
-      res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else {
-    console.log(">>>1")
-    member.mem_password = hash;
-    await pool.query(UserQuery.updatePassword, [member.mem_password, member.mem_id], function (err, result) {
-      console.log(">>>2")
-  
-      if (err) {
+        pool.query(UserQuery.getUser, member.mem_id, async function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'CHECK MEM_ID',
+              content: {},
+            });
+          } else {
+            callback(null, member);
+          }
+        });
+      },
+      function (member, callback) {
+        console.log('>>>> 비밀번호확인');
+        pool.query(UserQuery.checkPassword, member.mem_id, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'CHECK PASSWORD',
+              content: {},
+            });
+          } else if (bcrypt.compareSync(member.mem_password, result[0].mem_password)) {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          } else {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'CHECK PASSWORD',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
         console.log(err);
         return res.status(500).json({
           message: 'FAIL',
           detail: err,
           content: {},
         });
-      } else if (result.affectedRows == 0) {
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
+};
+
+const updatePassword = async (req, res) => {
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 비밀번호변경');
+        console.log('>>>> 비밀번호암호화');
+        let member = req.body;
+        bcrypt.hash(member.mem_password, 10, async function (err, hash) {
+          if (err) {
+            callback(err);
+          } else {
+            member.mem_password = hash;
+            callback(null, member);
+          }
+        });
+      },
+      function (member, callback) {
+        console.log('>>>> 비밀번호변경');
+
+        pool.query(UserQuery.updatePassword, [member.mem_password, member.mem_id], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.affectedRows == 0) {
+            callback(err);
+          } else if (result.affectedRows == 1) {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
         return res.status(500).json({
           message: 'FAIL',
           detail: err,
           content: {},
         });
-      } else if (result.affectedRows == 1) {
-        return res.status(200).json({
-          message: 'SUCCESS',
-          detail: '',
-          content: {},
-        });
+      } else {
+        res.status(200).json(data);
       }
-    });
     }
-  });
-  
+  );
 };
 
 const requireEmailAuth = async (req, res) => {
-  let member = req.body;
-  // console.log('>>>check email');
-  // console.log(member.mem_email);
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 이메일인증번호요청');
+        let member = req.body;
 
-  let authNum = Math.random().toString().substr(2, 6);
-  console.log('>>>authNum');
-  console.log(authNum);
+        let authNum = Math.random().toString().substr(2, 6);
+        console.log('>>>authNum');
+        console.log(authNum);
 
-  const mailOptions = {
-    from: 'filedsolar@gmail.com',
-    to: member.mem_email,
-    subject: '[ShareHi] 인증번호가 도착했습니다.',
-    text: '오른쪽 숫자 6자리를 입력해주세요 : ' + authNum,
-  };
+        const mailOptions = {
+          from: 'filedsolar@gmail.com',
+          to: member.mem_email,
+          subject: '[ShareHi] 인증번호가 도착했습니다.',
+          text: '오른쪽 숫자 6자리를 입력해주세요 : ' + authNum,
+        };
 
-  await transport.sendMail(mailOptions, (err) => {
-    if (err) {
+        callback(null, member, authNum, mailOptions);
+      },
+      function(member, authNum, mailOptions, callback) {
+        transport.sendMail(mailOptions, (err) => {
+          if (err) {
+            callback(err);
+          } else {
+            redis.set(member.mem_email, authNum);
+            redis.expire(member.mem_email, 180);
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      }
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
+};
+
+const checkEmailAuth = async (req, res) => {
+  async.waterfall(
+    [
+      function (callback) {
+        console.log('>>>> 이메일인증번호확인');
+        let member = req.body;
+        redis.get(member.mem_email, function (err, value) {
+          if (err) {
+            callback(err);
+          } else if (!value) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'TIMEOUT',
+              content: {},
+            });
+          } else if (value != member.authNum) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'DIFFERNT AUTHNUM',
+              content: {},
+            });
+          }else if (value === member.authNum) {
+            redis.del(member.mem_email);
+
+            callback(true,{
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      }
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
+};
+
+const upload = async(req, res) => {
+  // async.waterfall([
+  //   function(callback) {
+  //     console.log('>>>> 프로필이미지업로드');
+  //     multer.upload(req, res, (file) => {
+  //       console.log(file);
+  //       if (err) {
+  //         callback(err);
+  //       } else {
+  //         callback(true, {
+  //           message: 'SUCCESS',
+  //           detail: '',
+  //           content: { device: result },
+  //         });
+  //       }
+  //     });
+  //   }
+  // ], function(err, data) {
+  //   if (!data) {
+  //     console.log(err);
+  //     return res.status(500).json({
+  //       message: 'FAIL',
+  //       detail: err,
+  //       content: {},
+  //     });
+  //   } else {
+  //     res.status(200).json(data);
+  //   }
+  // })
+
+  async.waterfall([
+    function(callback) {
+      console.log(">>> upload")
+      var storage = multer.diskStorage({
+        // 서버에 저장할 폴더
+        destination: function (req, file, cb) {
+          cb(null, './volumese/profile/');
+        },
+    
+        // 서버에 저장할 파일 명
+        filename: function (req, file, cb) {
+          console.log(file);
+          file.uploadedFile = {
+            name: req.params.filename,
+            ext: file.mimetype.split('/')[1]
+          };
+          cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
+        }
+      });
+      callback(null, storage);
+    },
+    function(storage, callback) {
+      multer({
+        storage: storage
+      }).single('myfile');
+    }
+  ], function(err, data) {
+    if (!data) {
       console.log(err);
-      res.status(500).json({
+      return res.status(500).json({
         message: 'FAIL',
         detail: err,
         content: {},
       });
     } else {
-      redis.set(member.mem_email, authNum);
-      redis.expire(member.mem_email, 180);
-      res.status(200).json({
-        message: 'SUCCESS',
-        detail: '',
-        content: {},
-      });
+      res.status(200).json(data);
     }
-    transport.close();
-  });
-};
-
-const checkEmailAuth = async (req, res) => {
-  let member = req.body;
-  redis.get(member.mem_email, function (err, value) {
-    if (err) {
-      throw err;
-    } else if (!value) {
-      res.status(500).json({
-        message: 'FAIL',
-        detail: 'TIMEOUT',
-        content: {},
-      });
-    } else if (value != member.authNum) {
-      res.status(200).json({
-        message: 'FAIL',
-        detail: 'DIFFERNT AUTHNUM',
-        content: {},
-      });
-    } else if (value === member.authNum) {
-      res.status(200).json({
-        message: 'SUCCESS',
-        detail: '',
-        content: {},
-      });
-      redis.del(member.mem_email);
-    }
-  });
-};
-
+  })
+}
 module.exports = {
   signup,
   signout,
@@ -317,4 +495,5 @@ module.exports = {
   requireEmailAuth,
   checkEmailAuth,
   checkPassword,
+  upload
 };

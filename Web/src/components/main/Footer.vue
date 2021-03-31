@@ -1,7 +1,6 @@
 <template>
-  <div style="position: fixed; left: 0; bottom: 0; width: 100%;">
+  <div style="position: relative; top: 70%; width: 100%;">
     <el-row>
-      <el-col :span="24"><el-divider /></el-col>
       <el-row style="width: 75%; margin: 0px auto;">
         <el-col
           :md="3"
@@ -28,7 +27,7 @@
         
         <el-col :md="6" :sm="24">
           <div style="text-align: left;">
-            <span>emailaddress@gmail.com</span>
+            <span>whxorb44@gmail.com</span>
             <br>
             <span>© Share Hi</span>
           </div>
@@ -38,19 +37,15 @@
         </el-col>
         <el-col :md="{span: 12, offset: 6}" :sm="24" >
           <el-row>
-            <el-col :span="12">Item1</el-col>
-            <el-col :span="12">Item2</el-col>
-            <el-col :span="12">Item3</el-col>
-            <el-col :span="12">Item4</el-col>
+            <el-col :span="12">App Link</el-col>
+            <el-col :span="12">Chr Link</el-col>
           </el-row>
         </el-col>
         
         <!-- <el-col :span="24"><el-divider /></el-col> -->
       </el-row>
 
-      <div style="color: white; width=100%; background-color: #444444; margin-top: 2rem; padding: 0.25rem;">
-        Copyright © <strong style="color: #3ac569">SHARE HI</strong> {{ new Date().getFullYear() }} All Rights Reserved.
-      </div>
+
     </el-row>
   </div>
 </template>

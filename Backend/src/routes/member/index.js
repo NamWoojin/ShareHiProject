@@ -15,5 +15,6 @@ router.put('/updatePassword', UserService.updatePassword);
 router.get('/checkEmail/:memID', UserService.checkEmail);
 router.post('/requireEmailAuth', UserService.requireEmailAuth);
 router.post('/checkEmailAuth', UserService.checkEmailAuth);
+router.post('/upload', UserService.upload);
 
 module.exports = router;

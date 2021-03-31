@@ -19,10 +19,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.R;
+import com.example.android.data.injection.ViewModelInjection;
 import com.example.android.data.viewmodel.BackdropViewModel;
 import com.example.android.data.viewmodel.SendViewModel;
+import com.example.android.data.viewmodel.SettingViewModel;
+import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.data.viewmodelimpl.BackdropViewModelImpl;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
+import com.example.android.data.viewmodelimpl.SettingViewModelImpl;
 import com.example.android.databinding.ActivityMainBackdropBinding;
 import com.example.android.ui.send.PrepareFragment;
 import com.example.android.ui.user.SettingFragment;
@@ -34,6 +38,7 @@ public class BackdropActivity extends AppCompatActivity {
 
     private BackdropViewModel mBackdropViewModel;
     private SendViewModel mSendViewModel;
+    private SettingViewModel mSettingViewModel;
 
     private View frameLayout;
     private View actionBarDetail;
@@ -61,6 +66,10 @@ public class BackdropActivity extends AppCompatActivity {
         mSendViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SendViewModelImpl.class);
         mSendViewModel.setParentContext(this);
 
+        mSettingViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(SettingViewModelImpl.class);
+        mSettingViewModel.setParentContext(this);
+        injectViewModel(mSettingViewModel);
+
         //페이지 이동에 따른 fragment, UI제어
         mBackdropViewModel.getPageLiveData().observe(this, this::changePage);
         mBackdropViewModel.getBackdropMenuOpenLiveData().observe(this, aBoolean -> {
@@ -77,6 +86,11 @@ public class BackdropActivity extends AppCompatActivity {
 //        frameLayout.setEnabled(false);
 
 
+    }
+
+    //viewModel에 GoogleLoginExecutor의존성 주입
+    private void injectViewModel(SettingViewModel viewModel) {
+        viewModel.setGoogleLoginExecutor(ViewModelInjection.provideGoogleLoginExecutor(this));
     }
 
 

@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -18,9 +19,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.logging.Logger;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity { // public class MainActivity extends Activity {
 
@@ -49,6 +58,8 @@ public class MainActivity extends AppCompatActivity { // public class MainActivi
 
         setContentView(R.layout.activity_main);
 
+
+
         mPath = (TextView) findViewById(R.id.tvPath);
         lvFileControl = (ListView) findViewById(R.id.lvFileControl);
 
@@ -75,7 +86,34 @@ public class MainActivity extends AppCompatActivity { // public class MainActivi
                 }
             }
         });
+
+        thread.start();
     }
+    Thread thread = new Thread(){
+
+        @Override
+        public void run() {
+            super.run();
+            AdvertisingIdClient.Info idInfo = null;
+            try {
+                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(getApplicationContext());
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String advertId = null;
+            try{
+                advertId = idInfo.getId();
+                Log.i("TAG", "run: "+advertId);
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+    };
+
 
 
     private void getDir(String dirPath) {
