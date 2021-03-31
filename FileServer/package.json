@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./app.js",
+    "start": "node ./appV2.js",
     "test": "node_modules/.bin/mocha ./mocha-test-client/mocha.js"
   },
   "keywords": [],
