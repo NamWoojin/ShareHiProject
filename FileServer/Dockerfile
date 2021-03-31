@@ -8,5 +8,5 @@ COPY . .
 
 EXPOSE 9000 9001
 
-CMD ["node", "./app.js"]
+CMD ["node", "./appV2.js"]
 
