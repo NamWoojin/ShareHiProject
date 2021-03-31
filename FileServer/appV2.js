@@ -200,6 +200,7 @@ let andServer = net.createServer((socket) => {
        */
       case 2100:
         getSocket(data.targetId, data.data);
+
         break;
 
       /**
@@ -710,21 +711,12 @@ let getSocket = (id, data) => {
     }
   }
 
-  if (mySocket['type'] === 'android') {
-    mySocket.write(
-      JSON.stringify({
-        namespace: 2000,
-        data: data,
-      })
-    );
-  } else {
-    mySocket.emit(
-      2000,
-      JSON.stringify({
-        data: data,
-      })
-    );
-  }
+  mySocket.emit(
+    2000,
+    JSON.stringify({
+      data: data,
+    })
+  );
 };
 
 let setSocketFlag = (socket) => {
