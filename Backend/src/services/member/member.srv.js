@@ -452,7 +452,7 @@ const upload = async(req, res) => {
       var storage = multer.diskStorage({
         // 서버에 저장할 폴더
         destination: function (req, file, cb) {
-          cb(null, './volumese/profile/');
+          cb(null, '/volumes/profile/');
         },
     
         // 서버에 저장할 파일 명
