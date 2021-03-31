@@ -63,6 +63,9 @@ style.textContent =
   overflow: auto;
   box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.1);
 }
+.nav-item-display {
+  display : block;
+}
 .nav-item-last {
   right: 0;
 }
@@ -73,9 +76,13 @@ style.textContent =
   cursor : pointer;
   background : none;
 }
-.nav-item:hover .nav-item-content {
-  display : block;
+.nav-item-content div {
+  width: max-content;
+  padding: 12px 16px;
 }
+.more-btn:hover .nav-item-content {
+  display : block;
+} 
 .nav-item-content a {
   color: black;
   width: max-content;

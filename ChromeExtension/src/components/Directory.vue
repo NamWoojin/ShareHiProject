@@ -1,78 +1,22 @@
 <template>
   <div>
-    <input type="file" @change="fileUploadTest">
     <div class="directory">
     </div>
   </div>
 </template>
 
 <script>
-import io from 'socket.io-client';
-import ss from 'socket.io-stream';
-
-const config = {
-  host: 'http://j4f001.p.ssafy.io:9002',
-  uploadedSize: 0,
-  uploadTotalSize: 0,
-  savePath: './',
-  saveName: 'sample',
-  saveExt: '.mp4',
-  saveFile: '',
-  filename: '',
-  downLoadSize: 0,
-  downLoadTotalSize: 0,
-}
 
 const file = {
   name : '',
   data : '',
 }
 
-const socket = io.connect(config.host, { transports: ['websocket'] });
-
-socket.on('connect', () => {
-  if (socket.connected) console.log('서버로 성공적으로 연결되었습니다 : ' + config.host);
-  else console.log('서버의 연결이 끊겼습니다 : ' + config.host);
-});
-
-socket.on(7000, (data) => {
-  console.log('7000')
-  data = JSON.parse(data)
-  const fileData = file.data
-  const stream = ss.createStream();
-  ss(socket).emit(7001,stream, {size : fileData.size})
-  ss.createBlobReadStream(fileData).pipe(stream)
-
-  const blobStream = ss.createBlobReadStream(fileData)
-  let size = 0;
-  blobStream.on('data', function(chunk) {
-    size += chunk.length;
-    console.log(Math.floor(size / fileData.size * 100) + '%');
-    // -> e.g. '42%'
-  });
-  blobStream.pipe(stream);
-  // const reader = new FileReader()
-  // reader.onload = (e) => {
-  //   console.log('rawData',e.target.result)
-  //   socket.emit(7001,e.target.result)
-  // }
-  // reader.readAsArrayBuffer(fileData)
-})
-
-socket.on(4000, (data) => {
-  console.log('4000')
-  data = JSON.parse(data)
-})
-
-socket.on(7001,(data) => {
-  console.log('7001')
-  console.log(data)
-})
-
 export default {
   name: "Directory",
   props: {
     directoryData: Object,
+    socket : Object,
   },
   data() {
     return {
@@ -80,24 +24,81 @@ export default {
     }
   },
   mounted () {
-    this.rootDataParsing()
+    this.rootDataParsing();
+
+    socket.on(7000, (data) => {
+      console.log('7000')
+      data = JSON.parse(data)
+      let size = file.data.size;
+      let tmpfileSize = data.tmpfileSize;
+      let CHUNK_SIZE = 64 * 1024;
+      let start = tmpfileSize;
+      let fileReader = new FileReader();
+
+      let tmp;
+      if(start + CHUNK_SIZE < size) {
+        tmp = file.data.slice(start, start + CHUNK_SIZE);
+        start += CHUNK_SIZE;
+        fileReader.readAsArrayBuffer(tmp);
+      } else {
+        tmp = file.data.slice(start, size);
+        start = size;
+        fileReader.readAsArrayBuffer(tmp);
+      }
+
+      fileReader.onloadend = (e) => {
+        socket.emit(7001, e.target.result);
+
+        if(start == size) return;
+        if(start + CHUNK_SIZE < size) {
+          tmp = file.data.slice(start, start + CHUNK_SIZE);
+          start += CHUNK_SIZE;
+          e.target.readAsArrayBuffer(tmp);
+        } else {
+          tmp = file.data.slice(start, size);
+          start = size;
+          e.target.readAsArrayBuffer(tmp);
+        }
+      };
+    })
+
+    this.socket.on(4000, (data) => {
+      console.log('4000 Nodevice')
+      data = JSON.parse(data)
+    })
+
+    this.socket.on(7001,(data) => {
+      console.log('7001 Progress Bar')
+      console.log(data)
+    })
+
+    this.socket.on(2000,(data) => {
+      console.log('2000 StorageResponse')
+      console.log(data)
+    })
   },
   methods : {
-    fileUploadTest(e) {
-      console.log(e.target)
-      const fileName = e.target.value
+    socketStorageTreeRequest(path,name) {
+      const data = {
+        path,
+        name,
+      }
+      this.socket.emit(2000,JSON.stringify(data))
+    },
+    socketFileUpload(target) {
+      console.log(target)
+      const fileName = target.value
       const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
-
       const fileData = {
         'path' : './',
         'name' : fileNameWithoutPath.split('.')[0],
         'ext' : fileNameWithoutPath.split('.')[1],
-        'size' : e.target.files[0].size,
+        'size' : target.files[0].size,
       }
-      file.data = e.target.files[0];
+      file.data = target.files[0];
       file.name = fileNameWithoutPath.split('.')[0]
-      console.log('fileData', fileData)
-      socket.emit(7000, JSON.stringify(fileData));
+      console.log('emit 7000 fileData', fileData)
+      this.socket.emit(7000, JSON.stringify(fileData));
     },
     onClickOpenAllDir() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
@@ -156,6 +157,7 @@ export default {
           folderDiv.addEventListener('click', () => {
             ul.classList.toggle('closed')
             // path에 대해서 하위 내용 구조 통신하여 받는거 추가하기
+            // this.socketStorageTreeRequest(path,name)
             
           })
           folderDiv.addEventListener('contextmenu', (e) => {
@@ -310,8 +312,12 @@ export default {
             e.preventDefault();
             this.createContextMenu(e.clientX,e.clientY,e.target,'file');
           })
-          li.appendChild(liDiv)
-          ul.appendChild(li) 
+          this.socketFileUpload(modalObj.nameInput);
+          setTimeout(() => {
+            alert('업로드 완료!')
+            li.appendChild(liDiv)
+            ul.appendChild(li) 
+          }, 2000);
         }
         modalOverlay.remove()
         modal.remove()
