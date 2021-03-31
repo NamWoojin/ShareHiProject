@@ -479,12 +479,12 @@ io.on('connection', (socket) => {
       return;
     }
     data = JSON.parse(data);
-    console.log('b');
     if (!checkSocket(getId(getTargetSocket(socket)))) {
+      console.log('b');
       responseBad(socket, 'web');
       return;
     }
-
+    console.log('c');
     setSocketFlag(socket);
 
     let targetSocket = getTargetSocket(socket);
@@ -689,6 +689,7 @@ let getTargetSocket = (socket) => {
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       socketId = sockets[i]['targetId'];
+      console.log('targetId :::::: ' + socketId);
       break;
     }
   }
