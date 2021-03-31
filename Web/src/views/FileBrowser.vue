@@ -20,9 +20,14 @@
           </v-col>
           <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0; padding-top: 0; padding-bottom: 0;">
             <div style="display: flex; justify-content: space-between" class="icon-container">
-
+                <v-btn class="navicon" :disabled="!lastpath" @click="gotoLastpath">
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large style="margin-top: 5px !important">mdi-keyboard-backspace</v-icon>
+                  </div>
+                </v-btn>
               <div>
-                <span style="font-size: 1.5rem;">{{customPath}}</span>
+                <!-- <span style="font-size: 1.5rem;">{{customPath}}</span> -->
+                <span style="font-size: 1.5rem;">{{currentpath}}</span>
               </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
@@ -54,7 +59,7 @@
                     <v-icon x-large color="red" style="margin-top: 5px !important">mdi-close</v-icon>
                   </div>
                 </v-btn>
-                <v-btn 
+                <!-- <v-btn 
                   class="navicon" 
                   @click="editName"
                   :disabled="selectitem.length != 1"
@@ -62,7 +67,7 @@
                   <div style="width: 50px; height: 50px;">
                     <v-icon x-large color="black" style="margin-top: 5px !important">mdi-folder-edit-outline</v-icon>
                   </div>
-                </v-btn>
+                </v-btn> -->
               </div>
             </div>
           </v-col>
@@ -117,7 +122,6 @@
             <div v-if="node.directory && node.directory.length > 0" style="display: flex; flex-wrap: wrap;" id="outter">
               <div v-for="child in node.directory" :key="child.id" id="outter">
                 <div style="margin: 20px;">
-                  
                     <div 
                       @click="selectItem(child)" 
                       @contextmenu="selectRightclick(child);openMenu($event)"
@@ -157,7 +161,7 @@
                 이 폴더는 비어 있습니다.
               </div>
             </div>
-            <v-file-input multiple v-model="fileList" id="fileinput" style="display: none;" />
+            <v-file-input v-model="fileList" id="fileinput" style="display: none;" />
             <ul id="right-click-menu" ref="right" tabindex="-1" v-if="viewMenu" @blur="closeMenu" :style="{top: top, left: left}">
               <div v-if="selectitem.length > 1">
                 <li @click="remove">삭제</li>
@@ -180,8 +184,6 @@
 
 
 <script>
-// import io from 'socket.io-client'
-
 
 /*eslint-disable*/
 export default {
@@ -198,7 +200,12 @@ export default {
       selectitem: [],
       
       data: [
-
+        {
+          "name":"0",
+          "path":"\/storage\/emulated\/0",
+          "directory":[
+          ]
+        }
       ],
       defaultProps: {
         'children': 'directory',
@@ -214,6 +221,8 @@ export default {
       initiallyOpen: [0],
       active: [],
       tree: [],
+      lastpath: '',
+      currentpath: '',
     };
   },
   methods: {
@@ -239,6 +248,9 @@ export default {
     },
     nodeClick(node) {
       if (node.type == 'folder' || this.data[0] == node) {
+        this.$socket.emit(2000, JSON.stringify({
+          path: node.path
+        }))
         this.node = node
         this.selectitem = []
       }
@@ -313,7 +325,10 @@ export default {
       
     },
     openFolder(c) {
-      this.node = c;
+      // this.node = c;
+      this.$socket.emit(2000, JSON.stringify({
+        path: c.path
+      }))
       this.selectitem = [];
     },
     checkFolder: function(folderName) {
@@ -397,42 +412,38 @@ export default {
       console.log('this is downloadFile')
     },
     selectFolder(i) {
-      this.node = i
+      console.log(i)
+      this.$socket.emit(2000, JSON.stringify({
+        path: i.path
+      }))
+      // this.node = i
+    },
+    gotoLastpath() {
+      this.$socket.emit(2000, JSON.stringify({
+        path: this.lastpath
+      }))
+    },
+    noreload() {
+      this.$router.push({ name: 'Main' })
+      console.log('refresh')
     }
   },
   mounted() {
-    this.node = this.data[0];
+    // this.node = this.data[0];
   },
   watch: {
     fileList: function () {
-      if (this.fileList && this.fileList.length > 0) {
-        let cnt = 0;
-        for(let i=0; i<this.fileList.length; i++) {
-          if (this.checkFolder(this.fileList[i].name)) {
-            if (this.node.directory) {
-              this.node.directory.push({
-                name: this.fileList[i].name
-              })
-            } else {
-              this.node.directory = [{
-                name: this.fileList[i].name
-              }]
-            }
-            cnt++
-          } else {
-            this.$message({
-              type: 'info',
-              message: this.fileList[i].name + '은 이미 존재하는 파일입니다.'
-            })
-          }
+      if (this.fileList.size) {
+        console.log(this.fileList.name)
+        // console.log(this.fileList[0].size)
+        const fileData = {
+          'path': './',
+          'name': this.fileList.name.split('.')[0],
+          'ext': this.fileList.name.substr(this.fileList.name.split('.')[0].length),
+          'size': this.fileList.size,
         }
-        if (cnt > 0) {
-          this.$message({
-            type: 'success',
-            message: cnt + '개의 파일이 추가되었습니다.'
-          })
-        }
-        this.fileList = null;
+        console.log(fileData)
+        this.$socket.emit(7000, JSON.stringify(fileData));
       }
     }
   },
@@ -440,78 +451,74 @@ export default {
     customPath() {
       if (this.node.path)
       return this.node.path.split('\/').slice(3).join(' > ')
-      
-    }
+      // return this.node.path.split('\/').join(' > ')
+    },
   },
   created() {
-    this.$socket.emit(2000, JSON.stringify({
-      path: 'root'
-    }))
+    window.addEventListener('unload', this.noreload)
+
     this.$socket.on(2000, (data) => {
       data = JSON.parse(data)
-      console.log(data.data)
+      this.currentpath = JSON.parse(data.data).path
+      if (this.node.path && (this.currentpath != this.node.path)) {
+        this.lastpath = this.node.path
+      }
+      // console.log(JSON.parse(data.data))
+      // console.log(typeof JSON.parse(data.data))
+      this.data[0] = JSON.parse(data.data)
+      this.data[0].type = 'folder'
+      this.data[0].id = 0
+      this.componentKey++
+      this.node = this.data[0];
     })
-    
+    this.$socket.emit(2000, JSON.stringify({
+      path: '\/storage\/emulated\/0'
+    }))
 
-    this.data.push(
-      {
-        "name":"0",
-        "path":"\/storage\/emulated\/0",
-        "directory":[
-          {
-            "name":"Music",
-            "path":"\/storage\/emulated\/0\/Music",
-            "type":"folder"
-          },
-          {
-            "name":"Podcasts",
-            "path":"\/storage\/emulated\/0\/Podcasts",
-            "type":"folder"
-          },
-          {
-            "name":"Ringtones",
-            "path":"\/storage\/emulated\/0\/Ringtones",
-            "type":"folder"
-          },
-          {
-            "name":"Alarms",
-            "path":"\/storage\/emulated\/0\/Alarms",
-            "type":"folder"
-          },
-          {
-            "name":"Notifications",
-            "path":"\/storage\/emulated\/0\/Notifications",
-            "type":"folder"
-          },
-          {
-            "name":"Pictures",
-            "path":"\/storage\/emulated\/0\/Pictures",
-            "type":"folder"
-          },
-          {
-            "name":"Movies",
-            "path":"\/storage\/emulated\/0\/Movies",
-            "type":"folder"
-          },
-          {
-            "name":"Download",
-            "path":"\/storage\/emulated\/0\/Download",
-            "type":"folder"
-          },
-          {
-            "name":"DCIM",
-            "path":"\/storage\/emulated\/0\/DCIM",
-            "type":"folder"
-          },
-          {
-            "name":"Android",
-            "path":"\/storage\/emulated\/0\/Android",
-            "type":"folder"
-          }
-        ]
-      })
-    this.data[0].type = 'folder'
-    this.data[0].id = 0
+    this.$socket.on(7000, (data) => {
+      data = JSON.parse(data)
+      // const fileData = this.fileList
+
+      let size = this.fileList.size;
+      let tmpfileSize = data.tmpfileSize;
+      let CHUNK_SIZE = 64 * 1024;
+      let start = tmpfileSize;
+
+      let fileReader = new FileReader();
+
+      // 1. 파일을 슬라이스한다(start ~ start + CHUNK_SIZE) // 만약, (start + CHUNK_SIZE < size) ->
+      // slice : start ~ start + CHUNK_SIZE,            slice : start ~ size
+      let tmp;
+
+      if(start + CHUNK_SIZE < size) {
+        tmp = this.fileList.slice(start, start + CHUNK_SIZE);
+        start += CHUNK_SIZE;
+        fileReader.readAsArrayBuffer(tmp);
+      } else {
+        tmp = this.fileList.slice(start, size);
+        start = size;
+        fileReader.readAsArrayBuffer(tmp);
+      }
+
+      fileReader.onloadend = (e) => {
+        this.$socket.emit(7001, e.target.result);
+
+        if(start == size) return;
+        if(start + CHUNK_SIZE < size) {
+          tmp = this.fileList.slice(start, start + CHUNK_SIZE);
+          start += CHUNK_SIZE;
+          e.target.readAsArrayBuffer(tmp);
+        } else {
+          tmp = this.fileList.slice(start, size);
+          start = size;
+          e.target.readAsArrayBuffer(tmp);
+        }
+      };
+    })
+
+    this.$socket.on(7001, (data) => {
+      console.log('this is bar: ', data)
+    })
   }
 };
 </script>

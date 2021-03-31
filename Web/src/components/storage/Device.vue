@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="cursor: pointer;">
     <div @click="clickDevice">
       <v-img width="150px" height="150px" :src="squareUrl"></v-img>
       <p>{{device.name}}</p>
