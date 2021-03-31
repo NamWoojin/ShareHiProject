@@ -2,8 +2,8 @@
   <div id="app" class="hidden">
     <div class="overlay" @click="onClickOverlay">
       <div class="sidebar" >
-        <Main v-if="loginStatus" @onClickLogout="onClickLogout" :socket="socket"/>
-        <Login v-else @onClickLogin="onClickLogin" @socketConnect="socketConnect" />
+        <Main v-if="loginStatus" @onClickLogout="onClickLogout" />
+        <Login v-else @onClickLogin="onClickLogin"  />
       </div>
     </div>
     <router-view />
@@ -21,13 +21,9 @@ export default {
   data () {
     return {
       loginStatus : false,
-      socket : '',
     }
   },
   methods : {
-    socketConnect(socket) {
-      this.socket=socket;
-    },
     onClickOverlay(e) {
       const shadow = document.querySelector('#shadowElement').shadowRoot
       const overlay = shadow.querySelector(".overlay")

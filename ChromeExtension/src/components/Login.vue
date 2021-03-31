@@ -16,7 +16,6 @@
 
 <script>
 import {login} from "@/assets/api/user.js"
-import io from 'socket.io-client';
 
 export default {
   name: "Login",
@@ -62,13 +61,7 @@ export default {
         (res) => {
           if (res.data.message === 'SUCCESS') {
             console.log(res.data)
-            const socket = io.connect('http://j4f001.p.ssafy.io:9002', { transports: ['websocket'] })
-            socket.on('connect', () => {
-              if (socket.connected) console.log('서버로 성공적으로 연결되었습니다.');
-              else console.log('서버의 연결이 끊겼습니다.');
-            });
             this.resetLoginFail(false,false,false)
-            this.$emit("socketConnect",socket)
             this.$emit("onClickLogin",true)
           }
           else {

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from '../App.vue'
 import router from "../router";
 import store from "../store";
+import io from 'socket.io-client'
 
 
 const shadowElement = document.createElement('div');
@@ -55,6 +56,23 @@ style.textContent =
   position: relative;
   display: inline-block;
 }
+.nav-item:hover .nav-item-content{
+  display : block;
+}
+.nav-item-device {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 0px;
+  overflow: auto;
+  box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.1);  
+}
+.nav-item-device div {
+  width: max-content;
+  padding: 12px 16px;
+  color: black;
+  cursor : pointer;
+}
 .nav-item-content {
   display: none;
   position: absolute;
@@ -76,9 +94,9 @@ style.textContent =
   cursor : pointer;
   background : none;
 }
-.nav-item-content div {
-  width: max-content;
-  padding: 12px 16px;
+
+.nav-item-content div:hover {
+  background-color : rgba(0,0,0,0.2);
 }
 .more-btn:hover .nav-item-content {
   display : block;
@@ -279,7 +297,33 @@ style.textContent =
   border-radius: 5px;
   box-shadow: 0px 0px 0px 0.5px rgb(0 0 0 / 20%);
 }
+.progress {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.1);
+}
+.progress-filename {  
+  white-space: nowrap;
+  overflow: hidden;
+  width : 70%;
+  text-align : right;
+  text-overflow: ellipsis;
+
+}
+.progress-percent {
+}
 `
+
+const socket = io.connect('http://j4f001.p.ssafy.io:9002', { transports: ['websocket'] })
+Vue.prototype.$socket = socket;
+
 shadowElement.shadowRoot.appendChild(style)
 const hello = document.createElement('div');
 shadowElement.shadowRoot.appendChild(hello);

@@ -2,6 +2,10 @@
   <div>
     <div class="directory">
     </div>
+    <div v-show="progress" class="progress">
+      <div class="progress-filename">sdfsdf</div>
+      <div class="progress-percent">%</div>
+    </div>
   </div>
 </template>
 
@@ -16,17 +20,18 @@ export default {
   name: "Directory",
   props: {
     directoryData: Object,
-    socket : Object,
   },
   data() {
     return {
       file : '',
+      progress : false,
+      percent : 0,
     }
   },
   mounted () {
     this.rootDataParsing();
 
-    socket.on(7000, (data) => {
+    this.$socket.on(7000, (data) => {
       console.log('7000')
       data = JSON.parse(data)
       let size = file.data.size;
@@ -47,7 +52,7 @@ export default {
       }
 
       fileReader.onloadend = (e) => {
-        socket.emit(7001, e.target.result);
+        this.$socket.emit(7001, e.target.result);
 
         if(start == size) return;
         if(start + CHUNK_SIZE < size) {
@@ -62,17 +67,12 @@ export default {
       };
     })
 
-    this.socket.on(4000, (data) => {
+    this.$socket.on(4000, (data) => {
       console.log('4000 Nodevice')
       data = JSON.parse(data)
     })
 
-    this.socket.on(7001,(data) => {
-      console.log('7001 Progress Bar')
-      console.log(data)
-    })
-
-    this.socket.on(2000,(data) => {
+    this.$socket.on(2000,(data) => {
       console.log('2000 StorageResponse')
       console.log(data)
     })
@@ -83,7 +83,7 @@ export default {
         path,
         name,
       }
-      this.socket.emit(2000,JSON.stringify(data))
+      this.$socket.emit(2000,JSON.stringify(data))
     },
     socketFileUpload(target) {
       console.log(target)
@@ -98,7 +98,8 @@ export default {
       file.data = target.files[0];
       file.name = fileNameWithoutPath.split('.')[0]
       console.log('emit 7000 fileData', fileData)
-      this.socket.emit(7000, JSON.stringify(fileData));
+      console.log('emit 7000 socket', this.$socket)
+      this.$socket.emit(7000, JSON.stringify(fileData));
     },
     onClickOpenAllDir() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
@@ -312,12 +313,25 @@ export default {
             e.preventDefault();
             this.createContextMenu(e.clientX,e.clientY,e.target,'file');
           })
+          const progressFileName = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-filename")
+          const progressPercent = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-percent")
           this.socketFileUpload(modalObj.nameInput);
-          setTimeout(() => {
-            alert('업로드 완료!')
-            li.appendChild(liDiv)
-            ul.appendChild(li) 
-          }, 2000);
+          this.$socket.on(7001,(data) => {
+            console.log('7001 Progress Bar')
+            data = JSON.parse(data)
+            if (data.percent === 100) {
+              this.progress = false
+              progressPercent.innerText = data.percent + '%'
+              alert('업로드 완료!')
+              li.appendChild(liDiv)
+              ul.appendChild(li) 
+            }
+            else {
+              this.progress = true
+              progressFileName.innerText = file.name + ' : '
+              progressPercent.innerText = data.percent + '%'
+            }
+          })
         }
         modalOverlay.remove()
         modal.remove()
