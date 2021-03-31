@@ -135,16 +135,14 @@ public class SocketInfo {
 						 * LOGIC
 						 */
 						break;
-					case 1030: // 파일 전송을 위한 TCP 연결이 완료되었다.
+					case 7200: // 파일 전송을 위한 TCP 연결이 완료되었다.
+						System.out.println("fs size : " + fs.getSize());
+						if(fs.getSize() == 0) break;
 						jobj = new JsonObject();
-						jobj.addProperty("namespace", "7000");
+						jobj.addProperty("namespace", "7100");
 						jobj.addProperty("targetId", targetId);
 						jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
 						jobj.addProperty("size", fs.getSize());
-						jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-						jobj.addProperty("message", "OK");
-						jobj.addProperty("detail", "");
-						jobj.addProperty("content", "");
 						json = gson.toJson(jobj);
 						write(json);
 						break;
@@ -217,6 +215,7 @@ public class SocketInfo {
 						// 1. 파일이 이미 있는지 확인한다
 						if (file.length() == size) {
 							System.out.println("이미 파일이 있습니다.");
+							fs = new FileStat(name, path, ext, 0, 0);
 							jobj = new JsonObject();
 							jobj.addProperty("namespace", "7004");
 							jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
@@ -244,7 +243,7 @@ public class SocketInfo {
 						SocketData sd = new SocketData(fs);
 						sd.connect();
 					case 7001: // 파일 전송
-
+						
 						/**
 						 * TODO 퍼센트 로직
 						 */

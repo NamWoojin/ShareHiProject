@@ -53,9 +53,40 @@ socket.on(1060, (data) => {
  * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
  * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
  */
-socket.on(1070, (data) => {
+socket.on(1070, () => {
   console.log(1070);
-  console.log(data);
+  console.log();
+  //파일을 보낸다
+  let stats = fs.statSync(config.filename);
+
+  let fileStat = {
+    path: './',
+    name: 'sample',
+    ext: '.mp4',
+    size: stats.size,
+  };
+  console.log(fileStat);
+  socket.emit(7000, JSON.stringify(fileStat));
+});
+
+/**
+ * Web
+ * 7000
+ * 설명 : 데이터를 주고받았고, 전송해야 한다
+ */
+socket.on(7000, (data) => {
+  console.log('7000');
+  //데이터를 보내야 한다
+  data = JSON.parse(data);
+  let file = fs.createReadStream(config.filename, { flags: 'r', start: data.tmpfileSize }); // default : 64 * 1024
+  file.on('data', (data) => {
+    socket.emit(7001, data);
+  });
+});
+socket.on(7001, (data) => {
+  console.log('7001');
+  data = JSON.parse(data);
+  console.log('progress bar : ' + data.percent);
 });
 
 /**
