@@ -8,5 +8,14 @@ function login(userObj, success, fail) {
   .then(success)
   .catch(fail);
 }
-
-export {login} 
+function getOnlineDevice(mem_id, success, fail) {
+  instance
+  .get('device/getOnlineDevice', {  
+    params: {
+      mem_id,
+    }
+  })
+  .then(success)
+  .catch(fail)
+} 
+export {login,getOnlineDevice} 

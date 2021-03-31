@@ -14,7 +14,7 @@ test/
 
 ### Vuejs ###
 # Recommended template: Node.gitignore
-
+artifacts/
 node_modules/
 dist/
 npm-debug.log
