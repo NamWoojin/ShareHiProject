@@ -6,7 +6,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 9000 9001
+EXPOSE 9002 9003
 
 CMD ["node", "./appV2.js"]
 
