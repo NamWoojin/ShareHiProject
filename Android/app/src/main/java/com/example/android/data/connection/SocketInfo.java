@@ -33,12 +33,14 @@ public class SocketInfo {
     private SocketRepository socketRepository;
     private Socket socket;
     private String adID;
+    private boolean closeSocketByUser;
     BufferedReader in;
     PrintWriter out;
     Gson gson = new Gson();
 
     public SocketInfo(SocketRepository socketRepository) {
         this.socketRepository = socketRepository;
+        closeSocketByUser = false;
     }
 
     public void connect(String adID) {
@@ -62,6 +64,7 @@ public class SocketInfo {
     public void disConnect() throws IOException {
         //중지 요청 보내기
         //getIO스레드에서 중지 요청 승인하면 답장
+        closeSocketByUser = true;
         socket.close();
     }
 
@@ -175,7 +178,7 @@ public class SocketInfo {
                              * TODO 폴더 이름 제공 로직!
                              */
                             JSONObject returnJSONObject = socketRepository.getFolderDirectory(jsonObject.getString("path"));
-                            Log.i("myTag", "2100: "+returnJSONObject.toString());
+                            Log.i("myTag", "2100: " + returnJSONObject.toString());
 
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "2100");
@@ -183,7 +186,7 @@ public class SocketInfo {
                             jobj.addProperty("targetId", jsonObject.getString("targetId"));
                             jobj.addProperty("data", returnJSONObject.toString());
                             json = gson.toJson(jobj);
-                            Log.i("myTag", "2100: "+ json);
+                            Log.i("myTag", "2100: " + json);
                             write(json);
                             break;
                         /**
@@ -331,7 +334,6 @@ public class SocketInfo {
                             sd.connect();
 
 
-
                         case 7001: // 파일 전송
 
                             /**
@@ -412,6 +414,11 @@ public class SocketInfo {
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+                if (!closeSocketByUser) {
+                    //유저의 요청에 의한 종료가 아니라면
+                    socketRepository.abruptSocketClosed();
+                }
+                Log.i("TAG", "run: socketStop");
             }
         }
     };

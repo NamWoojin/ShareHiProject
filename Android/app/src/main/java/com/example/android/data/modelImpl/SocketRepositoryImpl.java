@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.android.data.connection.SocketInfo;
 import com.example.android.data.model.SocketRepository;
@@ -26,12 +27,15 @@ public class SocketRepositoryImpl implements SocketRepository {
 
     private WeakReference<Activity> mActivityRef;
 
+    private MutableLiveData<Boolean> isConnecting;
+
     private SocketInfo socketInfo;
 
     //Socket 시작
     @Override
     public void startSocket(String path) {
         socketInfo = new SocketInfo(this);
+        isConnecting = new MutableLiveData<>(true);
         SocketStartThread sst = new SocketStartThread();
         sst.start();
     }
@@ -61,6 +65,13 @@ public class SocketRepositoryImpl implements SocketRepository {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void abruptSocketClosed(){
+        mActivityRef.get().runOnUiThread(() -> {
+            isConnecting.setValue(false);
+        });
     }
 
     @Override
@@ -159,5 +170,14 @@ public class SocketRepositoryImpl implements SocketRepository {
             }
         }
         return result;
+    }
+
+    @Override
+    public MutableLiveData<Boolean> getIsConnecting() {
+        return isConnecting;
+    }
+    @Override
+    public void setIsConnecting(MutableLiveData<Boolean> isConnecting) {
+        this.isConnecting = isConnecting;
     }
 }
