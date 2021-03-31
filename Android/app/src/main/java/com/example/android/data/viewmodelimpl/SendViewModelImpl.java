@@ -10,8 +10,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
+import com.example.android.data.model.SocketRepository;
 import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.Folder;
+import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.ui.main.BackdropActivity;
 import com.example.android.ui.send.FolderFragment;
@@ -19,6 +21,7 @@ import com.example.android.ui.send.FolderRecyclerAdapter;
 import com.example.android.ui.send.ShareFragment;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,11 +41,17 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
 
     private ShareFragment shareFragment;
-
+    private SocketRepository mSocketRepository;
 
     @Override
     public void setParentContext(Activity parentContext) {
         this.mActivityRef = new WeakReference<>(parentContext);
+    }
+
+    @Override
+    public void setSocketRepository(SocketRepository repository,Activity parentContext){
+        mSocketRepository = repository;
+        mSocketRepository.setParentContext(parentContext);
     }
 
     @Override
@@ -57,8 +66,14 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //공유 중단
     @Override
     public void stopShare(){
-        Log.i("TAG", "stopShare: 들어옴");
-        shareFragment.dismiss();
+        try {
+            mSocketRepository.stopSocket();
+            shareFragment.dismiss();
+            Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     //prepare
@@ -68,6 +83,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         shareFragment = ShareFragment.newInstance();
         shareFragment.setCancelable(false);
         shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
+        mSocketRepository.startSocket(selectedPathLiveData.getValue());
     }
 
     //선택 폴더 경로 삭제

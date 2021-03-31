@@ -1,7 +1,9 @@
 package com.example.android.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 
@@ -9,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
+import com.example.android.data.injection.ModelInjection;
 import com.example.android.data.model.dto.Event;
+import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.IntroViewModel;
 import com.example.android.data.viewmodelimpl.IntroViewModelImpl;
 import com.example.android.ui.user.LoginActivity;
@@ -31,22 +35,23 @@ public class IntroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_intro);
 
-        mIntroViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(IntroViewModelImpl.class);
+        mIntroViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(IntroViewModelImpl.class);
         mIntroViewModel.setParentContext(this);
         mIntroViewModel.getAdID();
 //        mIntroViewModel.getPermissionAndLogin();
-        mIntroViewModel.getCheckAutoLoginLiveData().observe(this,this::setHandler);
+        mIntroViewModel.getCheckAutoLoginLiveData().observe(this, this::setHandler);
+
     }
 
-    
+
     //권한 허용에 대한 결과 전달
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        mIntroViewModel.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        mIntroViewModel.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     //자동로그인 확인 결과에 따른 처리
-    private void setHandler(Event<Boolean> event){
+    private void setHandler(Event<Boolean> event) {
         boolean canLogin = event.getContentIfNotHandled();
         Handler handler = new Handler();
         handler.postDelayed(() -> {
@@ -66,6 +71,6 @@ public class IntroActivity extends AppCompatActivity {
 
             //인트로로 다시 돌아오지 못하도록 끝내기
             finish();
-        },2000);
+        }, 2000);
     }
 }
