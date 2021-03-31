@@ -52,6 +52,8 @@ public class SignupActivity extends AppCompatActivity {
         //ViewModel생성
         mSignUpViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SignUpViewModelImpl.class);
         mSignUpViewModel.setParentContext(this);
+        mSignUpViewModel.getAdID();
+
         //바인딩 객체 설정
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_signup);
         binding.setLifecycleOwner(this);

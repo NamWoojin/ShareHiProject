@@ -57,6 +57,9 @@
     <string name="fragment_setting_user_delete_button_text">탈퇴하기</string>
     <string name="fragment_setting_ok_button_text">변경</string>
     <string name="fragment_setting_cancel_button_text">취소</string>
+    <string name="fragment_setting_edit_password_cant_open_text">비밀번호 변경은 일반 로그인만 가능합니다.</string>
+    <string name="fragment_setting_edit_password_current_success_text">비밀번호를 변경했습니다.</string>
+    <string name="fragment_setting_edit_password_current_fail_text">현재 비밀번호가 일치하지 않습니다.</string>
 
     <!--edit name-->
     <string name="fragment_edit_name_hint">변경할 이름을 입력하세요</string>
@@ -82,6 +85,8 @@
     <string name="toast_connect_fail_message">네트워크 연결상태를 확인해주세요</string>
     <string name="toast_404_fail_message">해당 요청을 수행할 수 없습니다.</string>
     <string name="toast_server_fail_message">서버에 문제가 발생했습니다</string>
+    <string name="toast_socket_stop_message">공유를 중단했습니다</string>
+    <string name="toast_socket_close_fail_message">통신을 중단하지 못했습니다</string>
     <string name="toast_500">500 error</string>
     <string name="toast_400">400 error</string>
 

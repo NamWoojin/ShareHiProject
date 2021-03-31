@@ -3,10 +3,7 @@ package com.example.android.data.model.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Member {
-    @Expose
-    @SerializedName("mem_id")
-    private int mem_id;
+public class MemberRequest {
     @Expose
     @SerializedName("mem_name")
     private String mem_name;
@@ -16,9 +13,6 @@ public class Member {
     @Expose
     @SerializedName("mem_password")
     private String mem_password;
-    @Expose
-    @SerializedName("mem_registDevice")
-    private int mem_registDevice;
     @Expose
     @SerializedName("mem_image")
     private String mem_image;
@@ -32,27 +26,17 @@ public class Member {
     @SerializedName("dev_id")
     private String dev_id;
 
-    public Member(int mem_id, String mem_name, String mem_email, String mem_password, int mem_registDevice, String mem_image, String mem_joinDate, String ad_id, String dev_id) {
-        this.mem_id = mem_id;
+    public MemberRequest(String mem_name, String mem_email, String mem_password, String mem_image, String mem_joinDate, String ad_id, String dev_id) {
         this.mem_name = mem_name;
         this.mem_email = mem_email;
         this.mem_password = mem_password;
-        this.mem_registDevice = mem_registDevice;
         this.mem_image = mem_image;
         this.mem_joinDate = mem_joinDate;
         this.ad_id = ad_id;
         this.dev_id = dev_id;
     }
 
-    public Member() {
-    }
-
-    public int getMem_id() {
-        return mem_id;
-    }
-
-    public void setMem_id(int mem_id) {
-        this.mem_id = mem_id;
+    public MemberRequest() {
     }
 
     public String getMem_name() {
@@ -69,14 +53,6 @@ public class Member {
 
     public void setMem_email(String mem_email) {
         this.mem_email = mem_email;
-    }
-
-    public int getMem_registDevice() {
-        return mem_registDevice;
-    }
-
-    public void setMem_registDevice(int mem_registDevice) {
-        this.mem_registDevice = mem_registDevice;
     }
 
     public String getMem_image() {
@@ -122,11 +98,9 @@ public class Member {
     @Override
     public String toString() {
         return "Member{" +
-                "mem_id=" + mem_id +
                 ", mem_name='" + mem_name + '\'' +
                 ", mem_email='" + mem_email + '\'' +
                 ", mem_password='" + mem_password + '\'' +
-                ", mem_registDevice=" + mem_registDevice +
                 ", mem_image='" + mem_image + '\'' +
                 ", mem_joinDate='" + mem_joinDate + '\'' +
                 ", ad_id='" + ad_id + '\'' +

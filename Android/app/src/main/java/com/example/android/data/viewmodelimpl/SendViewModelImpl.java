@@ -1,25 +1,39 @@
 package com.example.android.data.viewmodelimpl;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
+import com.example.android.data.connection.APIRequest;
+import com.example.android.data.connection.RetrofitClient;
+import com.example.android.data.model.SocketRepository;
+import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.Folder;
+import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.ui.main.BackdropActivity;
 import com.example.android.ui.send.FolderFragment;
 import com.example.android.ui.send.FolderRecyclerAdapter;
 import com.example.android.ui.send.ShareFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +52,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
 
     private ShareFragment shareFragment;
-
+    private SocketRepository mSocketRepository;
 
     @Override
     public void setParentContext(Activity parentContext) {
@@ -46,19 +60,31 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     }
 
     @Override
+    public void setSocketRepository(SocketRepository repository, Activity parentContext) {
+        mSocketRepository = repository;
+        mSocketRepository.setParentContext(parentContext);
+    }
+
+    @Override
     public void switchPage(String page) {
         if (page.equals("folder")) {
             getDir("Root", mRoot);
-            ((BackdropActivity)mActivityRef.get()).replaceFragment(FolderFragment.newInstance(),true);
+            ((BackdropActivity) mActivityRef.get()).replaceFragment(FolderFragment.newInstance(), true);
         }
     }
 
     //share
     //공유 중단
     @Override
-    public void stopShare(){
-        Log.i("TAG", "stopShare: 들어옴");
-        shareFragment.dismiss();
+    public void stopShare() {
+        try {
+            mSocketRepository.stopSocket();
+            shareFragment.dismiss();
+            Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     //prepare
@@ -68,6 +94,18 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         shareFragment = ShareFragment.newInstance();
         shareFragment.setCancelable(false);
         shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
+        mSocketRepository.startSocket(selectedPathLiveData.getValue());
+        mSocketRepository.getIsConnecting().observe((BackdropActivity) mActivityRef.get(), aBoolean -> {
+            if(!aBoolean) {
+                new AlertDialog.Builder(mActivityRef.get())
+                        .setTitle("통신 중지")
+                        .setMessage("오랜 시간 통신이 이어지지 않아 연결이 끊어졌습니다.")
+                        .setPositiveButton("확인", (dialog, whichButton) -> {
+                            shareFragment.dismiss();
+                        })
+                        .show();
+            }
+        });
     }
 
     //선택 폴더 경로 삭제
@@ -83,7 +121,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         File file = new File(folderItems.get(pos).getPath());
         if (file.isDirectory()) {
             if (file.canRead()) {
-                getDir(file.getName(),file.getAbsolutePath());
+                getDir(file.getName(), file.getAbsolutePath());
             } else {
                 Toast.makeText(mActivityRef.get(), "No files in this folder.", Toast.LENGTH_SHORT).show();
             }
@@ -95,10 +133,10 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
     //폴더 목록 생성
     private void getDir(String name, String dirPath) {
-        if(name.equals(new File(mRoot).getName()))
+        if (name.equals(new File(mRoot).getName()))
             name = "Root";
         folderTitleLiveData.setValue(name);
-        folderPathLiveData.setValue(dirPath.replace(mRoot,"Root"));
+        folderPathLiveData.setValue(dirPath.replace(mRoot, "Root"));
         List<Folder> newList = new ArrayList<>();
 
         File f = new File(dirPath);
@@ -123,11 +161,12 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         folderItems = new ArrayList<>(newList);
         folderRecyclerAdapter.notifyDataSetChanged();
     }
+
     //폴더 경로 선택
     @Override
-    public void choiceFolderPath(){
+    public void choiceFolderPath() {
         Log.i("TAG", "choiceFolderPath: 들어옴");
-        selectedPathLiveData.setValue(folderPathLiveData.getValue().replace("Root",mRoot));
+        selectedPathLiveData.setValue(folderPathLiveData.getValue().replace("Root", mRoot));
         mActivityRef.get().onBackPressed();
     }
 

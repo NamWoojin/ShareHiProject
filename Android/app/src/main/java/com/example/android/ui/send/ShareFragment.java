@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.R;
+import com.example.android.data.connection.SocketInfo;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
@@ -57,7 +58,6 @@ public class ShareFragment extends DialogFragment {
 
         mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
         binding.setViewModel(mSendViewModel);
-
 
         
         return view;

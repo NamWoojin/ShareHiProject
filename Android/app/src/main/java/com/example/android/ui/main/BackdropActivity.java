@@ -13,13 +13,16 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.R;
+import com.example.android.data.injection.ModelInjection;
 import com.example.android.data.injection.ViewModelInjection;
+import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.BackdropViewModel;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodel.SettingViewModel;
@@ -65,6 +68,7 @@ public class BackdropActivity extends AppCompatActivity {
         //SendViewModel 요청
         mSendViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SendViewModelImpl.class);
         mSendViewModel.setParentContext(this);
+        mSendViewModel.setSocketRepository(ModelInjection.provideSocketRepository(),this);   //의존성 주입
 
         mSettingViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(SettingViewModelImpl.class);
         mSettingViewModel.setParentContext(this);

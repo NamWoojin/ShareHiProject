@@ -17,18 +17,22 @@ import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.EmailAuth;
 import com.example.android.data.model.dto.LoginContent;
 import com.example.android.data.model.dto.Member;
-import com.example.android.data.model.dto.User;
+import com.example.android.data.model.dto.MemberRequest;
 import com.example.android.ui.main.MainActivity;
 import com.example.android.data.viewmodel.GoogleLoginExecutor;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.ui.user.CheckEmailFragment;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
@@ -53,6 +57,8 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private MutableLiveData<Boolean> isOKCheckPassword = new MutableLiveData<>(false);
     private MutableLiveData<Boolean> isOKCheckEmail = new MutableLiveData<>(false);
 
+    private String advertId = null;
+
     //이메일 인증
     private MutableLiveData<String> checkEmailLiveData = new MutableLiveData<>();
 
@@ -71,13 +77,40 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     public void setGoogleLoginExecutor(GoogleLoginExecutor executor) {
         mGoogleLoginExecutor = executor;
     }
+    @Override
+    public void getAdID(){
+        getadid.start();
+    }
+
+    private Thread getadid = new Thread(){
+        @Override
+        public void run() {
+            super.run();
+            AdvertisingIdClient.Info idInfo = null;
+            try {
+                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(mActivityRef.get().getApplicationContext());
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try{
+                advertId = idInfo.getId();
+                Log.i("TAG", "run: "+advertId);
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+    };
 
 
     //이메일 중복 확인
     @Override
     public void checkEmailDuplicate() {
         loadingLiveData.setValue(true);
-        APIRequest.request(RetrofitClient.getUserApiService().checkEmail(emailLiveData.getValue()), objectResponse -> {
+        APIRequest.request(RetrofitClient.getUserApiService().CheckEmail(emailLiveData.getValue()), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -117,7 +150,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //이메일 인증 Activity 열기
     private void onRenderCheckEmail() {
 //        이메일 인증 요청 보내기
-        APIRequest.request(RetrofitClient.getUserApiService().requireEmailAuth(new EmailAuth(emailLiveData.getValue())),
+        APIRequest.request(RetrofitClient.getUserApiService().RequireEmailAuth(new EmailAuth(emailLiveData.getValue())),
                 (objectResponse -> {
                     loadingLiveData.setValue(false);
                     Gson gson = new Gson();
@@ -154,7 +187,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     @Override
     public void checkEmailAuth() {
         loadingLiveData.setValue(true);
-        APIRequest.request(RetrofitClient.getUserApiService().checkEmailAuth(new EmailAuth(emailLiveData.getValue(), checkEmailLiveData.getValue())),
+        APIRequest.request(RetrofitClient.getUserApiService().CheckEmailAuth(new EmailAuth(emailLiveData.getValue(), checkEmailLiveData.getValue())),
                 (objectResponse -> {
                     loadingLiveData.setValue(false);
                     Gson gson = new Gson();
@@ -228,7 +261,11 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //로그인 시도
     @Override
     public void onRequestedSignIn() {
-        APIRequest.request(RetrofitClient.getLoginApiService().Login(new User(emailLiveData.getValue(), passwordLiveData.getValue())), objectResponse -> {
+        MemberRequest mem  =new MemberRequest();
+        mem.setMem_email(emailLiveData.getValue());
+        mem.setMem_password(passwordLiveData.getValue());
+        mem.setAd_id(advertId);
+        APIRequest.request(RetrofitClient.getLoginApiService().Login(mem), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -274,6 +311,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
         editor.putInt("mem_id", member.getMem_id());
+        editor.putString("dev_id",member.getDev_id());
         editor.apply();
     }
 
@@ -289,7 +327,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private void saveAutoLoginInfo() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = loginInformation.edit();
-        editor.putBoolean("basicLogin", true);
+        editor.putString("login","basic");
         editor.putString("email", emailLiveData.getValue());
         editor.putString("password", passwordLiveData.getValue());
         editor.apply();
@@ -298,8 +336,11 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     //회원가입 요청
     @Override
     public void onRequestedSignUp() {
-        User user = new User(nameLiveData.getValue(), emailLiveData.getValue(), passwordLiveData.getValue());
-        APIRequest.request(RetrofitClient.getUserApiService().SignUp(user), objectResponse -> {
+        MemberRequest mem  =new MemberRequest();
+        mem.setMem_name(nameLiveData.getValue());
+        mem.setMem_email(emailLiveData.getValue());
+        mem.setMem_password(passwordLiveData.getValue());
+        APIRequest.request(RetrofitClient.getUserApiService().SignUp(mem), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -383,11 +424,12 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
 
     //구글 로그인 정보로 사용자 정보 조회
     private void googleLogin(String name, String email, String image){
-        User user = new User();
-        user.setMem_name(name);
-        user.setMem_email(email);
-        user.setMem_image(image);
-        APIRequest.request(RetrofitClient.getLoginApiService().socialLogin(user), objectResponse -> {
+        MemberRequest mem  =new MemberRequest();
+        mem.setMem_name(name);
+        mem.setMem_email(email);
+        mem.setMem_image(image);
+        mem.setAd_id(advertId);
+        APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(mem), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());
@@ -430,7 +472,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     private void saveGoogleLoginInfo() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = loginInformation.edit();
-        editor.putBoolean("basicLogin", false);
+        editor.putString("login", "google");
         editor.apply();
     }
 

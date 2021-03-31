@@ -11,6 +11,7 @@ public interface SignUpViewModel{
 
     void setParentContext(Activity parentContext);
     void setGoogleLoginExecutor(GoogleLoginExecutor executor);
+    void getAdID();
 
     //Event LiveData
     MutableLiveData<Boolean> getLoadingLiveData();
