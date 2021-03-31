@@ -38,7 +38,7 @@ pipeline {
         sh 'docker run -d --name field-pjt-fileserver \
             -p 9002:9002 \
             -p 9003:9003 \
-            -v /volumes/fileServer_home:/volumes/keys \
+            -v /volumes/fileServer_home:/volumes \
             -v /volumes/web_home:/volumes \
             --network field-network \
             field-pjt-fileserver:latest'
