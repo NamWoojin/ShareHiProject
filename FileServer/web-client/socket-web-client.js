@@ -1,10 +1,4 @@
 const io = require('socket.io-client');
-
-/**
- *  FOR TEST - ENV : LOCALHOST
- *  로컬 파일 시스템을 이용하여 파일 전송을 테스트합니다
- *  다음에 서버와 연결이 원활히 된다면, 브라우저에서 파일을 로드할 수 있도록 재구성합니다.
- */
 const fs = require('fs');
 
 let config = {
@@ -12,8 +6,167 @@ let config = {
   filename: './img/sample.mp4',
 };
 
-let socket = '';
+/**
+ * 서버와의 소켓 연결
+ */
+let socket = io.connect(config.host, { transports: ['websocket'] });
 
+/**
+ * Web
+ * 1010
+ * 설명 : 서버와 첫 연결 후 수행되는 콜백 함수 예제
+ * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
+ */
+socket.on(1010, (data) => {
+  console.log(1010);
+  console.log(data);
+  socket.emit(1050);
+});
+
+/**
+ * Web
+ * 1050
+ * 설명 : 서버에게 내 디바이스를 제외한 현재 공유중인 모든 디바이스의 정보를 받아온다.
+ * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
+ */
+socket.on(1050, (data) => {
+  console.log(1050);
+  console.log(data);
+  data = JSON.parse(data);
+  socket.emit(1070, JSON.stringify(data.devices[0]));
+});
+
+/**
+ * Web
+ * 1060
+ * 설명 : 내 디바이스를 제외한 현재 공유 중이 '아닌' 모든 디바이스의 정보를 클라이언트에게 제공한다
+ * 메시지 :{"namespace":1060,"devices":[{"id":"c45f6a42-259c-4f48-a469-18f26d89a561","name":"c45f6a42-259c-4f48-a469-18f26d89a561"}]}
+ */
+socket.on(1060, (data) => {
+  console.log(1060);
+  console.log(data);
+});
+
+/**
+ * Web
+ * 1070
+ * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
+ * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
+ */
+socket.on(1070, () => {
+  console.log(1070);
+  console.log();
+  //파일을 보낸다
+  let stats = fs.statSync(config.filename);
+
+  let fileStat = {
+    path: './',
+    name: 'sample',
+    ext: '.mp4',
+    size: stats.size,
+  };
+  console.log(fileStat);
+  socket.emit(7000, JSON.stringify(fileStat));
+});
+
+/**
+ * Web
+ * 7000
+ * 설명 : 데이터를 주고받았고, 전송해야 한다
+ */
+socket.on(7000, (data) => {
+  console.log(7000);
+  console.log(data);
+  //데이터를 보내야 한다
+  data = JSON.parse(data);
+  let file = fs.createReadStream(config.filename, { flags: 'r', start: data.tmpfileSize }); // default : 64 * 1024
+  file.on('data', (data) => {
+    socket.emit(7001, data);
+  });
+});
+socket.on(7001, (data) => {
+  console.log('7001');
+  data = JSON.parse(data);
+  console.log('progress bar : ' + data.percent);
+});
+
+/**
+ * Web
+ * 2000
+ * 설명 : 폴더 디렉토리 구조를 받아서 클라이언트에게 제공한다
+ * 메시지 :
+ */
+socket.on(2000, (data) => {
+  console.log(2000);
+  console.log(data);
+});
+
+/**
+ * Web
+ * 1050
+ * 설명 : 현재 공유중인 모든 디바이스의 정보를 가져온다.
+ * 메시지 : {"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
+ */
+// socket.emit(1050);
+/**
+ * Web
+ * 1060
+ * 설명 : 내 디바이스를 제외한 현재 공유 중이 '아닌' 모든 디바이스의 정보를 클라이언트에게 제공한다
+ * 메시지 :{"namespace":1060,"devices":[{"id":"c45f6a42-259c-4f48-a469-18f26d89a561","name":"c45f6a42-259c-4f48-a469-18f26d89a561"}]}
+ */
+// socket.emit(1060);
+
+/**
+ * Web
+ * 1070
+ * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
+ * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
+ */
+// data = JSON.parse(data);
+// socket.emit(1070, JSON.stringify(data.devices[0]));
+
+/**
+ * Web
+ * 2001
+ * 설명 : 폴더 이름 수정을 요청한다
+ * 메시지 :
+ */
+// socket.emit(
+//   2001,
+//   JSON.stringify({
+//     path: 'path',
+//     newPath: 'newPath',
+//   })
+// );
+
+/**
+ * Web
+ * 2002
+ * 설명 : 폴더 삭제를 요청한다
+ * 메시지 :
+ */
+// socket.emit(
+//   2002,
+//   JSON.stringify({
+//     path: 'path',
+//   })
+// );
+
+/**
+ * Web
+ * 2003
+ * 설명 : 폴더 추가를 요청한다
+ * 메시지 :
+ */
+// socket.emit(
+//   2003,
+//   JSON.stringify({
+//     path: 'path',
+//     newFolder: 'newFolder',
+//   })
+// );
+
+/*
 let getConnection = function () {
   console.log('connecting...');
   socket = io.connect(config.host, {});
@@ -31,15 +184,15 @@ let getConnection = function () {
   });
   socket.on(1010, (data) => {
     console.log('1010');
-
-    /**
-     * 파일 전송 1단계. 정보 제공
-     */
-    /*
+*/
+/**
+ * 파일 전송 1단계. 정보 제공
+ */
+/*
      file.on('data', (data) => {
        config.uploadedSize += data.length;
        */
-
+/*
     let stats = fs.statSync(config.filename);
 
     let fileStat = {
@@ -49,10 +202,11 @@ let getConnection = function () {
       size: stats.size,
     };
     console.log(fileStat);
-
-    /**
-     * 먼저 파일 정보를 보낸다 - 7000
-     */
+*/
+/**
+ * 먼저 파일 정보를 보낸다 - 7000
+ */
+/*
     socket.emit(7000, JSON.stringify(fileStat));
   });
   socket.on(4000, (data) => {
@@ -87,7 +241,7 @@ let getConnection = function () {
     else console.log('서버의 연결이 끊겼습니다 : ' + config.host);
   });
 };
-
+*/
 // socket.emit(
 //   2000,
 //   JSON.stringify({
@@ -118,4 +272,4 @@ let getConnection = function () {
 //   })
 // );
 
-getConnection();
+// getConnection();

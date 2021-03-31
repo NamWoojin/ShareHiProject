@@ -449,8 +449,7 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
   });
-
-  ss(socket).on(7001, (stream) => {
+  socket.on(KEY.SEND_FILE, (data) => {
     // 7001 파일 전송
     // stream
     stream.on('data', function (data) {

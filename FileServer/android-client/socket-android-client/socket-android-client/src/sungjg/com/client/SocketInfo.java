@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.Scanner;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -37,8 +36,10 @@ public class SocketInfo {
 	public void connect() {
 		try {
 			socket = new Socket();
-			System.out.println("ip,port : " + Client.IP + "," + Client.PORT);
 			SocketAddress socketAddress = new InetSocketAddress(Client.IP, Client.PORT);
+			/**
+			 * 서버와 소켓 연결 시도하는 코드
+			 */
 			socket.connect(socketAddress, 8288);
 
 			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
@@ -64,98 +65,143 @@ public class SocketInfo {
 
 					JsonParser parser = new JsonParser();
 					JsonElement element = parser.parse(data);
-					//System.out.println(data);
+					JsonObject jobj = new JsonObject();
+					String json = "";
+					System.out.println(data);
 					int namespace = element.getAsJsonObject().get("namespace").getAsInt();
 					switch (namespace) {
-					case 1010: // 이 디바이스를 공유 디바이스로 설정 + 동시에 공유 데이터 tcp 연결이 필요
-						System.out.println("send 1020");
-						JsonObject jobj = new JsonObject();
-						jobj.addProperty("namespace", "1020");
-						String json = gson.toJson(jobj);
-						write(json);
-
-						break;
-					case 1030: // 파일 전송을 위한 TCP 연결이 완료되었다.
+					/**
+					 * Android
+					 * 1010 
+					 * 응답에 성공했을 때 수행되는 코드 설명 : 서버와 성공적으로 응답한 경우 수행된다 
+					 * data : {"namespace":1010,"status":200,"message":"OK"}
+					 */
+					
+					case 1010:
+						/**
+						 * LOGIC
+						 */
 						jobj = new JsonObject();
-						jobj.addProperty("namespace", "7000");
+						jobj.addProperty("namespace", "1020");
+						json = gson.toJson(jobj);
+						write(json);
+						break;
+						
+					/**
+					 * Android 
+					 * 1050 
+					 * 설명 : 내 디바이스를 제외한 현재 공유 중인 모든 디바이스의 정보를 클라이언트에게 제공한다
+					 * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
+					 */
+					case 1050:
+						/**
+						 * LOGIC
+						 */
+						break;
+						
+					/**
+					* Android 
+					* 1060 
+					* 설명 : 내 디바이스를 제외한 현재 공유 중이 '아닌' 모든 디바이스의 정보를 클라이언트에게 제공한다
+					* 메시지 :{"namespace":1060,"devices":[{"id":"c45f6a42-259c-4f48-a469-18f26d89a561","name":"c45f6a42-259c-4f48-a469-18f26d89a561"}]}
+					*/
+					case 1060:
+						/**
+						 * LOGIC
+						 */
+						break;
+						
+					/**
+					 * Android
+					 * 1070
+					 * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
+					 * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
+					 */
+					case 1070:
+						/**
+						 * LOGIC
+						 */
+						break;
+						
+						
+					/**
+					 * Android
+					 * 4001
+					 * 설명 : JSON 파싱이 실패할 경우 부른다
+					 * 메시지 :{"namespace":4001,"status":400,"message":"BAD REQUEST"}
+					*/
+					case 4001:
+						/**
+						 * LOGIC
+						 */
+						break;
+					case 7200: // 파일 전송을 위한 TCP 연결이 완료되었다.
+						System.out.println("fs size : " + fs.getSize());
+						if(fs.getSize() == 0) break;
+						jobj = new JsonObject();
+						jobj.addProperty("namespace", "7100");
 						jobj.addProperty("targetId", targetId);
 						jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
 						jobj.addProperty("size", fs.getSize());
-						jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-						jobj.addProperty("message", "OK");
-						jobj.addProperty("detail", "");
-						jobj.addProperty("content", "");
 						json = gson.toJson(jobj);
 						write(json);
 						break;
-					case 2000: // 폴더 디렉토리 출력
+						
+					 /**
+					   * Android
+					   * 2100
+					   * 설명 : 폴더 디렉토리 구조를 공유 디바이스에게 요청한다.
+					   * 메시지 : {"namespace":2100,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
+					  */
+					case 2100:
+						/**
+						 * LOGIC
+						 */
+						jobj = new JsonObject();
+						jobj.addProperty("namespace", "2100");
+						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
+						jobj.addProperty("data", "folder directory JSON object ");
+						json = gson.toJson(jobj);
+						write(json);
+						break;
+					/**
+					* Android
+					* 2101
+					* 설명 : 폴더를 수정한다
+					* 메시지 : 
+					*/
+					case 2101:
 
 						/**
-						 * TODO 폴더 이름 제공 로직!
+						 * LOGIC
 						 */
-
-						jobj = new JsonObject();
-						jobj.addProperty("namespace", "2000");
-						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
-
-						jobj.addProperty("status", "200");
-						jobj.addProperty("message", "OK");
-						jobj.addProperty("detail", "");
-						jobj.addProperty("content", "folder directory JSON object ");
-						json = gson.toJson(jobj);
-						write(json);
 						break;
-					case 2001: // 폴더 이름 수정
+						
+						/**
+						* Android
+						* 2102
+						* 설명 : 폴더를 삭제한다
+						* 메시지 : 
+						*/
+					case 2102:
 
 						/**
-						 * TODO 폴더 이름 수정 로직!
+						 * LOGIC
 						 */
-
-						jobj = new JsonObject();
-						jobj.addProperty("namespace", "2001");
-						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
-
-						jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-						jobj.addProperty("message", "OK");
-						jobj.addProperty("detail", "");
-						jobj.addProperty("content", "");
-						json = gson.toJson(jobj);
-						write(json);
 						break;
-					case 2002: // 폴더 삭제
+						
+						/**
+						* Android
+						* 2101
+						* 설명 : 폴더를 추가한다
+						* 메시지 : 
+						*/
+					case 2103:
 
 						/**
-						 * TODO 폴더 삭제 로직! (여러 개의 폴더, 파일 삭제가 요청을 올 수도 있음)
+						 * LOGIC
 						 */
-
-						jobj = new JsonObject();
-						jobj.addProperty("namespace", "2002");
-						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
-
-						jobj.addProperty("status", "200"); // or 401 UNAUTHORIZED
-						jobj.addProperty("message", "OK");
-						jobj.addProperty("detail", "");
-						jobj.addProperty("content", "");
-						json = gson.toJson(jobj);
-						write(json);
-						break;
-					case 2003: // 폴더 추가 (파일은 추가 못함(파일 추가 == 업로드)
-
-						/**
-						 * TODO 폴더 추가 로직!
-						 */
-
-						jobj = new JsonObject();
-						jobj.addProperty("namespace", "2003");
-						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
-						jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-						jobj.addProperty("message", "OK");
-						jobj.addProperty("detail", "");
-						jobj.addProperty("content", "");
-						json = gson.toJson(jobj);
-						write(json);
-						break;
-					case 7000: // 파일 스텟 확인
+					case 7100: // 파일 스텟 확인
 
 						/**
 						 * TODO 파일 스텟 로직
@@ -169,13 +215,14 @@ public class SocketInfo {
 						// 1. 파일이 이미 있는지 확인한다
 						if (file.length() == size) {
 							System.out.println("이미 파일이 있습니다.");
+							fs = new FileStat(name, path, ext, 0, 0);
 							jobj = new JsonObject();
 							jobj.addProperty("namespace", "7004");
 							jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
 							jobj.addProperty("status", "400"); // or 403 FORBIDDEN
 							jobj.addProperty("message", "BAD REQUEST");
 							jobj.addProperty("detail", "");
-							jobj.addProperty("content", "");
+							jobj.addProperty("content", "이미 파일이 있습니다.");
 							json = gson.toJson(jobj);
 							write(json);
 							break;
@@ -192,11 +239,11 @@ public class SocketInfo {
 							fs = new FileStat(name, path, ext, size, tmpfileSize);
 							// 새로운 TCP 연결 시도
 							targetId = element.getAsJsonObject().get("targetId").getAsString();
-							SocketData sd = new SocketData(fs);
-							sd.connect();
 						}
+						SocketData sd = new SocketData(fs);
+						sd.connect();
 					case 7001: // 파일 전송
-
+						
 						/**
 						 * TODO 퍼센트 로직
 						 */
@@ -204,6 +251,73 @@ public class SocketInfo {
 
 					}
 				}
+				/**
+				 * 1020 
+				 * 해당 디바이스를 공유 디바이스로 설정하기 위한 코드 
+				 * 설명 : 1020으로 서버에 전달하면 서버는 이 디바이스를 공유할 수 있도록 설정한다. 
+				 * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
+				 */
+				/*
+				 * jobj = new JsonObject(); 
+				 * jobj.addProperty("namespace", "1020"); 
+				 * json = gson.toJson(jobj); 
+				 * write(json);
+				 */
+				
+				/**
+				 * Android 
+				 * 1050 
+				 * 설명 : 내 디바이스를 제외한 현재 공유 중인 모든 디바이스의 정보를 클라이언트에게 제공한다
+				 * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
+				 */
+				/*
+				 * jobj = new JsonObject(); 
+				 * jobj.addProperty("namespace", "1050"); 
+				 * json = gson.toJson(jobj); 
+				 * write(json);
+				 */
+				
+				/**
+				* Android 
+				* 1060 
+				* 설명 : 내 디바이스를 제외한 현재 공유 중이 '아닌' 모든 디바이스의 정보를 클라이언트에게 제공한다
+				* 메시지 :{"namespace":1060,"devices":[{"id":"c45f6a42-259c-4f48-a469-18f26d89a561","name":"c45f6a42-259c-4f48-a469-18f26d89a561"}]}
+				*/
+				/*
+				 * jobj = new JsonObject(); 
+				 * jobj.addProperty("namespace", "1060"); 
+				 * json = gson.toJson(jobj); 
+				 * write(json);
+				 */
+				
+				/**
+				 * Android
+				 * 1070
+				 * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
+				 * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
+				 */
+				/*
+				 * jobj = new JsonObject(); 
+				 * jobj.addProperty("namespace", "1070"); 
+				 * jobj.addProperty("id", "device id");
+				 * json = gson.toJson(jobj); 
+				 * write(json);
+				 */
+				
+				 /**
+				   * Android
+				   * 2100
+				   * 설명 : 폴더 디렉토리 구조를 공유 디바이스에게 요청한다.
+				   * 메시지 :
+				  */
+				/*
+				jobj = new JsonObject();
+				jobj.addProperty("namespace", "2100");
+				jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
+				jobj.addProperty("content", "folder directory JSON object ");
+				json = gson.toJson(jobj);
+				write(json);
+				*/
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

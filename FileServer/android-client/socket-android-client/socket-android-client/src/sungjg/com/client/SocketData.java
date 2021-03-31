@@ -37,7 +37,7 @@ public class SocketData {
 			socket = new Socket();
 			SocketAddress socketAddress = new InetSocketAddress(Client.IP, Client.PORT);
 			socket.connect(socketAddress, 8288);
-			socket.setSoTimeout(100000);
+			socket.setSoTimeout(10000);
 			buf = new byte[CHUNK_SIZE];
 			fileOutput = new FileOutputStream(file, true);
 			dataInput = new DataInputStream(socket.getInputStream());
@@ -64,7 +64,7 @@ public class SocketData {
 					tmp += (CHUNK_SIZE);
 					i = 0;
 					fileOutput.write(buf);
-					System.out.println();
+					System.out.println("tmp : " + tmp);
 					fileOutput.flush();
 				}
 				if (size - tmp <= CHUNK_SIZE) {
@@ -82,7 +82,6 @@ public class SocketData {
 				File newFile = new File(fs.getPath() + fs.getName() + fs.getExt());
 				
 				boolean isSuc = file.renameTo(newFile);
-				System.out.println(isSuc);
 				System.out.println("FILE을 모두 썼습니다.");
 			} catch (Exception e) {
 				e.printStackTrace();
