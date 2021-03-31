@@ -472,11 +472,14 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE_STAT, (data) => {
+    console.log('hi');
     if (!isJsonString(data)) {
+      console.log('a');
       responseBad(socket, 'web');
       return;
     }
     data = JSON.parse(data);
+    console.log('b');
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
@@ -675,6 +678,7 @@ let connectToShareDevice = (socket, targetId) => {
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       sockets[i]['targetId'] = targetId;
+      console.log('target id : ' + targetId);
       return;
     }
   }
