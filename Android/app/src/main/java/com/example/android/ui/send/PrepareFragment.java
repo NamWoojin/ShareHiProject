@@ -48,7 +48,6 @@ public class PrepareFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("TAG", "switchFragment: "+((BackdropActivity)getActivity()));
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_send_prepare, container, false);
         View view = binding.getRoot();
 
