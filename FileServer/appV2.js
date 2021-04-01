@@ -68,6 +68,13 @@ let andServer = net.createServer((socket) => {
   }
   responseOK(socket, 'android');
 
+  socket.broadcast.emit(
+    1050,
+    JSON.stringify({
+      devices: val,
+    })
+  );
+
   /**
    * Android
    * 연결이 에러로 인해 끊겼을 경우 수행되는 코드
@@ -101,6 +108,7 @@ let andServer = net.createServer((socket) => {
      */
     if (isFileSender(socket)) {
       let fileSender = getFileSender(socket);
+      console.log('sending');
       fileSender.emit(8000, data);
       return;
     }

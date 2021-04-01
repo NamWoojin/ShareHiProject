@@ -3,6 +3,7 @@ const fs = require('fs');
 
 let config = {
   host: 'http://localhost:9002',
+  //host: 'http://j4f001.p.ssafy.io:9002',
   filename: './img/sample.mp4',
 };
 
@@ -115,7 +116,7 @@ socket.on(2000, (data) => {
   console.log(data);
 });
 socket.on(8000, (data) => {
-  console.log(2000);
+  console.log(8000);
   console.log(data);
 });
 
