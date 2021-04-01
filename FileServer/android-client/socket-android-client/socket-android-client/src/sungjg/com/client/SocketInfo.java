@@ -140,7 +140,6 @@ public class SocketInfo {
 						if(fs.getSize() == 0) break;
 						jobj = new JsonObject();
 						jobj.addProperty("namespace", "7100");
-						jobj.addProperty("targetId", targetId);
 						jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
 						jobj.addProperty("size", fs.getSize());
 						json = gson.toJson(jobj);

@@ -530,6 +530,12 @@ io.on('connection', (socket) => {
         percent: percent,
       })
     );
+    getTargetSocket(socket).emit(
+      KEY.SEND_FILE,
+      JSON.stringify({
+        percent: percent,
+      })
+    );
 
     getFileReceiver(socket).write(data);
     if (percent === 100) {
