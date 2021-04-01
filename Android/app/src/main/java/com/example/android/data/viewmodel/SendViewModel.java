@@ -33,6 +33,9 @@ public interface SendViewModel {
     int getType(int pos);
     String getName(int pos);
     void choiceFolderPath();
+    void createFolder();
+    void createFolderFragmentOpen();
+    void createFolderFragmentClose();
 
     void setFolderPathLiveData(MutableLiveData<String> folderPath);
     MutableLiveData<String> getFolderPathLiveData();
@@ -42,4 +45,6 @@ public interface SendViewModel {
     MutableLiveData<String> getFolderTitleLiveData();
     void setSelectedPathLiveData(MutableLiveData<String> selectedPathLiveData);
     MutableLiveData<String> getSelectedPathLiveData();
+    void setNewFolderNameLiveData(MutableLiveData<String> newFolderNameLiveData);
+    MutableLiveData<String> getNewFolderNameLiveData();
 }

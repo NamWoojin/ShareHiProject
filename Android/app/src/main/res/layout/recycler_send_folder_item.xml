@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/recycler_folder_imageView_margin"
-            android:contentDescription="@string/activity_logo_description"
+            android:contentDescription="@string/imageView_description"
             android:src="@{(viewModel.getType(pos) == 1 ? @drawable/ic_baseline_folder_24 :(viewModel.getType(pos) == 0 ? @drawable/ic_baseline_arrow_back_24 : @drawable/ic_baseline_file_24))}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
