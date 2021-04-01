@@ -64,10 +64,10 @@ public class SocketInfo {
 					String data = in.readLine();
 
 					JsonParser parser = new JsonParser();
+					System.out.println(data);
 					JsonElement element = parser.parse(data);
 					JsonObject jobj = new JsonObject();
 					String json = "";
-					System.out.println(data);
 					int namespace = element.getAsJsonObject().get("namespace").getAsInt();
 					switch (namespace) {
 					/**

@@ -565,14 +565,15 @@ io.on('connection', (socket) => {
         percent: percent,
       })
     );
+    getFileReceiver(socket).write(data);
+
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 7001,
         percent: percent,
       }) + '\n'
     );
-    getFileReceiver(socket).write(data);
-    if (percent === 100) {
+    if (percent >= 100) {
       initSocketData(socket);
     }
   });
