@@ -567,12 +567,12 @@ io.on('connection', (socket) => {
     );
     getFileReceiver(socket).write(data);
 
-    getTargetSocket(socket).write(
-      JSON.stringify({
-        namespace: 7001,
-        percent: percent,
-      }) + '\n'
-    );
+    // getTargetSocket(socket).write(
+    //   JSON.stringify({
+    //     namespace: 7001,
+    //     percent: percent,
+    //   }) + '\n'
+    // );
     if (percent >= 100) {
       initSocketData(socket);
     }
