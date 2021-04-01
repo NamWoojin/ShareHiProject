@@ -50,6 +50,7 @@ let andServer = net.createServer((socket) => {
    * @description 서버의 flag를 본다
    */
   if (flag === 1) {
+    console.log('flag 1');
     setFileReceiver(socket);
     let controlSocket = getControlSocket(socket);
     if (controlSocket === undefined) return;
@@ -61,6 +62,7 @@ let andServer = net.createServer((socket) => {
     return;
   }
   if (flag === 2) {
+    console.log('flag 2');
     setFileSender(socket);
     let controlSocket = getControlSocketDownload(socket);
     if (controlSocket === undefined) return;
@@ -551,11 +553,11 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE, (data) => {
+    console.log(data);
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
     }
-    if (!data) return;
 
     let percent = getFilePercent(socket, data.length);
 
@@ -565,14 +567,16 @@ io.on('connection', (socket) => {
         percent: percent,
       })
     );
+
+    getTargetSocket(socket).write(
+      JSON.stringify({
+        namespace: 7001,
+        percent: percent,
+      }) + '\n'
+    );
+
     getFileReceiver(socket).write(data);
 
-    // getTargetSocket(socket).write(
-    //   JSON.stringify({
-    //     namespace: 7001,
-    //     percent: percent,
-    //   }) + '\n'
-    // );
     if (percent >= 100) {
       initSocketData(socket);
     }
