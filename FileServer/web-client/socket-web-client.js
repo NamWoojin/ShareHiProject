@@ -66,7 +66,17 @@ socket.on(1070, () => {
     size: stats.size,
   };
   console.log(fileStat);
-  socket.emit(7000, JSON.stringify(fileStat));
+  //socket.emit(7000, JSON.stringify(fileStat));
+
+  //자! 파일 다운로드를 시작해 보자!
+  socket.emit(
+    8000,
+    JSON.stringify({
+      path: './',
+      name: 'sample',
+      ext: '.mp4',
+    })
+  );
 });
 
 /**

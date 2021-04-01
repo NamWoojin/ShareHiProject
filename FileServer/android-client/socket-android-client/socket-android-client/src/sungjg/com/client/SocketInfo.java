@@ -140,7 +140,6 @@ public class SocketInfo {
 						if(fs.getSize() == 0) break;
 						jobj = new JsonObject();
 						jobj.addProperty("namespace", "7100");
-						jobj.addProperty("targetId", targetId);
 						jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
 						jobj.addProperty("size", fs.getSize());
 						json = gson.toJson(jobj);
@@ -214,6 +213,7 @@ public class SocketInfo {
 						File file = new File(path + name + ext);
 						// 1. 파일이 이미 있는지 확인한다
 						if (file.length() == size) {
+							System.out.println("파일 이름 : " + file.getName());
 							System.out.println("이미 파일이 있습니다.");
 							fs = new FileStat(name, path, ext, 0, 0);
 							jobj = new JsonObject();
@@ -248,7 +248,32 @@ public class SocketInfo {
 						 * TODO 퍼센트 로직
 						 */
 						break;
-
+						
+					/**
+					* Android
+					* 8100
+					* 설명 : 폴더를 추가한다
+					* 메시지 : 
+					*/
+					case 8100:
+						String name2 = element.getAsJsonObject().get("name").getAsString();
+						String path2 = element.getAsJsonObject().get("path").getAsString();
+						String ext2 = element.getAsJsonObject().get("ext").getAsString();
+						File file2 = new File(name2 + path2 + ext2);
+						fs = new FileStat(name2, path2, ext2, file2.length(), 0);
+						targetId = element.getAsJsonObject().get("targetId").getAsString();
+						
+						jobj = new JsonObject(); 
+						jobj.addProperty("namespace", "8100");
+						jobj.addProperty("size", file2.length());
+						jobj.addProperty("targetId", targetId);
+						json = gson.toJson(jobj); 
+						write(json);
+						break;
+					case 8200:
+						SocketDownload sdown = new SocketDownload(fs);
+						sdown.connect();
+						break;
 					}
 				}
 				/**
