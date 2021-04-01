@@ -179,6 +179,17 @@
         </v-row>
       </v-container>
     </div>
+    <v-progress-circular
+      style="z-index: 99; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+      v-if="percent < 100"
+      :rotate="360"
+      :size="250"
+      :width="20"
+      :value="percent"
+      color="teal"
+    >
+      {{ percent }}
+    </v-progress-circular>
   </div>
 </template>
 
@@ -223,6 +234,7 @@ export default {
       tree: [],
       lastpath: '',
       currentpath: '',
+      percent: 100,
     };
   },
   methods: {
@@ -423,13 +435,12 @@ export default {
         path: this.lastpath
       }))
     },
-    noreload() {
-      this.$router.push({ name: 'Main' })
-      console.log('refresh')
-    }
   },
   mounted() {
     // this.node = this.data[0];
+    this.$socket.emit(2000, JSON.stringify({
+      path: '\/storage\/emulated\/0'
+    }))
   },
   watch: {
     fileList: function () {
@@ -455,9 +466,8 @@ export default {
     },
   },
   created() {
-    window.addEventListener('unload', this.noreload)
-
     this.$socket.on(2000, (data) => {
+      console.log('directory loading')
       data = JSON.parse(data)
       this.currentpath = JSON.parse(data.data).path
       if (this.node.path && (this.currentpath != this.node.path)) {
@@ -471,9 +481,7 @@ export default {
       this.componentKey++
       this.node = this.data[0];
     })
-    this.$socket.emit(2000, JSON.stringify({
-      path: '\/storage\/emulated\/0'
-    }))
+
 
     this.$socket.on(7000, (data) => {
       data = JSON.parse(data)
@@ -517,7 +525,9 @@ export default {
     })
 
     this.$socket.on(7001, (data) => {
-      console.log('this is bar: ', data)
+      console.log('this is bar: ', JSON.parse(data).percent)
+      console.log(typeof JSON.parse(data).percent)
+      this.percent = JSON.parse(data).percent
     })
   }
 };

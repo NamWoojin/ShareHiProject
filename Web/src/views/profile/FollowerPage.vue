@@ -1,63 +1,50 @@
 <template>
   <div>
     <div>
-      {{people}}
+      <!-- {{followers}} -->
+      <hr>
+      <!-- {{followings}} -->
+      <Profile />
+      <hr>
+      <UserStatus @state="setState" />
+      <hr>
+      <v-row>
+        <v-col>
+          <div v-for="(follower, idx) in followers" :key="idx">
+            <div style="display: flex; align-items: center; margin: 1rem;">
+              <img style="width: 60px; height: 60px;" :src="follower.mem_image">
+              <div style="text-align: left;">
+                <p style="margin: 0;">{{follower.mem_name}}</p>
+                <p style="margin: 0;">{{follower.mem_email}}</p>
+              </div>
+              <!-- <div>
+                <v-btn>팔로우</v-btn>
+              </div> -->
+            </div>
+          </div>
+        </v-col>
+      </v-row>
       <!-- profile bar -->
     </div>
-    <div>
-      <v-autocomplete
-        :items="people"
-        solo
-        flat
-        dense
-        outlined
-        chips
-        color="blue-grey lighten-2"
-        label="Select"
-        item-text="mem_name"
-        item-value="mem_name"
-        multiple
-      >
-        <template v-slot:selection="data">
-          <v-chip
-            v-bind="data.attrs"
-            :input-value="data.selected"
-            close
-            @click="data.select"
-            @click:close="remove(data.item)"
-          >
-            <v-avatar left>
-              <v-img :src="data.item.mem_image"></v-img>
-            </v-avatar>
-            {{ data.item.name }}
-          </v-chip>
-        </template>
-        <template v-slot:item="data">
-          <template v-if="typeof data.item !== 'object'">
-            <v-list-item-content v-text="data.item"></v-list-item-content>
-          </template>
-          <template v-else>
-            <v-list-item-avatar>
-              <img :src="data.item.avatar">
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title v-html="data.item.name"></v-list-item-title>
-              <v-list-item-subtitle v-html="data.item.group"></v-list-item-subtitle>
-            </v-list-item-content>
-          </template>
-        </template>
-      </v-autocomplete>
-    </div>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
+import Profile from '../../components/profile/Profile.vue'
+import UserStatus from '../../components/profile/UserStatus.vue'
 export default {
+  components: { Profile, UserStatus },
   name: 'FollowerPage',
   data() {
     return {
       people: [],
+      state: 0,
+      
+      followers: [],
+      followings: [],
     }
   },
   created() {
@@ -69,6 +56,36 @@ export default {
       .then(res => {
         this.people = res.data.content.member
       })
+    
+    axios.get(`https://j4f001.p.ssafy.io/api/follow/getFollower`, {
+      params: {
+        'mem_id': this.member.mem_id
+      }
+    })
+      .then((res) => {
+        this.followers = res.data.content.member
+      })
+    
+    axios.get(`https://j4f001.p.ssafy.io/api/follow/getFollowing`, {
+      params: {
+        'target_mem_id': this.member.mem_id
+      }
+    })
+      .then((res) => {
+        this.followings = res.data.content.member
+      })
+    
+
+  },
+  methods: {
+    setState(data) {
+      this.state = data
+    }
+  },
+  computed: {
+    ...mapState([
+      'member'
+    ])
   }
 }
 </script>

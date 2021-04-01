@@ -8,7 +8,7 @@ import VueFullPage from 'vue-fullpage.js'
 
 import io from 'socket.io-client'
 // const socket = io('http://j4f001.p.ssafy.io:9002')
-const socket = io('http://192.168.0.7:9002')
+const socket = io('http://j4f001.p.ssafy.io:9002')
 
 Vue.prototype.$socket = socket;
 
