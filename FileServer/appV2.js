@@ -571,7 +571,8 @@ io.on('connection', (socket) => {
         percent: percent,
       }) + '\n'
     );
-
+    let fileReceiver2 = getFileReceiver(socket);
+    if (!fileReceiver2) return;
     getFileReceiver(socket).write(data);
     if (percent === 100) {
       initSocketData(socket);
