@@ -259,7 +259,7 @@ public class SocketInfo {
 						String name2 = element.getAsJsonObject().get("name").getAsString();
 						String path2 = element.getAsJsonObject().get("path").getAsString();
 						String ext2 = element.getAsJsonObject().get("ext").getAsString();
-						File file2 = new File(name2 + path2 + ext2);
+						File file2 = new File(path2 + name2 + ext2);
 						fs = new FileStat(name2, path2, ext2, file2.length(), 0);
 						targetId = element.getAsJsonObject().get("targetId").getAsString();
 						

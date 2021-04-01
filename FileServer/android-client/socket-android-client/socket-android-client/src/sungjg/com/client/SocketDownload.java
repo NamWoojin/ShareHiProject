@@ -1,12 +1,9 @@
 package sungjg.com.client;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -55,32 +52,26 @@ public class SocketDownload {
 		@Override
 		public void run() {
 			try {
-				long size = fs.getSize();
-				long tmp = 0;
+				int size = (int)fs.getSize();
+				System.out.println("size : " + size);
+				int tmp = 0;
 				while (size - tmp > CHUNK_SIZE) {
-					int i = 0;
-					while (i < CHUNK_SIZE) {
-						buf[i] = (byte) fileInput.read();
-						i++;
-					}
+					fileInput.read(buf, tmp, tmp+ CHUNK_SIZE);
+					System.out.println(buf[0]);
 					tmp += (CHUNK_SIZE);
-					i = 0;
 					bufferdOutput.write(buf);
 					System.out.println("tmp : " + tmp);
 					bufferdOutput.flush();
 				}
 				if (size - tmp <= CHUNK_SIZE) {
-					int i = 0;
 					buf = new byte[(int) (size - tmp)];
-					while (i < size - tmp) {
-						buf[i] = (byte) fileInput.read();
-						i++;
-					}
+					fileInput.read(buf, tmp, size);
 					bufferdOutput.write(buf);
 					tmp += (size - tmp);
+					System.out.println("tmp : " + tmp);
+					bufferdOutput.flush();
 				}
 
-				bufferdOutput.flush();
 
 				System.out.println("FILE을 모두 전송했습니다..");
 			} catch (Exception e) {
