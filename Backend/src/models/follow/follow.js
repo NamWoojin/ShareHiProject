@@ -1,10 +1,10 @@
 'use strict';
 
 
-const getFollower = 'select mem_id, mem_name, mem_image \
+const getFollower = 'select mem_id, mem_name, mem_email, mem_image \
                        from member \
                       where mem_id in (select mem_id from follow where target_mem_id=?)';
-const getFollowing = 'select mem_id, mem_name, mem_image \
+const getFollowing = 'select mem_id, mem_name, mem_email, mem_image \
                         from member \
                        where mem_id in (select target_mem_id from follow where mem_id=?)';
 const insertFollowing = 'insert into follow \
