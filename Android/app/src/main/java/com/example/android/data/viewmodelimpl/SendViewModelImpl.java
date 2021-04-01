@@ -161,7 +161,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
         if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             //권한 허용되어 있을 때
-            Log.i("TAG", "getDir: 들어옴");
             File f = new File(dirPath);
             File[] files = f.listFiles();
 
