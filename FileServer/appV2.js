@@ -390,11 +390,11 @@ io.on('connection', (socket) => {
     if (!data) return;
     data = JSON.parse(data);
     connectToShareDevice(socket, data.id);
-    socket.emit(
-      1070,
+    getTargetSocket(socket).write(
       JSON.stringify({
+        namespace: 1070,
         targetId: getId(getTargetSocket(socket)),
-      })
+      }) + '\n'
     );
   });
 
