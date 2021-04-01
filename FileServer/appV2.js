@@ -75,7 +75,7 @@ let andServer = net.createServer((socket) => {
    */
   socket.on('error', (err) => {
     deleteSocket(socket);
-    printSocket();
+    broadCastToAllSocket();
   });
   /**
    * Android
@@ -84,7 +84,7 @@ let andServer = net.createServer((socket) => {
    */
   socket.on('end', () => {
     deleteSocket(socket);
-    printSocket();
+    broadCastToAllSocket();
   });
 
   /**
@@ -348,7 +348,6 @@ io.on('connection', (socket) => {
    */
   socket.on('disconnect', () => {
     deleteSocket(socket);
-    printSocket();
   });
 
   /**
