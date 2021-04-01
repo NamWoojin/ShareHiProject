@@ -149,7 +149,7 @@ public class BackdropActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
-        Log.i(TAG, "onBackPressed: " + fm.getBackStackEntryCount());
+//        Log.i(TAG, "onBackPressed: " + fm.getBackStackEntryCount());
         if (fm.getBackStackEntryCount() >= 1) {
             fm.popBackStack();
         } else {

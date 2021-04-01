@@ -92,10 +92,11 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
 
     private void getPermissionAndLogin() {
-        if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //파일 접근 권한 허용되지 않았을 때
             //권한 요청
-            ActivityCompat.requestPermissions(mActivityRef.get(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(mActivityRef.get(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
         } else {
             //권한 허용되어 있을 때
             startIntro();
@@ -105,10 +106,11 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
     //권한 승인 결과에 따라서 실행
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "onRequestPermissionsResult: "+grantResults[0]+" "+grantResults[1]);
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // 권한 승인
                     startIntro();
                 } else {

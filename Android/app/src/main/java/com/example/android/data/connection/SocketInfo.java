@@ -84,12 +84,15 @@ public class SocketInfo {
                 while (true) {
                     String data = in.readLine();
 
+                    if(data == null){
+                        throw new IOException();
+                    }
+
                     Log.d("myTag", "here");
                     Log.d("myTag", data);
 
                     JSONObject jsonObject = new JSONObject(data);
                     int namespace = jsonObject.getInt("namespace");
-
 
                     JsonObject jobj = new JsonObject();
                     String json = "";
@@ -141,13 +144,23 @@ public class SocketInfo {
                         /**
                          * Android
                          * 1070
-                         * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
-                         * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
+                         * 설명 : 현재 공유하고 있는 root path를 전송한다
+                         * 메시지 :{"namespace":1010,"path":path value}
                          */
                         case 1070:
                             /**
                              * LOGIC
                              */
+
+                            String rootPath = socketRepository.getRootPath();
+
+                            jobj = new JsonObject();
+                            jobj.addProperty("namespace", "1070");
+                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+                            jobj.addProperty("path", rootPath);
+                            json = gson.toJson(jobj);
+                            Log.i("myTag", "1070: " + json);
+                            write(json);
                             break;
                         /**
                          * Android

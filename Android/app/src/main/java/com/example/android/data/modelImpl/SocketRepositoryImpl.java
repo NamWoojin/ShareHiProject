@@ -27,6 +27,8 @@ public class SocketRepositoryImpl implements SocketRepository {
 
     private final int PERMISSIONS_REQUEST_CODE = 1;
 
+    private String rootPath;
+
     private WeakReference<Activity> mActivityRef;
 
     private MutableLiveData<String> isConnecting= new MutableLiveData<>();
@@ -36,9 +38,16 @@ public class SocketRepositoryImpl implements SocketRepository {
     //Socket 시작
     @Override
     public void startSocket(String path) {
+        rootPath = path;
         socketInfo = new SocketInfo(this);
+        Log.i("TAG", "startSocket: ");
         SocketStartThread sst = new SocketStartThread();
         sst.start();
+    }
+
+    @Override
+    public String getRootPath(){
+        return rootPath;
     }
 
     class SocketStartThread extends Thread{

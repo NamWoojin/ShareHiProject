@@ -1,13 +1,17 @@
 package com.example.android.data.viewmodelimpl;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -19,6 +23,7 @@ import com.example.android.data.model.SocketRepository;
 import com.example.android.data.model.dto.APIResponse;
 import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.Folder;
+import com.example.android.data.model.dto.Member;
 import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.ui.main.BackdropActivity;
@@ -48,6 +53,8 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     private List<Folder> folderItems = new ArrayList<>();
     private FolderRecyclerAdapter folderRecyclerAdapter = new FolderRecyclerAdapter(this);
     private String mRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+    private MutableLiveData<List<Member>> selectedMemberLiveData = new MutableLiveData<>(new ArrayList<>());
 
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
 
@@ -145,33 +152,41 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
     //폴더 목록 생성
     private void getDir(String name, String dirPath) {
+
         if (name.equals(new File(mRoot).getName()))
             name = "Root";
         folderTitleLiveData.setValue(name);
         folderPathLiveData.setValue(dirPath.replace(mRoot, "Root"));
         List<Folder> newList = new ArrayList<>();
 
-        File f = new File(dirPath);
-        File[] files = f.listFiles();
+        if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            //권한 허용되어 있을 때
+            Log.i("TAG", "getDir: 들어옴");
+            File f = new File(dirPath);
+            File[] files = f.listFiles();
 
-        if (!dirPath.equals(mRoot)) {
-            Folder folder = new Folder(0, mActivityRef.get().getString(R.string.fragment_folder_nothing_text), f.getParent());
-            newList.add(folder);
+            if (!dirPath.equals(mRoot)) {
+                Folder folder = new Folder(0, mActivityRef.get().getString(R.string.fragment_folder_nothing_text), f.getParent());
+                newList.add(folder);
+            }
+
+            if(files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+
+                    Folder folder = new Folder();
+                    folder.setType(file.isDirectory() ? 1 : 2);
+                    folder.setName(file.getName());
+                    folder.setPath(file.getAbsolutePath());
+
+                    newList.add(folder);
+                }
+            }
+            Collections.sort(newList);
+            folderItems = new ArrayList<>(newList);
+            folderRecyclerAdapter.notifyDataSetChanged();
         }
 
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
-
-            Folder folder = new Folder();
-            folder.setType(file.isDirectory() ? 1 : 2);
-            folder.setName(file.getName());
-            folder.setPath(file.getAbsolutePath());
-
-            newList.add(folder);
-        }
-        Collections.sort(newList);
-        folderItems = new ArrayList<>(newList);
-        folderRecyclerAdapter.notifyDataSetChanged();
     }
 
     //폴더 경로 선택

@@ -70,6 +70,7 @@
     <dimen name="fragment_prepare_go_share_Button_margin">12dp</dimen>
     <dimen name="fragment_prepare_go_share_Button_paddingVertical">16dp</dimen>
     <dimen name="fragment_prepare_go_share_Button_textSize">18sp</dimen>
+    <dimen name="fragment_prepare_marginHorizontal">16dp</dimen>
 
     <!--folder-->
     <dimen name="fragment_folder_header_layout_height">56dp</dimen>
