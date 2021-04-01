@@ -550,7 +550,7 @@ io.on('connection', (socket) => {
       JSON.stringify({
         namespace: 7001,
         percent: percent,
-      })
+      }) + '\n'
     );
 
     getFileReceiver(socket).write(data);
