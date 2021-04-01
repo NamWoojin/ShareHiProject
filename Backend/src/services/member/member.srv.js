@@ -337,7 +337,7 @@ const requireEmailAuth = async (req, res) => {
 
         callback(null, member, authNum, mailOptions);
       },
-      function(member, authNum, mailOptions, callback) {
+      function (member, authNum, mailOptions, callback) {
         transport.sendMail(mailOptions, (err) => {
           if (err) {
             callback(err);
@@ -351,7 +351,7 @@ const requireEmailAuth = async (req, res) => {
             });
           }
         });
-      }
+      },
     ],
     function (err, data) {
       if (!data) {
@@ -389,17 +389,17 @@ const checkEmailAuth = async (req, res) => {
               detail: 'DIFFERNT AUTHNUM',
               content: {},
             });
-          }else if (value === member.authNum) {
+          } else if (value === member.authNum) {
             redis.del(member.mem_email);
 
-            callback(true,{
+            callback(true, {
               message: 'SUCCESS',
               detail: '',
               content: {},
             });
           }
         });
-      }
+      },
     ],
     function (err, data) {
       if (!data) {
@@ -416,7 +416,7 @@ const checkEmailAuth = async (req, res) => {
   );
 };
 
-const upload = async(req, res) => {
+const upload = async (req, res) => {
   // async.waterfall([
   //   function(callback) {
   //     console.log('>>>> 프로필이미지업로드');
@@ -446,47 +446,52 @@ const upload = async(req, res) => {
   //   }
   // })
 
-  async.waterfall([
-    function(callback) {
-      console.log(">>> upload")
-      var storage = multer.diskStorage({
-        // 서버에 저장할 폴더
-        destination: function (req, file, cb) {
-          console.log(">>> destination")
-          cb(null, '/volumes/profile/');
-        },
-    
-        // 서버에 저장할 파일 명
-        filename: function (req, file, cb) {
-          console.log(">>> filename")
-          console.log(file);
-          file.uploadedFile = {
-            name: req.params.filename,
-            ext: file.mimetype.split('/')[1]
-          };
-          cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
-        }
-      });
-      callback(null, storage);
-    },
-    function(storage, callback) {
-      multer({
-        storage: storage
-      }).single('myfile');
+  async.waterfall(
+    [
+      function (callback) {
+        console.log(req.body);
+        console.log(file);
+        console.log('>>> upload');
+        var storage = multer.diskStorage({
+          // 서버에 저장할 폴더
+          destination: function (req, file, cb) {
+            console.log('>>> destination');
+            cb(null, 'upload/');
+          },
+
+          // 서버에 저장할 파일 명
+          filename: function (req, file, cb) {
+            console.log('>>> filename');
+            console.log(file);
+            file.uploadedFile = {
+              name: req.params.filename,
+              ext: file.mimetype.split('/')[1],
+            };
+            cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
+          },
+        });
+        callback(null, storage);
+      },
+      function (storage, callback) {
+        multer({
+          storage: storage,
+        }).single('myfile');
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
     }
-  ], function(err, data) {
-    if (!data) {
-      console.log(err);
-      return res.status(500).json({
-        message: 'FAIL',
-        detail: err,
-        content: {},
-      });
-    } else {
-      res.status(200).json(data);
-    }
-  })
-}
+  );
+};
 module.exports = {
   signup,
   signout,
@@ -497,5 +502,5 @@ module.exports = {
   requireEmailAuth,
   checkEmailAuth,
   checkPassword,
-  upload
+  upload,
 };
