@@ -20,7 +20,7 @@ const sendMSG = async(req, res) => {
             let queue = 'hello';
             let msg = 'hello world';
             channel.assertQueue(queue, {
-                durable: false;
+                // durable: false;
             });
             channel.sendToQueue(queue, Buffer.from(msg));
             console.log('send %s', msg);
