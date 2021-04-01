@@ -67,6 +67,10 @@ let andServer = net.createServer((socket) => {
     return;
   }
   responseOK(socket, 'android');
+  /**
+   * 연결 되면 모든 디바이스들한테 브로드 캐스팅
+   */
+  broadCastToAllSocket();
 
   /**
    * Android
@@ -1000,6 +1004,20 @@ let getSocketByTargetId = (targetId) => {
   for (let i in sockets) {
     if (sockets[i]['id'] === targetId) {
       return sockets[i]['socket'];
+    }
+  }
+};
+
+let broadCastToAllSocket = () => {
+  console.log('broadcasting all shared android device...');
+  for (let i in sockets) {
+    if (sockets[i]['type'] === 'web') {
+      sockets[i]['socket'].emit(
+        1050,
+        JSON.stringify({
+          devices: val,
+        })
+      );
     }
   }
 };
