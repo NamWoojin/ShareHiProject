@@ -57,9 +57,10 @@ public class SocketDownload {
 				int tmp = 0;
 				while (size - tmp > CHUNK_SIZE) {
 					fileInput.read(buf, tmp, tmp+ CHUNK_SIZE);
-					System.out.println(buf[0]);
+					System.out.println(buf[1]);
 					tmp += (CHUNK_SIZE);
 					bufferdOutput.write(buf);
+					System.out.println("gigi");
 					System.out.println("tmp : " + tmp);
 					bufferdOutput.flush();
 				}
