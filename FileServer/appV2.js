@@ -547,8 +547,8 @@ io.on('connection', (socket) => {
       })
     );
     getTargetSocket(socket).write(
-      KEY.SEND_FILE,
       JSON.stringify({
+        namespace: 7001,
         percent: percent,
       })
     );
