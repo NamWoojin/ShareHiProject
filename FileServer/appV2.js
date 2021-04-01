@@ -42,7 +42,7 @@ let andServer = net.createServer((socket) => {
    */
   console.log('Success - Android Connect');
   registSocket(socket, 'android');
-  printSocket();
+  //printSocket();
 
   /**
    * @type Android
@@ -61,15 +61,9 @@ let andServer = net.createServer((socket) => {
     return;
   }
   if (flag === 2) {
-    console.log('flag = 2');
     setFileSender(socket);
     let controlSocket = getControlSocketDownload(socket);
     if (controlSocket === undefined) return;
-    controlSocket.write(
-      JSON.stringify({
-        namespace: 8200,
-      }) + '\n'
-    );
     return;
   }
   responseOK(socket, 'android');
@@ -103,7 +97,13 @@ let andServer = net.createServer((socket) => {
     /**
      * @type Android
      * @description 데이터 전송 socket인지 구분한다.
+     * @logic socket이 과연 fileReceiver에 포함되는지 검사
      */
+    if (isFileSender(socket)) {
+      let fileSender = getFileSender(socket);
+      fileSender.emit(8000, data);
+      return;
+    }
 
     /**
      * Android
@@ -129,7 +129,6 @@ let andServer = net.createServer((socket) => {
       case KEY.SET_SHARE_ID:
         setShareDevice(socket);
         //responseOK(socket, 'android');
-        printSocket(socket);
         break;
 
       /**
@@ -274,7 +273,7 @@ let andServer = net.createServer((socket) => {
        * @description 파일 전송 전처리 최종작업
        */
       case 7100:
-        console.log('7100');
+        console.log(7100);
         setSenderTmpfileSize(socket, data.tmpfileSize, data.size);
 
         let sender = getSender(socket);
@@ -284,6 +283,23 @@ let andServer = net.createServer((socket) => {
           JSON.stringify({
             tmpfileSize: data.tmpfileSize,
           })
+        );
+        break;
+
+      /**
+       * @type Android
+       * @namespace 8100
+       * @description size를 세팅하고 파일 다운로드 준비를 최종적으로 마친다
+       * @data {path, name, exe}
+       */
+      case 8100:
+        console.log(8100);
+
+        setDownloadReceiverSize(data.size, data.targetId);
+        socket.write(
+          JSON.stringify({
+            namespace: 8200,
+          }) + '\n'
         );
         break;
     }
@@ -310,7 +326,7 @@ io.on('connection', (socket) => {
   console.log('Success Web Connect');
   registSocket(socket, 'web');
   responseOK(socket, 'web');
-  printSocket();
+  //printSocket();
 
   /**
    * Web
@@ -530,7 +546,7 @@ io.on('connection', (socket) => {
         percent: percent,
       })
     );
-    getTargetSocket(socket).emit(
+    getTargetSocket(socket).write(
       KEY.SEND_FILE,
       JSON.stringify({
         percent: percent,
@@ -559,7 +575,6 @@ io.on('connection', (socket) => {
       responseBad(socket, 'web');
       return;
     }
-
     flag = 2;
     if (!data) return;
     setDownloadReceiver(socket);
@@ -567,36 +582,10 @@ io.on('connection', (socket) => {
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 8100,
-        targetId: getId(getTargetSocket(socket)),
+        targetId: getId(socket),
         path: data.path,
         name: data.name,
         ext: data.ext,
-      }) + '\n'
-    );
-  });
-
-  /**
-   * @type Web
-   * @namespace 8100
-   * @description 웹에서 파일 다운로드를 요청한다
-   * @data {path, name, exe}
-   */
-  socket.on(8100, (data) => {
-    if (!isJsonString(data)) {
-      responseBad(socket, 'web');
-      return;
-    }
-    data = JSON.parse(data);
-    if (!checkSocket(getId(getTargetSocket(socket)))) {
-      responseBad(socket, 'web');
-      return;
-    }
-    if (!data) return;
-
-    setDownloadReceiverSize(socket, data.size);
-    getTargetSocket(socket).write(
-      JSON.stringify({
-        namespace: 8200,
       }) + '\n'
     );
   });
@@ -919,12 +908,10 @@ let setDownloadReceiver = (socket) => {
   }
 };
 
-let setDownloadReceiverSize = (socket, size) => {
-  let id;
+let setDownloadReceiverSize = (size, targetId) => {
   for (let i in sockets) {
-    if (sockets[i]['socket'] === socket) {
+    if (sockets[i]['id'] === targetId) {
       sockets[i]['size'] = size;
-      return;
     }
   }
 };
@@ -935,7 +922,7 @@ let setFileSender = (socket) => {
   let id = getId(socket);
 
   for (let i in sockets) {
-    if (sockets[i]['flag'] === 1) {
+    if (sockets[i]['flag'] === 2) {
       sockets[i]['flag'] = 0;
       sockets[i]['fileSender'] = id;
     }
@@ -944,15 +931,15 @@ let setFileSender = (socket) => {
 
 let getControlSocketDownload = (socket) => {
   let targetId;
-  let receiverId;
+  let senderId;
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
-      receiverId = sockets[i]['id'];
+      senderId = sockets[i]['id'];
       break;
     }
   }
   for (let i in sockets) {
-    if (sockets[i]['fileSender'] === receiverId) {
+    if (sockets[i]['fileSender'] === senderId) {
       targetId = sockets[i]['targetId'];
       break;
     }
@@ -963,4 +950,34 @@ let getControlSocketDownload = (socket) => {
     }
   }
   return undefined;
+};
+let isFileSender = (socket) => {
+  let id = '';
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      id = sockets[i]['id'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['fileReceiver'] === id) {
+      return true;
+    }
+  }
+  return false;
+};
+let getFileSender = (socket) => {
+  let fileSender = '';
+
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      fileSender = sockets[i]['id'];
+      break;
+    }
+  }
+  for (let i in sockets) {
+    if (sockets[i]['fileSender'] === fileSender) {
+      return sockets[i]['socket'];
+    }
+  }
 };
