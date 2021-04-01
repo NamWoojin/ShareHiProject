@@ -4,6 +4,8 @@ import android.app.Activity;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.android.data.connection.dto.FileStat;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -11,12 +13,16 @@ import java.io.IOException;
 public interface SocketRepository {
     void setParentContext(Activity parentContext);
     void startSocket(String path);
-    void abruptSocketClosed();
-    void stopSocket() throws IOException;
+    void successSocketConnection();
+    void failSocketConnection();
+    void successSocketClosed();
+    void failSocketClosed();
+    void stopSocket();
+    boolean getFile(FileStat fs);
     JSONObject getFolderDirectory(String path);
     boolean changeFolderName(String path, String prevName, String newName);
     boolean deleteFolder(String path,String name);
     boolean createFolder(String path,String folderName);
-    void setIsConnecting(MutableLiveData<Boolean> isConnecting);
-    MutableLiveData<Boolean> getIsConnecting();
+    void setIsConnecting(MutableLiveData<String> isConnecting);
+    MutableLiveData<String> getIsConnecting();
 }

@@ -33,7 +33,7 @@ public class SocketData {
 
     public void connect() {
         try {
-            file = new File(fs.getPath() + fs.getName() + fs.getExt());
+            file = new File(fs.getPath() +"/"+ fs.getName() + fs.getExt());
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(SocketInfo.IP, SocketInfo.PORT);
             socket.connect(socketAddress, 8288);

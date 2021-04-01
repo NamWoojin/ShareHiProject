@@ -63,6 +63,8 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     public void setSocketRepository(SocketRepository repository, Activity parentContext) {
         mSocketRepository = repository;
         mSocketRepository.setParentContext(parentContext);
+        setSocketObserver();
+//        mSocketRepository.deleteFolder(mRoot,"sample.mp4");
     }
 
     @Override
@@ -77,33 +79,43 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //공유 중단
     @Override
     public void stopShare() {
-        try {
-            mSocketRepository.stopSocket();
-            shareFragment.dismiss();
-            Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
-        }
+        mSocketRepository.stopSocket();
     }
 
     //prepare
     //공유 시작
     @Override
     public void startShare() {
-        shareFragment = ShareFragment.newInstance();
-        shareFragment.setCancelable(false);
-        shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
         mSocketRepository.startSocket(selectedPathLiveData.getValue());
-        mSocketRepository.getIsConnecting().observe((BackdropActivity) mActivityRef.get(), aBoolean -> {
-            if(!aBoolean) {
-                new AlertDialog.Builder(mActivityRef.get())
-                        .setTitle("통신 중지")
-                        .setMessage("오랜 시간 통신이 이어지지 않아 연결이 끊어졌습니다.")
-                        .setPositiveButton("확인", (dialog, whichButton) -> {
-                            shareFragment.dismiss();
-                        })
-                        .show();
+    }
+
+    private void setSocketObserver(){
+        mSocketRepository.getIsConnecting().observe((BackdropActivity) mActivityRef.get(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                switch (s){
+                    case "successConnect":
+                        shareFragment = ShareFragment.newInstance();
+                        shareFragment.setCancelable(false);
+                        shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
+                        break;
+                    case "failConnect":
+                        new AlertDialog.Builder(mActivityRef.get())
+                                .setTitle("통신 중지")
+                                .setMessage("소켓 연결이 끊어졌습니다.")
+                                .setPositiveButton("확인", (dialog, whichButton) -> {
+                                    shareFragment.dismiss();
+                                })
+                                .show();
+                        break;
+                    case "successClose":
+                        shareFragment.dismiss();
+                        Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
+                        break;
+                    case "failClose":
+                        Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         });
     }
