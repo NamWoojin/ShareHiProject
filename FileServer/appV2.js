@@ -179,12 +179,20 @@ let andServer = net.createServer((socket) => {
       /**
        * Android
        * 1070
-       * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
+       * 설명 : 안드로이드에서 공유폴더의 최상위 디렉토리 path를 웹으로 전송한다
        * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
        */
       case 1070:
-        connectToShareDevice(socket, data.id);
-        responseOK(socket);
+        path = data.path;
+        targetId = data.targetId;
+
+        getSocketByTargetId(targetId).emit(
+          1070,
+          JSON.stringify({
+            path: path,
+          })
+        );
+
         break;
 
       /**
@@ -382,7 +390,12 @@ io.on('connection', (socket) => {
     if (!data) return;
     data = JSON.parse(data);
     connectToShareDevice(socket, data.id);
-    socket.emit(1070);
+    socket.emit(
+      1070,
+      JSON.stringify({
+        targetId: getId(getTargetSocket(socket)),
+      })
+    );
   });
 
   /**
@@ -978,6 +991,14 @@ let getFileSender = (socket) => {
   }
   for (let i in sockets) {
     if (sockets[i]['fileSender'] === fileSender) {
+      return sockets[i]['socket'];
+    }
+  }
+};
+
+let getSocketByTargetId = (targetId) => {
+  for (let i in sockets) {
+    if (sockets[i]['id'] === targetId) {
       return sockets[i]['socket'];
     }
   }
