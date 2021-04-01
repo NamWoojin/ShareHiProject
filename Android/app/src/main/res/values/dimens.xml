@@ -74,11 +74,16 @@
 
     <!--folder-->
     <dimen name="fragment_folder_header_layout_height">56dp</dimen>
-    <dimen name="fragment_folder_header_title_textView_marginStart">32dp</dimen>
+    <dimen name="fragment_folder_header_title_textView_marginStart">16dp</dimen>
     <dimen name="fragment_folder_header_title_textView_textSize">18sp</dimen>
     <dimen name="fragment_folder_footer_layout_height">56dp</dimen>
     <dimen name="fragment_folder_footer_button_marginHorizontal">16dp</dimen>
     <dimen name="recycler_folder_imageView_margin">16dp</dimen>
+
+    <!--create folder-->
+    <dimen name="fragment_create_folder_layout_height">230dp</dimen>
+    <dimen name="fragment_create_folder_info_textSize">18sp</dimen>
+    <dimen name="fragment_create_folder_button_width">120dp</dimen>
 
     <!--share-->
     <dimen name="fragment_share_layout_width">300dp</dimen>

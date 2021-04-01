@@ -27,6 +27,7 @@ import com.example.android.data.model.dto.Member;
 import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.ui.main.BackdropActivity;
+import com.example.android.ui.send.CreateFolderFragment;
 import com.example.android.ui.send.FolderFragment;
 import com.example.android.ui.send.FolderRecyclerAdapter;
 import com.example.android.ui.send.ShareFragment;
@@ -54,11 +55,14 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     private FolderRecyclerAdapter folderRecyclerAdapter = new FolderRecyclerAdapter(this);
     private String mRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
 
+    private MutableLiveData<String> newFolderNameLiveData;
+
     private MutableLiveData<List<Member>> selectedMemberLiveData = new MutableLiveData<>(new ArrayList<>());
 
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
 
     private ShareFragment shareFragment;
+    private CreateFolderFragment createFolderFragment;
     private SocketRepository mSocketRepository;
 
     @Override
@@ -185,7 +189,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
             folderItems = new ArrayList<>(newList);
             folderRecyclerAdapter.notifyDataSetChanged();
         }
-
     }
 
     //폴더 경로 선택
@@ -194,6 +197,29 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         Log.i("TAG", "choiceFolderPath: 들어옴");
         selectedPathLiveData.setValue(folderPathLiveData.getValue().replace("Root", mRoot));
         mActivityRef.get().onBackPressed();
+    }
+
+    @Override
+    public void createFolderFragmentOpen(){
+        newFolderNameLiveData = new MutableLiveData<>("");
+        createFolderFragment = CreateFolderFragment.newInstance();
+        createFolderFragment.show(mActivityRef.get().getFragmentManager(),"CREATE_FOLDER");
+    }
+
+    @Override
+    public void createFolder(){
+        if(mSocketRepository.createFolder(folderPathLiveData.getValue().replace("Root", mRoot),newFolderNameLiveData.getValue())){
+            Toast.makeText(mActivityRef.get(), R.string.toast_create_folder_success_message, Toast.LENGTH_SHORT).show();
+            createFolderFragment.dismiss();
+            getDir(folderTitleLiveData.getValue(),folderPathLiveData.getValue().replace("Root", mRoot));
+        }else{
+            Toast.makeText(mActivityRef.get(), R.string.toast_create_folder_fail_message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void createFolderFragmentClose(){
+        createFolderFragment.dismiss();
     }
 
     @Override
@@ -256,5 +282,13 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     @Override
     public MutableLiveData<String> getSelectedPathLiveData() {
         return selectedPathLiveData;
+    }
+    @Override
+    public void setNewFolderNameLiveData(MutableLiveData<String> newFolderNameLiveData) {
+        this.newFolderNameLiveData = newFolderNameLiveData;
+    }
+    @Override
+    public MutableLiveData<String> getNewFolderNameLiveData() {
+        return newFolderNameLiveData;
     }
 }

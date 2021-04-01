@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.data.viewmodel.SendViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -22,13 +25,29 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/fragment_folder_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/fragment_folder_header_title_textView_marginStart"
                 android:text="@{viewModel.folderTitleLiveData}"
                 android:textSize="@dimen/fragment_folder_header_title_textView_textSize"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/fragment_folder_create_imageView"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/fragment_folder_create_imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/fragment_folder_header_title_textView_marginStart"
+                android:contentDescription="@string/imageView_description"
+                android:onClick="@{() -> viewModel.createFolderFragmentOpen()}"
+                android:src="@drawable/ic_create_new_folder_black_24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fragment_folder_title_textView"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -36,8 +55,8 @@
             android:id="@+id/fragment_folder_path_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.folderPathLiveData}"
             android:layout_marginHorizontal="16dp"
+            android:text="@{viewModel.folderPathLiveData}"
             app:layout_constraintBottom_toTopOf="@id/fragment_folder_file_recyclerView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,14 +64,14 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_folder_file_recyclerView"
+            folderAdapter="@{viewModel.folderRecyclerAdapter}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:divider="@color/gray"
             app:layout_constraintBottom_toTopOf="@id/fragment_folder_footer_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_folder_path_textView"
-            folderAdapter="@{viewModel.folderRecyclerAdapter}"/>
+            app:layout_constraintTop_toBottomOf="@id/fragment_folder_path_textView" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_folder_footer_layout"
@@ -68,8 +87,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/fragment_folder_footer_button_marginHorizontal"
-                android:text="이 폴더 공유"
                 android:onClick="@{() -> viewModel.choiceFolderPath()}"
+                android:text="이 폴더 공유"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
