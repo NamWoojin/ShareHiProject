@@ -1,5 +1,6 @@
 package sungjg.com.client;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -24,6 +25,7 @@ public class SocketDownload {
 	DataOutputStream dataOutput = null;
 	byte[] buf = null;
 	BufferedOutputStream bufferdOutput = null;
+	BufferedInputStream bis = null;
 
 	public SocketDownload(FileStat fs) {
 		super();
@@ -40,6 +42,8 @@ public class SocketDownload {
 			buf = new byte[CHUNK_SIZE];
 			fileInput = new FileInputStream(file);
 			dataOutput = new DataOutputStream(socket.getOutputStream());
+			bis = new BufferedInputStream(fileInput);
+			
 			bufferdOutput = new BufferedOutputStream(dataOutput);
 			getIO.start();
 
@@ -56,17 +60,15 @@ public class SocketDownload {
 				System.out.println("size : " + size);
 				int tmp = 0;
 				while (size - tmp > CHUNK_SIZE) {
-					fileInput.read(buf, tmp, tmp+ CHUNK_SIZE);
-					System.out.println(buf[1]);
+					bis.read(buf, 0, CHUNK_SIZE);
 					tmp += (CHUNK_SIZE);
 					bufferdOutput.write(buf);
-					System.out.println("gigi");
 					System.out.println("tmp : " + tmp);
 					bufferdOutput.flush();
 				}
 				if (size - tmp <= CHUNK_SIZE) {
 					buf = new byte[(int) (size - tmp)];
-					fileInput.read(buf, tmp, size);
+					bis.read(buf, 0, (size-tmp));
 					bufferdOutput.write(buf);
 					tmp += (size - tmp);
 					System.out.println("tmp : " + tmp);
@@ -92,4 +94,5 @@ public class SocketDownload {
 			}
 		}
 	};
+	
 }
