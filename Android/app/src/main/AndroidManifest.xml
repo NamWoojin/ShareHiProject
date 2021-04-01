@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
         <activity android:name=".ui.main.BackdropActivity" />
-        <activity android:name=".ui.receive.ShareActivity" />
         <activity android:name=".ui.user.SignupActivity" />
         <activity android:name=".ui.user.LoginActivity" />
         <activity android:name=".ui.main.IntroActivity">

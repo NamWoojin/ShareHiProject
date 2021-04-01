@@ -16,9 +16,7 @@ import java.net.SocketAddress;
 import com.example.android.data.connection.dto.FileStat;
 import com.example.android.data.model.SocketRepository;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +38,6 @@ public class SocketInfo {
 
     public SocketInfo(SocketRepository socketRepository) {
         this.socketRepository = socketRepository;
-        closeSocketByUser = false;
     }
 
     public void connect(String adID) {
@@ -55,17 +52,24 @@ public class SocketInfo {
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             getIO.start();
-
+            socketRepository.successSocketConnection();
+            closeSocketByUser = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void disConnect() throws IOException {
+    public void disConnect() {
         //중지 요청 보내기
         //getIO스레드에서 중지 요청 승인하면 답장
-        closeSocketByUser = true;
-        socket.close();
+        try {
+            closeSocketByUser = true;
+            socket.close();
+            socketRepository.successSocketClosed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            socketRepository.failSocketClosed();
+        }
     }
 
     public void write(String data) {
@@ -156,12 +160,13 @@ public class SocketInfo {
                              * LOGIC
                              */
                             break;
+
                         case 7200: // 파일 전송을 위한 TCP 연결이 완료되었다.
                             System.out.println("fs size : " + fs.getSize());
                             if (fs.getSize() == 0) break;
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "7100");
-                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
                             jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
                             jobj.addProperty("size", fs.getSize());
                             json = gson.toJson(jobj);
@@ -318,7 +323,7 @@ public class SocketInfo {
                                 break;
                             } else {
 
-                                file = new File(path7100 + name7100 + ext);
+                                file = new File(path7100 + "/" + name7100 + ext);
                                 long tmpfileSize = 0;
                                 if (file.exists()) {
                                     System.out.println("이어받기 로직을 수행합니다.");
@@ -330,15 +335,18 @@ public class SocketInfo {
                                 // 새로운 TCP 연결 시도
                                 String targetId = jsonObject.getString("targetId");
                             }
-                            SocketData sd = new SocketData(fs);
-                            sd.connect();
-
+                            socketRepository.getFile(fs);
+//                            SocketData sd = new SocketData(fs);
+//                            sd.connect();
+                            break;
 
                         case 7001: // 파일 전송
 
                             /**
                              * TODO 퍼센트 로직
                              */
+                            int percentage = jsonObject.getInt("percent");
+                            Log.i("myTag", "percentage: " + percentage);
                             break;
 
 
@@ -414,10 +422,10 @@ public class SocketInfo {
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
-                if (!closeSocketByUser) {
-                    //유저의 요청에 의한 종료가 아니라면
-                    socketRepository.abruptSocketClosed();
-                }
+                //사용자의 의도에 의한 종료가 아닐 경우
+                if(!closeSocketByUser)
+                    socketRepository.failSocketConnection();
+
                 Log.i("TAG", "run: socketStop");
             }
         }

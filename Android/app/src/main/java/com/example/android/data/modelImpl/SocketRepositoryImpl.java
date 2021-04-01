@@ -7,7 +7,9 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.android.data.connection.SocketData;
 import com.example.android.data.connection.SocketInfo;
+import com.example.android.data.connection.dto.FileStat;
 import com.example.android.data.model.SocketRepository;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -27,7 +29,7 @@ public class SocketRepositoryImpl implements SocketRepository {
 
     private WeakReference<Activity> mActivityRef;
 
-    private MutableLiveData<Boolean> isConnecting;
+    private MutableLiveData<String> isConnecting= new MutableLiveData<>();
 
     private SocketInfo socketInfo;
 
@@ -35,7 +37,6 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public void startSocket(String path) {
         socketInfo = new SocketInfo(this);
-        isConnecting = new MutableLiveData<>(true);
         SocketStartThread sst = new SocketStartThread();
         sst.start();
     }
@@ -68,14 +69,35 @@ public class SocketRepositoryImpl implements SocketRepository {
     }
 
     @Override
-    public void abruptSocketClosed(){
+    public void successSocketConnection(){
         mActivityRef.get().runOnUiThread(() -> {
-            isConnecting.setValue(false);
+            isConnecting.setValue("successConnect");
         });
     }
 
     @Override
-    public void stopSocket() throws IOException {
+    public void failSocketConnection(){
+        mActivityRef.get().runOnUiThread(() -> {
+            isConnecting.setValue("failConnect");
+        });
+    }
+
+    @Override
+    public void successSocketClosed(){
+        mActivityRef.get().runOnUiThread(() -> {
+            isConnecting.setValue("successClose");
+        });
+    }
+
+    @Override
+    public void failSocketClosed(){
+        mActivityRef.get().runOnUiThread(() -> {
+            isConnecting.setValue("failClose");
+        });
+    }
+
+    @Override
+    public void stopSocket(){
         socketInfo.disConnect();
     }
 
@@ -138,11 +160,13 @@ public class SocketRepositoryImpl implements SocketRepository {
         File dir = new File(path);
         File[] childFileList = dir.listFiles();
         if (dir.exists()) {
-            for (File childFile : childFileList) {
-                if (childFile.isDirectory()) {
-                    deleteFolderwithChild(childFile.getAbsolutePath()); //하위 디렉토리
-                } else {
-                    childFile.delete(); //하위 파일
+            if(childFileList != null) {
+                for (File childFile : childFileList) {
+                    if (childFile.isDirectory()) {
+                        deleteFolderwithChild(childFile.getAbsolutePath()); //하위 디렉토리
+                    } else {
+                        childFile.delete(); //하위 파일
+                    }
                 }
             }
             result = dir.delete();
@@ -173,11 +197,28 @@ public class SocketRepositoryImpl implements SocketRepository {
     }
 
     @Override
-    public MutableLiveData<Boolean> getIsConnecting() {
+    public boolean getFile(FileStat fs){
+        boolean shouldProviceRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
+
+        if (shouldProviceRationale) {
+            //앱에 필요한 권한이 없어서 권한 요청
+//            ActivityCompat.requestPermissions(mActivityRef.get(),
+//                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_CODE);
+            return false;
+        } else {
+            SocketData sd = new SocketData(fs);
+            sd.connect();
+            return true;
+        }
+    }
+
+    @Override
+    public MutableLiveData<String> getIsConnecting() {
         return isConnecting;
     }
     @Override
-    public void setIsConnecting(MutableLiveData<Boolean> isConnecting) {
+    public void setIsConnecting(MutableLiveData<String> isConnecting) {
         this.isConnecting = isConnecting;
     }
 }
