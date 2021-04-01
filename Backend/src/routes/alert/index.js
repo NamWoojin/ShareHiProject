@@ -2,4 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
-const UserService = require('../../services/alert/alert.srv');
+const AlertService = require('../../services/alert/alert.srv');
+
+router.get('/sendMSG', AlertService.)
+
+module.exports = router;
