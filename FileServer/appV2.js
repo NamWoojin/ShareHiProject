@@ -189,6 +189,8 @@ let andServer = net.createServer((socket) => {
       case 1070:
         path = data.path;
         targetId = data.targetId;
+        console.log('path : ' + path);
+        console.log('targetId : ' + targetId);
 
         getSocketByTargetId(targetId).emit(
           1070,
