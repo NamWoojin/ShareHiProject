@@ -396,7 +396,7 @@ io.on('connection', (socket) => {
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 1070,
-        targetId: getId(getTargetSocket(socket)),
+        targetId: getId(socket),
       }) + '\n'
     );
   });
