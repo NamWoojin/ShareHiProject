@@ -67,10 +67,6 @@ let andServer = net.createServer((socket) => {
     return;
   }
   responseOK(socket, 'android');
-  /**
-   * 연결 되면 모든 디바이스들한테 브로드 캐스팅
-   */
-  broadCastToAllSocket();
 
   /**
    * Android
@@ -134,6 +130,10 @@ let andServer = net.createServer((socket) => {
       case KEY.SET_SHARE_ID:
         setShareDevice(socket);
         //responseOK(socket, 'android');
+        /**
+         * 연결 되면 모든 디바이스들한테 브로드 캐스팅
+         */
+        broadCastToAllSocket();
         break;
 
       /**
@@ -1008,8 +1008,9 @@ let getSocketByTargetId = (targetId) => {
   }
 };
 
-let broadCastToAllSocket = () => {
+let broadCastToAllSocket = (socket) => {
   console.log('broadcasting all shared android device...');
+  let val = getShareDevicesAll();
   for (let i in sockets) {
     if (sockets[i]['type'] === 'web') {
       sockets[i]['socket'].emit(
@@ -1020,4 +1021,16 @@ let broadCastToAllSocket = () => {
       );
     }
   }
+};
+let getShareDevicesAll = () => {
+  let val = [];
+  for (let i in sockets) {
+    if (sockets[i]['isShare'] === 'true') {
+      val.push({
+        id: sockets[i].id,
+        name: sockets[i].name,
+      });
+    }
+  }
+  return val;
 };
