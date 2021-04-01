@@ -20,7 +20,6 @@ export default {
   name: "Directory",
   props: {
     directoryData: Object,
-    rootPath : String,
   },
   data() {
     return {
@@ -29,18 +28,9 @@ export default {
       percent : 0,
     }
   },
-  watch : {
-    rootPath() {
-      console.log('watch rootPath',this.rootPath)
-      if(this.rootPath) {
-        console.log(`emit 2000 ${this.rootPath}`)
-        this.$socket.emit(2000, JSON.stringify({
-          path: this.rootPath
-        }))
-      }
-    }
-  },
   mounted () {
+    this.rootDataParsing();
+
     this.$socket.on(7000, (data) => {
       console.log('7000')
       data = JSON.parse(data)
@@ -84,16 +74,11 @@ export default {
 
     this.$socket.on(2000,(data) => {
       data = JSON.parse(data)
+      console.log('2000 StorageResponse In Directory')
+      console.log(data)
+      console.log('')
       console.log(JSON.parse(data.data))
-      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
-      console.log('on 2000', Boolean(directory.childNodes),directory.childNodes.length)
-      if (directory.childNodes.length === 0) {
-        this.DataParsing(data.data,true)
-      }
-      else {
-        this.DataParsing(data.data,false)
-      }
-
+      console.log('')
     })
   },
   methods : {
@@ -109,7 +94,7 @@ export default {
       const fileName = target.value
       const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
       const fileData = {
-        'path' : "\/storage\/emulated\/0",
+        'path' : './',
         'name' : fileNameWithoutPath.split('.')[0],
         'ext' : fileNameWithoutPath.split('.')[1],
         'size' : target.files[0].size,
@@ -144,35 +129,26 @@ export default {
       return tag
     },
 
-    DataParsing(data,isRoot) {
-      console.log('dataParsing',isRoot)
-      console.log('dataParsing data',data)
-      data = JSON.parse(data)
-      let directory
-      if (isRoot) {
-        directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
-      }
-      else {
-        directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory").querySelector(`[data-path="${data.path}"]`) 
-      }
-      console.log('DataParsing',directory)
-      if (!data) {
-        console.log('noData',data)
+    rootDataParsing() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      const rootData = this.directoryData
+      if (!rootData) {
+        console.log('noData',rootData)
         return
       }
       const folders = []
       const files = []
-      for (let i=0;i<data.directory.length;i++) {
-        const element = data.directory[i]
+      for (let i=0;i<rootData.directory.length;i++) {
+        const element = rootData.directory[i]
         if (element.type === 'folder') {
-          folders.push(data.directory[i])
+          folders.push(rootData.directory[i])
         }
         else {
-          files.push(data.directory[i])
+          files.push(rootData.directory[i])
         }
       }
       const rootDiv = this.elementSetting('div','dir')
-      rootDiv.innerText = data.name
+      rootDiv.innerText = "root"
       const rootUl = this.elementSetting('ul')
       rootDiv.addEventListener('click', () => {
           rootUl.classList.toggle('closed')
@@ -187,7 +163,7 @@ export default {
           folderDiv.addEventListener('click', () => {
             ul.classList.toggle('closed')
             // path에 대해서 하위 내용 구조 통신하여 받는거 추가하기
-            this.socketStorageTreeRequest(folder.path,folder.name)
+            // this.socketStorageTreeRequest(path,name)
             
           })
           folderDiv.addEventListener('contextmenu', (e) => {
