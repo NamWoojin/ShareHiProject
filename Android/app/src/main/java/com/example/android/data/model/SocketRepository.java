@@ -13,6 +13,7 @@ import java.io.IOException;
 public interface SocketRepository {
     void setParentContext(Activity parentContext);
     void startSocket(String path);
+    String getRootPath();
     void successSocketConnection();
     void failSocketConnection();
     void successSocketClosed();

@@ -41,7 +41,7 @@
                 android:id="@+id/fragment_prepare_choiced_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
+                android:layout_marginHorizontal="@dimen/fragment_prepare_marginHorizontal"
                 android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"
                 android:visibility="@{viewModel.selectedPathLiveData.length() > 0 ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toTopOf="@id/fragment_prepare_go_folder_Button"
@@ -112,15 +112,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <Button
+                android:id="@+id/fragment_prepare_go_member_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"
+                android:text="@string/fragment_prepare_go_member_Button_text"
+                android:onClick="@{() -> viewModel.switchPage(`member`)}"
+                app:layout_constraintStart_toStartOf="@id/fragment_prepare_member_TextView"
+                app:layout_constraintTop_toBottomOf="@id/fragment_prepare_member_TextView"
+               />
+<!--            app:layout_constraintBottom_toTopOf="@id/fragment_prepare_choice_members_RecyclerView"-->
+
 <!--            <androidx.recyclerview.widget.RecyclerView-->
 <!--                android:id="@+id/fragment_prepare_choice_members_RecyclerView"-->
 <!--                android:layout_width="match_parent"-->
 <!--                android:layout_height="0dp"-->
 <!--                android:layout_marginVertical="@dimen/fragment_prepare_element_marginTop"-->
+<!--                android:layout_marginHorizontal="@dimen/fragment_prepare_marginHorizontal"-->
 <!--                app:layout_constraintBottom_toBottomOf="parent"-->
 <!--                app:layout_constraintEnd_toEndOf="parent"-->
 <!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/fragment_prepare_member_TextView" />-->
+<!--                app:layout_constraintTop_toBottomOf="@id/fragment_prepare_go_member_Button" />-->
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
