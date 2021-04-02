@@ -376,7 +376,6 @@ io.on('connection', (socket) => {
    */
   socket.on(1050, () => {
     let val = getShareDevices(socket);
-    console.log(val);
     socket.emit(
       1050,
       JSON.stringify({
@@ -575,7 +574,7 @@ io.on('connection', (socket) => {
     }
 
     let percent = getFilePercent(socket, data.length);
-
+    console.log('percent : ' + percent);
     socket.emit(
       KEY.SEND_FILE,
       JSON.stringify({
@@ -590,9 +589,7 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
 
-    console.log(socket);
     let fileReceiverMan = getFileReceiver(socket);
-    console.log(fileReceiverMan);
 
     fileReceiverMan.write(data);
 
@@ -640,6 +637,7 @@ let getFilePercent = (socket, length) => {
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       size = sockets[i]['size'];
+      console.log('saved size in send socket : ' + sockets[i]['size']);
       sockets[i]['tmpfileSize'] += length;
       tmpfileSize = sockets[i]['tmpfileSize'];
       break;
