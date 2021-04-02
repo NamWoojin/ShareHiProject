@@ -320,8 +320,10 @@ style.textContent =
 .progress-percent {
 }
 `
-const socket = io.connect('https://j4f001.p.ssafy.io/file/web/', { transports: ['websocket'] })
-// const socket = io.connect('http://j4f001.p.ssafy.io:9002', { transports: ['websocket'] })
+// https로 변경해도 안되는 코드
+// const socket = io.connect('http://j4f001.p.ssafy.io/file/web', { transports: ['websocket'] })
+// 되는 코드
+const socket = io.connect('https://j4f001.p.ssafy.io:9002', { transports: ['websocket'] })
 Vue.prototype.$socket = socket;
 
 shadowElement.shadowRoot.appendChild(style)
