@@ -21,6 +21,7 @@ export default {
   props: {
     directoryData: Object,
     rootPath : String,
+    deviceChanged : Number,
   },
   data() {
     return {
@@ -30,8 +31,11 @@ export default {
     }
   },
   watch : {
+    deviceChanged() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      directory.innerHTML = ''
+    },
     rootPath() {
-      console.log('watch rootPath',this.rootPath)
       if(this.rootPath) {
         console.log(`emit 2000 ${this.rootPath}`)
         this.$socket.emit(2000, JSON.stringify({
@@ -84,6 +88,7 @@ export default {
 
     this.$socket.on(2000,(data) => {
       data = JSON.parse(data)
+      console.log('---------this.$socket.on(2000) start--------------')
       console.log(JSON.parse(data.data))
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
       console.log('on 2000', Boolean(directory.childNodes),directory.childNodes.length)
@@ -93,16 +98,25 @@ export default {
       else {
         this.DataParsing(data.data,false)
       }
-
+      console.log('---------this.$socket.on(2000) End--------------')
     })
   },
   methods : {
     socketStorageTreeRequest(path,name) {
+      console.log('---------socketStorageTreeRequest Start---------')
+      console.log('socketStorageTreeRequest Path')
+      console.log(path)
+      console.log('socketStorageTreeRequest Name')
+      console.log(name)
       const data = {
         path,
         name,
       }
+      console.log('socketStorageTreeRequest Data')
+      console.log(data)
+      console.log('this.$socket.emit(2000,JSON.stringify(data))')
       this.$socket.emit(2000,JSON.stringify(data))
+      console.log('---------socketStorageTreeRequest End---------')
     },
     socketFileUpload(target) {
       console.log(target)
@@ -145,9 +159,11 @@ export default {
     },
 
     DataParsing(data,isRoot) {
-      console.log('dataParsing',isRoot)
-      console.log('dataParsing data',data)
       data = JSON.parse(data)
+      console.log('   -----------dataParsing Start------------')
+      console.log('boolean -> isRoot',isRoot)
+      console.log('안드로이드 저장소로부터 받은 데이터')
+      console.log(data)
       let directory
       if (isRoot) {
         directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
@@ -155,7 +171,8 @@ export default {
       else {
         directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory").querySelector(`[data-path="${data.path}"]`) 
       }
-      console.log('DataParsing',directory)
+      console.log('DataParsing Target')
+      console.log(directory)
       if (!data) {
         console.log('noData',data)
         return
@@ -171,20 +188,36 @@ export default {
           files.push(data.directory[i])
         }
       }
-      const rootDiv = this.elementSetting('div','dir')
-      rootDiv.innerText = data.name
-      const rootUl = this.elementSetting('ul')
-      rootDiv.addEventListener('click', () => {
-          rootUl.classList.toggle('closed')
-        })
+      let curDiv
+      let curUl
+      if (isRoot) {
+        curDiv = this.elementSetting('div','dir')
+        curDiv.innerText = data.name
+        curUl = this.elementSetting('ul')
+        curDiv.addEventListener('click', () => {
+            curUl.classList.toggle('closed')
+          })
+      }
+      else {
+        curDiv = directory
+        curUl = directory.nextElementSibling
+        curUl.innerHTML = ''
+      }
+      console.log('curDiv',curDiv)
+      console.log('curUl',curUl)
       if (folders) {
         folders.forEach(folder => {
           const li = this.elementSetting('li')
           const folderDiv = this.elementSetting('div','dir')
           folderDiv.setAttribute('data-path', folder.path)
-          const ul = this.elementSetting('ul')
+          const ul = this.elementSetting('ul','closed')
           folderDiv.innerText = folder.name
           folderDiv.addEventListener('click', () => {
+            console.log('*******************************************')
+            console.log('folder click event -> 폴더 하위구조 가져오기')
+            console.log('클릭한 folder.path : ',folder.path)
+            console.log('클릭한 folder.name : ',folder.name)
+            console.log('*******************************************')
             ul.classList.toggle('closed')
             // path에 대해서 하위 내용 구조 통신하여 받는거 추가하기
             this.socketStorageTreeRequest(folder.path,folder.name)
@@ -196,7 +229,7 @@ export default {
           })
           li.appendChild(folderDiv)
           li.appendChild(ul)
-          rootUl.appendChild(li)        
+          curUl.appendChild(li)        
         });
       }
       if (files) {
@@ -210,12 +243,15 @@ export default {
             this.createContextMenu(e.clientX,e.clientY,e.target,'file');
           })
           li.appendChild(fileDiv)
-          li.appendChild(ul)
-          rootUl.appendChild(li)        
+          curUl.appendChild(li)        
         });
       }
-      directory.appendChild(rootDiv)
-      directory.appendChild(rootUl)
+      if (isRoot) {
+        directory.appendChild(curDiv)
+        directory.appendChild(curUl)
+      }
+      console.log('   -----------dataParsing End------------')
+
     },
 
     setDeleteMenu(target) {
