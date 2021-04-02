@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -48,6 +49,12 @@ public class IntroActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         mIntroViewModel.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mIntroViewModel.onActivityResult(requestCode, resultCode,data);
     }
 
     //자동로그인 확인 결과에 따른 처리

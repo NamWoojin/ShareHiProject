@@ -1,5 +1,6 @@
 package com.example.android.ui.main;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -157,4 +158,9 @@ public class BackdropActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mSendViewModel.onActivityResult(requestCode,resultCode,data);
+    }
 }

@@ -1,7 +1,9 @@
 package com.example.android.data.viewmodel;
 
 import android.app.Activity;
+import android.content.Intent;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -27,7 +29,7 @@ public interface SendViewModel {
     //prepare
     void startShare();
     void deleteSelectedFolderPath();
-
+    void onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
     //folder
     void clickFolderList(int pos);
     FolderRecyclerAdapter getFolderRecyclerAdapter();
