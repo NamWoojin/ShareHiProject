@@ -92,7 +92,7 @@ public class SocketData {
 //                        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
 //
 //                if (shouldProviceRationale) {
-                File newFile = new File(fs.getPath() + fs.getName() + fs.getExt());
+                File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
                 boolean isSuc = file.renameTo(newFile);
                 System.out.println("FILE을 모두 썼습니다.");
 //                }
