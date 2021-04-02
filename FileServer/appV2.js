@@ -71,11 +71,11 @@ let andServer = net.createServer((socket) => {
     return;
   }
   if (flag === 2) {
-    console.log('flag 2');
+    console.log('connected socket id : ' + getId(socket));
     setFileSender(socket);
     let controlSocket = getControlSocketDownload(socket);
     if (controlSocket === undefined) return;
-    return;
+    console.log('sender socket id : ' + getId(socket));
   }
   responseOK(socket, 'android');
 
@@ -85,6 +85,7 @@ let andServer = net.createServer((socket) => {
    * 설명 : 소켓 연결이 끊기면, 등록을 해제한다.
    */
   socket.on('error', (err) => {
+    console.log('error');
     deleteSocket(socket);
     broadCastToAllSocket();
   });
@@ -94,6 +95,7 @@ let andServer = net.createServer((socket) => {
    * 설명 : 소켓 연결이 끊기면, 등록을 해제한다.
    */
   socket.on('end', () => {
+    console.log('end');
     deleteSocket(socket);
     broadCastToAllSocket();
   });
@@ -105,12 +107,12 @@ let andServer = net.createServer((socket) => {
    */
 
   socket.on('data', (data) => {
-    console.log(data);
     /**
      * @type Android
      * @description 데이터 전송 socket인지 구분한다.
      * @logic socket이 과연 fileReceiver에 포함되는지 검사
      */
+    console.log(data);
     if (isFileSender(socket)) {
       let fileSender = getFileSender(socket);
       console.log('sending');
@@ -1004,7 +1006,7 @@ let isFileSender = (socket) => {
     }
   }
   for (let i in sockets) {
-    if (sockets[i]['fileReceiver'] === id) {
+    if (sockets[i]['fileSender'] === id) {
       return true;
     }
   }

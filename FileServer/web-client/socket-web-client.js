@@ -3,8 +3,8 @@ const fs = require('fs');
 
 let config = {
   host: 'http://localhost:9002',
-  //host: 'http://j4f001.p.ssafy.io:9002',
-  filename: './img/sample.mp4',
+  // host: 'http://j4f001.p.ssafy.io:9002',
+  filename: './img/sample.txt',
 };
 
 /**
@@ -34,11 +34,15 @@ socket.on(1010, (data) => {
  * 설명 : 서버에게 내 디바이스를 제외한 현재 공유중인 모든 디바이스의 정보를 받아온다.
  * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
  */
+let flag2 = 0;
 socket.on(1050, (data) => {
   console.log(1050);
   console.log(data);
   data = JSON.parse(data);
-  socket.emit(1070, JSON.stringify(data.devices[0]));
+  if (flag2 === 0) {
+    flag2 = 1;
+    socket.emit(1070, JSON.stringify(data.devices[0]));
+  }
 });
 
 /**
@@ -58,19 +62,20 @@ socket.on(1060, (data) => {
  * 설명 : 공유된 특정 디바이스에 나의 디바이스를 연결한다.
  * 메시지 :{"namespace":1010,"status":200,"message":"OK"}
  */
-socket.on(1070, () => {
+socket.on(1070, (data) => {
   console.log(1070);
-  console.log();
+  console.log(data);
+  data = JSON.parse(data);
   //파일을 보낸다
-  let stats = fs.statSync(config.filename);
+  // let stats = fs.statSync(config.filename);
 
-  let fileStat = {
-    path: './',
-    name: 'sample',
-    ext: '.mp4',
-    size: stats.size,
-  };
-  console.log(fileStat);
+  // let fileStat = {
+  //   path: data.path,
+  //   name: 'sample',
+  //   ext: '.txt',
+  //   size: stats.size,
+  // };
+  // console.log(fileStat);
   //socket.emit(7000, JSON.stringify(fileStat));
 
   //자! 파일 다운로드를 시작해 보자!
