@@ -330,11 +330,13 @@ let andServer = net.createServer((socket) => {
         console.log(8100);
 
         setDownloadReceiverSize(data.size, data.targetId);
-        socket.write(
+        getSocketByTargetId(data.targetId).emit(
+          8001,
           JSON.stringify({
-            namespace: 8200,
-          }) + '\n'
+            size: data.size,
+          })
         );
+
         break;
       case 7002:
         if (percent >= 100) {
@@ -642,6 +644,19 @@ io.on('connection', (socket) => {
   });
 });
 
+/**
+ * @type Web
+ * @namespace 8001
+ * @description 웹에서 파일 사이즈를 보낸 것을 동기화한다.
+ * @data
+ */
+socket.on(8001, () => {
+  getFileReceiver(socket).write(
+    JSON.stringify({
+      namespace: 8200,
+    }) + '\n'
+  );
+});
 ////////////// LOGIC ///////////////////
 
 let getFilePercent = (socket, length) => {
