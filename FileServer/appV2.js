@@ -344,7 +344,7 @@ let andServer = net.createServer((socket) => {
 //   console.log('안드-서버 socket연결');
 // });
 server.listen(9002);
-server.listen(443);
+// server.listen(443);
 
 andServer.listen(9003);
   
