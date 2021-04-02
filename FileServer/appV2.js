@@ -329,6 +329,11 @@ let andServer = net.createServer((socket) => {
           }) + '\n'
         );
         break;
+      case 7002:
+        if (percent >= 100) {
+          initSocketData(socket);
+        }
+        break;
     }
   });
 });
@@ -574,6 +579,7 @@ io.on('connection', (socket) => {
     }
 
     let percent = getFilePercent(socket, data.length);
+    if (percent === -1) return;
     console.log('percent : ' + percent);
     socket.emit(
       KEY.SEND_FILE,
@@ -630,6 +636,8 @@ io.on('connection', (socket) => {
   });
 });
 
+////////////// LOGIC ///////////////////
+
 let getFilePercent = (socket, length) => {
   let size = 0;
   let tmpfileSize = 0;
@@ -640,16 +648,13 @@ let getFilePercent = (socket, length) => {
       console.log('saved size in send socket : ' + sockets[i]['size']);
       sockets[i]['tmpfileSize'] += length;
       tmpfileSize = sockets[i]['tmpfileSize'];
-      break;
+      let ans = Math.floor((tmpfileSize / size) * 100);
+      return ans;
     }
   }
-
-  let ans = Math.floor((tmpfileSize / size) * 100);
-  console.log(ans);
-  return ans;
+  return -1;
 };
 
-////////////// LOGIC ///////////////////
 function isJsonString(str) {
   try {
     var json = JSON.parse(str);
