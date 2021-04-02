@@ -21,7 +21,6 @@ const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
-
 //////////////// socket map system /////////////
 let flag = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
@@ -347,7 +346,7 @@ server.listen(9002);
 // server.listen(443);
 
 andServer.listen(9003);
-  
+
 io.on('connection', (socket) => {
   /**
    * Web
@@ -569,13 +568,14 @@ io.on('connection', (socket) => {
    */
   socket.on(KEY.SEND_FILE, (data) => {
     console.log(data);
-    console.log('percent ::: ' + percent);
+
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
     }
 
     let percent = getFilePercent(socket, data.length);
+
     socket.emit(
       KEY.SEND_FILE,
       JSON.stringify({
@@ -589,10 +589,11 @@ io.on('connection', (socket) => {
         percent: percent,
       }) + '\n'
     );
-    console.log('------------------------------->>');
+
     console.log(socket);
     let fileReceiverMan = getFileReceiver(socket);
     console.log(fileReceiverMan);
+
     fileReceiverMan.write(data);
 
     if (percent >= 100) {
