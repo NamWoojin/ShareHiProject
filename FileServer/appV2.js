@@ -579,7 +579,6 @@ io.on('connection', (socket) => {
     }
 
     let percent = getFilePercent(socket, data.length);
-    if (percent === -1) return;
     console.log('percent : ' + percent);
     socket.emit(
       KEY.SEND_FILE,
@@ -599,9 +598,9 @@ io.on('connection', (socket) => {
 
     fileReceiverMan.write(data);
 
-    if (percent >= 100) {
-      initSocketData(socket);
-    }
+    // if (percent >= 100) {
+    //   initSocketData(socket);
+    // }
   });
 
   /**
