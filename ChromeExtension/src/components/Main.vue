@@ -114,7 +114,7 @@ export default {
   mounted(){
     this.$socket.on(1050,(data) => {
       data = JSON.parse(data)
-      console.log('socket.on 1050')
+      console.log('-------------this.$socket.on(1050)-------------')
       const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
       const navItem = this.findNavitem(deviceBtn.parentNode)
       if (!navItem) {
@@ -132,9 +132,9 @@ export default {
     })
     this.$socket.on(1070,(data)=>{
       data = JSON.parse(data)
-      console.log('socket.on 1070')
-      console.log('안드로이드가 공유하는 폴더의 최상의 Path')
-      console.log(data.path)
+      console.log('-------------this.$socket.on(1070)-------------')
+      console.log('this.$socket.on(1070) data')
+      console.log(data)
       this.deviceChanged += 1;
       this.rootPath = data.path
     })
@@ -142,6 +142,7 @@ export default {
   methods : {
 
     onClickDevice() {
+      console.log('-------------this.$socket.emit(1050)-------------')
       this.$socket.emit(1050)
     },
     onClickSearch() {
@@ -179,10 +180,8 @@ export default {
         contentDiv.innerText=device.id
         const data = {id : device.id}
         contentDiv.addEventListener('click',()=>{
+          console.log('-------------this.$socket.emit(1070, JSON.stringify(data))-------------')
           this.$socket.emit(1070, JSON.stringify(data))
-          // this.$socket.emit(2000, JSON.stringify({
-          //   path: '\/storage\/emulated\/0'
-          // }))
           const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
           const navItem = this.findNavitem(deviceBtn.parentNode)
           navItem.classList.toggle('nav-item-display')
