@@ -255,27 +255,27 @@ export default {
       currentpath: '',
       percent: 100,
       originalpath: '',
-      saveFile: null,
+      saveFile: '',
+      saveFileLength: 10
     };
   },
   methods: {
-    async selectWindowFile() {
-      try {
-    const handle = await window.showSaveFilePicker({
-      types: [{
-        description: 'myfile',
-        accept: {
-          // Omitted
-        },
-      }],
-      suggestedFileName : 'savedFile',
-    })
+    // async selectWindowFile() {
+    //   try {
+    // const handle = await window.showSaveFilePicker({
+    //   types: [{
+    //     description: 'myfile',
+    //     accept: {
+    //       // Omitted
+    //     },
+    //   }],
+    // })
 
-    const writable = await handle.createWritable();
-      } catch (err) {
-        console.log(err)
-      }
-    },
+    // const writable = await handle.createWritable();
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    // },
     dragMouseDown(event) {
       event.preventDefault()
       this.positions.clientX = event.clientX
@@ -460,7 +460,7 @@ export default {
     },
     downloadFile() {
       console.log('this is downloadFile')
-      let file = this.selectWindowFile();
+      // let file = this.selectWindowFile();
       this.$socket.emit(8000, JSON.stringify({
         path: './',
         name: 'sample-for-download',
@@ -508,7 +508,10 @@ export default {
         console.log(fileData)
         this.$socket.emit(7000, JSON.stringify(fileData));
       }
-    }
+    },
+    // saveFile: function () {
+    //   console.log(saveFile)
+    // }
   },
   computed: {
     originalSize() {
@@ -594,8 +597,27 @@ export default {
       };
     })
     this.$socket.on(8000, (data) => {
-      console.log('this is json datas')
-      console.log(typeof data)
+      // console.log('this is json datas')
+      // console.log(data)
+      // this.saveFile = this.saveFile + data
+      // console.log(this.saveFile)
+      // console.log('File Object?')
+      // let reader = new FileReader()
+      // console.log(reader.readAsArrayBuffer(data))
+      // console.log(FileReader.readAsArrayBuffer(data))
+      const a = document.createElement('a');
+      a.download = 'my-file.txt';
+      a.href = URL.createObjectURL(new Blob([data]))
+      a.style.display = 'none';
+      a.addEventListener('click', (e) => {
+        setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+
+      });
+      a.click();
+
+    })
+    this.$socket.on(8001, (data) => {
+      this.saveFileLength = JSON.parse(data).size
     })
     this.$socket.on(7001, (data) => {
       console.log('this is bar: ', JSON.parse(data).percent)
