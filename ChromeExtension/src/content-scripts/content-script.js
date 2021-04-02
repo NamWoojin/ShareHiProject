@@ -1,17 +1,15 @@
 import Vue from 'vue';
-import App from '../App.vue'
-import router from "../router";
-import store from "../store";
-import io from 'socket.io-client'
-
+import App from '../App.vue';
+import router from '../router';
+import store from '../store';
+import io from 'socket.io-client';
 
 const shadowElement = document.createElement('div');
-shadowElement.setAttribute("id","shadowElement")
+shadowElement.setAttribute('id', 'shadowElement');
 shadowElement.attachShadow({ mode: 'open' });
 document.body.appendChild(shadowElement);
-const style = document.createElement("style")
-style.textContent = 
-`
+const style = document.createElement('style');
+style.textContent = `
 * {
   box-sizing: border-box;
   margin : 0;
@@ -319,19 +317,17 @@ style.textContent =
 }
 .progress-percent {
 }
-`
-// https로 변경해도 안되는 코드
-// const socket = io.connect('http://j4f001.p.ssafy.io/file/web', { transports: ['websocket'] })
-// 되는 코드
-const socket = io.connect('https://j4f001.p.ssafy.io:9002', { transports: ['websocket'] })
+`;
+//const socket = io.connect('https://j4f001.p.ssafy.io/file/web/', { transports: ['websocket'] })
+const socket = io.connect('http://j4f001.p.ssafy.io:9002', { transports: ['websocket'] });
 Vue.prototype.$socket = socket;
 
-shadowElement.shadowRoot.appendChild(style)
+shadowElement.shadowRoot.appendChild(style);
 const hello = document.createElement('div');
 shadowElement.shadowRoot.appendChild(hello);
 new Vue({
   router,
   store,
-  el : hello,
-  render: (h) => h(App)
-})
+  el: hello,
+  render: (h) => h(App),
+});

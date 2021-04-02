@@ -26,7 +26,6 @@ const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
-
 //////////////// socket map system /////////////
 let flag = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
@@ -77,11 +76,11 @@ let andServer = net.createServer((socket) => {
     return;
   }
   if (flag === 2) {
-    console.log('flag 2');
+    console.log('connected socket id : ' + getId(socket));
     setFileSender(socket);
     let controlSocket = getControlSocketDownload(socket);
     if (controlSocket === undefined) return;
-    return;
+    console.log('sender socket id : ' + getId(socket));
   }
   responseOK(socket, 'android');
 
@@ -91,6 +90,7 @@ let andServer = net.createServer((socket) => {
    * 설명 : 소켓 연결이 끊기면, 등록을 해제한다.
    */
   socket.on('error', (err) => {
+    console.log('error');
     deleteSocket(socket);
     broadCastToAllSocket();
   });
@@ -100,6 +100,7 @@ let andServer = net.createServer((socket) => {
    * 설명 : 소켓 연결이 끊기면, 등록을 해제한다.
    */
   socket.on('end', () => {
+    console.log('end');
     deleteSocket(socket);
     broadCastToAllSocket();
   });
@@ -111,12 +112,12 @@ let andServer = net.createServer((socket) => {
    */
 
   socket.on('data', (data) => {
-    console.log(data);
     /**
      * @type Android
      * @description 데이터 전송 socket인지 구분한다.
      * @logic socket이 과연 fileReceiver에 포함되는지 검사
      */
+    console.log(data);
     if (isFileSender(socket)) {
       let fileSender = getFileSender(socket);
       console.log('sending');
@@ -335,6 +336,11 @@ let andServer = net.createServer((socket) => {
           }) + '\n'
         );
         break;
+      case 7002:
+        if (percent >= 100) {
+          initSocketData(socket);
+        }
+        break;
     }
   });
 });
@@ -352,7 +358,7 @@ server.listen(9002);
 // server.listen(443);
 
 andServer.listen(9003);
-  
+
 io.on('connection', (socket) => {
   /**
    * Web
@@ -382,7 +388,6 @@ io.on('connection', (socket) => {
    */
   socket.on(1050, () => {
     let val = getShareDevices(socket);
-    console.log(val);
     socket.emit(
       1050,
       JSON.stringify({
@@ -574,13 +579,14 @@ io.on('connection', (socket) => {
    */
   socket.on(KEY.SEND_FILE, (data) => {
     console.log(data);
-    console.log('percent ::: ' + percent);
+
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
     }
 
     let percent = getFilePercent(socket, data.length);
+    console.log('percent : ' + percent);
     socket.emit(
       KEY.SEND_FILE,
       JSON.stringify({
@@ -594,15 +600,14 @@ io.on('connection', (socket) => {
         percent: percent,
       }) + '\n'
     );
-    console.log('------------------------------->>');
-    console.log(socket);
+
     let fileReceiverMan = getFileReceiver(socket);
-    console.log(fileReceiverMan);
+
     fileReceiverMan.write(data);
 
-    if (percent >= 100) {
-      initSocketData(socket);
-    }
+    // if (percent >= 100) {
+    //   initSocketData(socket);
+    // }
   });
 
   /**
@@ -637,6 +642,8 @@ io.on('connection', (socket) => {
   });
 });
 
+////////////// LOGIC ///////////////////
+
 let getFilePercent = (socket, length) => {
   let size = 0;
   let tmpfileSize = 0;
@@ -644,18 +651,16 @@ let getFilePercent = (socket, length) => {
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       size = sockets[i]['size'];
+      if (size === 0) return -1;
       sockets[i]['tmpfileSize'] += length;
       tmpfileSize = sockets[i]['tmpfileSize'];
-      break;
+      let ans = Math.floor((tmpfileSize / size) * 100);
+      return ans;
     }
   }
-
-  let ans = Math.floor((tmpfileSize / size) * 100);
-  console.log(ans);
-  return ans;
+  return -1;
 };
 
-////////////// LOGIC ///////////////////
 function isJsonString(str) {
   try {
     var json = JSON.parse(str);
@@ -1006,7 +1011,7 @@ let isFileSender = (socket) => {
     }
   }
   for (let i in sockets) {
-    if (sockets[i]['fileReceiver'] === id) {
+    if (sockets[i]['fileSender'] === id) {
       return true;
     }
   }

@@ -69,7 +69,7 @@ public class SocketData {
 				}
 				if (size - tmp <= CHUNK_SIZE) {
 					int i = 0;
-					buf = new byte[(int)(size - tmp)];
+					buf = new byte[(int) (size - tmp)];
 					while (i < size - tmp) {
 						buf[i] = (byte) bufferdInput.read();
 						i++;
@@ -77,10 +77,10 @@ public class SocketData {
 					fileOutput.write(buf);
 					tmp += (size - tmp);
 				}
-				
+
 				fileOutput.flush();
 				File newFile = new File(fs.getPath() + fs.getName() + fs.getExt());
-				
+
 				boolean isSuc = file.renameTo(newFile);
 				System.out.println("FILE을 모두 썼습니다.");
 			} catch (Exception e) {

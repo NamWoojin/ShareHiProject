@@ -21,6 +21,7 @@ export default {
   props: {
     directoryData: Object,
     rootPath : String,
+    deviceChanged : Number,
   },
   data() {
     return {
@@ -30,20 +31,23 @@ export default {
     }
   },
   watch : {
-    rootPath() {
-      console.log('watch rootPath',this.rootPath)
-      if(this.rootPath) {
-        console.log(`emit 2000 ${this.rootPath}`)
-        this.$socket.emit(2000, JSON.stringify({
-          path: this.rootPath
-        }))
-      }
+    deviceChanged() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      directory.innerHTML = ''
+      console.log(`-------------this.$socket.emit(2000)-------------`)
+      console.log(`this.$socket.emit(2000) data`)
+      console.log({path: this.rootPath})
+      this.$socket.emit(2000, JSON.stringify({
+        path: this.rootPath
+      }))
     }
   },
   mounted () {
     this.$socket.on(7000, (data) => {
-      console.log('7000')
       data = JSON.parse(data)
+      console.log('-------------this.$socket.on(7000)-------------')
+      console.log('this.$socket.on(7000) data')
+      console.log(data)
       let size = file.data.size;
       let tmpfileSize = data.tmpfileSize;
       let CHUNK_SIZE = 64 * 1024;
@@ -84,16 +88,16 @@ export default {
 
     this.$socket.on(2000,(data) => {
       data = JSON.parse(data)
+      console.log('-------------this.$socket.on(2000)-------------')
+      console.log('this.$socket.on(2000) data')
       console.log(JSON.parse(data.data))
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
-      console.log('on 2000', Boolean(directory.childNodes),directory.childNodes.length)
       if (directory.childNodes.length === 0) {
         this.DataParsing(data.data,true)
       }
       else {
         this.DataParsing(data.data,false)
       }
-
     })
   },
   methods : {
@@ -102,22 +106,25 @@ export default {
         path,
         name,
       }
+      console.log('-------------this.$socket.emit(2000,JSON.stringify(data))-------------')
+      console.log('this.$socket.emit(2000) data')
+      console.log(data)
       this.$socket.emit(2000,JSON.stringify(data))
     },
-    socketFileUpload(target) {
-      console.log(target)
+    socketFileUpload(target,clickedFolder) {
       const fileName = target.value
       const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
       const fileData = {
-        'path' : "\/storage\/emulated\/0",
+        'path' : clickedFolder.getAttribute("data-path"),
         'name' : fileNameWithoutPath.split('.')[0],
         'ext' : fileNameWithoutPath.split('.')[1],
         'size' : target.files[0].size,
       }
       file.data = target.files[0];
       file.name = fileNameWithoutPath.split('.')[0]
-      console.log('emit 7000 fileData', fileData)
-      console.log('emit 7000 socket', this.$socket)
+      console.log('this.$socket.emit(7000, JSON.stringify(fileData));')
+      console.log('this.$socket.emit(7000) fileData :')
+      console.log(fileData)
       this.$socket.emit(7000, JSON.stringify(fileData));
     },
     onClickOpenAllDir() {
@@ -145,8 +152,6 @@ export default {
     },
 
     DataParsing(data,isRoot) {
-      console.log('dataParsing',isRoot)
-      console.log('dataParsing data',data)
       data = JSON.parse(data)
       let directory
       if (isRoot) {
@@ -155,7 +160,6 @@ export default {
       else {
         directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory").querySelector(`[data-path="${data.path}"]`) 
       }
-      console.log('DataParsing',directory)
       if (!data) {
         console.log('noData',data)
         return
@@ -171,18 +175,27 @@ export default {
           files.push(data.directory[i])
         }
       }
-      const rootDiv = this.elementSetting('div','dir')
-      rootDiv.innerText = data.name
-      const rootUl = this.elementSetting('ul')
-      rootDiv.addEventListener('click', () => {
-          rootUl.classList.toggle('closed')
-        })
+      let curDiv
+      let curUl
+      if (isRoot) {
+        curDiv = this.elementSetting('div','dir')
+        curDiv.innerText = data.name
+        curUl = this.elementSetting('ul')
+        curDiv.addEventListener('click', () => {
+            curUl.classList.toggle('closed')
+          })
+      }
+      else {
+        curDiv = directory
+        curUl = directory.nextElementSibling
+        curUl.innerHTML = ''
+      }
       if (folders) {
         folders.forEach(folder => {
           const li = this.elementSetting('li')
           const folderDiv = this.elementSetting('div','dir')
           folderDiv.setAttribute('data-path', folder.path)
-          const ul = this.elementSetting('ul')
+          const ul = this.elementSetting('ul','closed')
           folderDiv.innerText = folder.name
           folderDiv.addEventListener('click', () => {
             ul.classList.toggle('closed')
@@ -196,7 +209,7 @@ export default {
           })
           li.appendChild(folderDiv)
           li.appendChild(ul)
-          rootUl.appendChild(li)        
+          curUl.appendChild(li)        
         });
       }
       if (files) {
@@ -210,12 +223,13 @@ export default {
             this.createContextMenu(e.clientX,e.clientY,e.target,'file');
           })
           li.appendChild(fileDiv)
-          li.appendChild(ul)
-          rootUl.appendChild(li)        
+          curUl.appendChild(li)        
         });
       }
-      directory.appendChild(rootDiv)
-      directory.appendChild(rootUl)
+      if (isRoot) {
+        directory.appendChild(curDiv)
+        directory.appendChild(curUl)
+      }
     },
 
     setDeleteMenu(target) {
@@ -345,7 +359,7 @@ export default {
           })
           const progressFileName = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-filename")
           const progressPercent = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-percent")
-          this.socketFileUpload(modalObj.nameInput);
+          this.socketFileUpload(modalObj.nameInput,target);
           this.$socket.on(7001,(data) => {
             console.log('7001 Progress Bar')
             data = JSON.parse(data)

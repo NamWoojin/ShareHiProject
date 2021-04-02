@@ -34,7 +34,7 @@
       </div>
     </nav>
     <SearchResult :directoryData="directoryData" v-if="searchFlag" />
-    <Directory :directoryData="directoryData" :rootPath="rootPath" ref="directory" v-else />
+    <Directory :directoryData="directoryData" :deviceChanged="deviceChanged" :rootPath="rootPath" ref="directory" v-else />
   </div>
 </template>
 
@@ -52,6 +52,7 @@ export default {
       searchInputValue : '',
       devices : [],
       rootPath : "",
+      deviceChanged : 0,
       directoryData : {
         "name":"0",
         "path":"\/storage\/emulated\/0",
@@ -113,8 +114,7 @@ export default {
   mounted(){
     this.$socket.on(1050,(data) => {
       data = JSON.parse(data)
-      console.log('1050',this.$socket)
-      console.log(data.devices)
+      console.log('-------------this.$socket.on(1050)-------------')
       const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
       const navItem = this.findNavitem(deviceBtn.parentNode)
       if (!navItem) {
@@ -132,36 +132,18 @@ export default {
     })
     this.$socket.on(1070,(data)=>{
       data = JSON.parse(data)
-      console.log('socket.on 1070 data',data)
+      console.log('-------------this.$socket.on(1070)-------------')
+      console.log('this.$socket.on(1070) data')
+      console.log(data)
+      this.deviceChanged += 1;
       this.rootPath = data.path
     })
   },
   methods : {
 
-    onClickDevice(e) {
-      console.log('onClickDevice',e.target);
-      console.log('onClickDevice',e.target.parentNode);
+    onClickDevice() {
+      console.log('-------------this.$socket.emit(1050)-------------')
       this.$socket.emit(1050)
-
-      // console.log('click target',e.target.parentNode)
-      // const clickTargetParent = e.target.parentNode
-      // getOnlineDevice(26,
-      // (res) => {
-      //   if(!res.data.content.device) {
-      //     alert('연결된 디바이스가 없습니다')
-      //     return
-      //   }
-      //   this.devices = res.data.content.device
-      //   console.log(res.data)
-      //   const navItem = this.findNavitem(clickTargetParent)
-      //   navItem.innerHTML = ''
-      //   navItem.classList.toggle('nav-item-display')
-      //   this.createNavcontent(res.data.content.device,navItem)
-      // },
-      // (err) => {
-      //   console.log(err)
-      //   alert('디바이스 목록 가져오기 오류!')
-      // })
     },
     onClickSearch() {
       this.searchFlag = !this.searchFlag
@@ -178,7 +160,6 @@ export default {
     },
     searchInputChanged(e) {
       e.stopPropagation();
-      console.log(e.target.value)
     },
     onClicktest() {
       test();
@@ -199,10 +180,8 @@ export default {
         contentDiv.innerText=device.id
         const data = {id : device.id}
         contentDiv.addEventListener('click',()=>{
+          console.log('-------------this.$socket.emit(1070, JSON.stringify(data))-------------')
           this.$socket.emit(1070, JSON.stringify(data))
-          // this.$socket.emit(2000, JSON.stringify({
-          //   path: '\/storage\/emulated\/0'
-          // }))
           const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
           const navItem = this.findNavitem(deviceBtn.parentNode)
           navItem.classList.toggle('nav-item-display')

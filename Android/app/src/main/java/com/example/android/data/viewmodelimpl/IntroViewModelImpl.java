@@ -2,13 +2,17 @@ package com.example.android.data.viewmodelimpl;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
@@ -37,7 +41,8 @@ import java.lang.reflect.Type;
 
 public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
-    private final int WRITE_EXTERNAL_STORAGE = 1;
+    private final int PERMISSON_CODE = 1;
+    private final int EXTERNAL_STORAGE_MANAGER = 2;
 
     private static final String TAG = "IntroViewModelImpl";
 
@@ -52,12 +57,13 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     public void setParentContext(Activity parentContext) {
         mActivityRef = new WeakReference<>(parentContext);
     }
+
     @Override
-    public void getAdID(){
+    public void getAdID() {
         getadid.start();
     }
 
-    private Thread getadid = new Thread(){
+    private Thread getadid = new Thread() {
         @Override
         public void run() {
             super.run();
@@ -71,35 +77,65 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try{
+            try {
                 advertId = idInfo.getId();
-                Log.i("TAG", "run: "+advertId);
+                Log.i("TAG", "run: " + advertId);
                 mActivityRef.get().runOnUiThread(() -> {    //현재 스레드가 UI스레드가 아니니 UI스레드에서 실행하도록 runOnUiThread설정
                     // TODO.
-                    getPermissionAndLogin();
-                }) ;
+                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                        getExternalStoragePermission();
+                    }
+                    else{
+                        getPermissionAndLogin();
+                    }
+                });
 
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 e.printStackTrace();
                 mActivityRef.get().runOnUiThread(() -> {
                     // TODO.
-                    getPermissionAndLogin();
-                }) ;
+                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                        getExternalStoragePermission();
+                    }
+                    else{
+                        getPermissionAndLogin();
+                    }
+                });
 
             }
         }
     };
 
+    private void getExternalStoragePermission(){
+        if(Environment.isExternalStorageManager()){
+            getPermissionAndLogin();
+        }else{
+            Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            mActivityRef.get().startActivityForResult(permissionIntent,EXTERNAL_STORAGE_MANAGER);
+        }
+    }
+
 
     private void getPermissionAndLogin() {
+
         if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
             //파일 접근 권한 허용되지 않았을 때
             //권한 요청
-            ActivityCompat.requestPermissions(mActivityRef.get(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(mActivityRef.get(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSON_CODE);
         } else {
             //권한 허용되어 있을 때
             startIntro();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+        if(Environment.isExternalStorageManager()){
+            getPermissionAndLogin();
+        }else{
+            exitProgram();
         }
     }
 
@@ -108,8 +144,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case WRITE_EXTERNAL_STORAGE: {
-                Log.i(TAG, "onRequestPermissionsResult: "+grantResults[0]+" "+grantResults[1]);
+            case PERMISSON_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // 권한 승인
                     startIntro();
@@ -118,34 +153,32 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                 }
                 return;
             }
-
         }
     }
 
     //자동로그인 판단
     private void startIntro() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
-        String login =  loginInformation.getString("login", "none");
+        String login = loginInformation.getString("login", "none");
         //기본 로그인인지 판단
         if (login.equals("basic")) {
             String email = loginInformation.getString("email", "");
             String password = loginInformation.getString("password", "");
             login(email, password);
-        } else if(login.equals("google")){
+        } else if (login.equals("google")) {
             //구글로그인이거나, 로그인 정보가 없는지 판단
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(mActivityRef.get());
 
-            if(account != null) {
+            if (account != null) {
                 String name = account.getDisplayName();
                 String email = account.getEmail();
                 Uri imageUri = account.getPhotoUrl();
                 String image = imageUri != null ? imageUri.toString() : null;
-                googleLogin(name,email,image);
-            }
-            else{
+                googleLogin(name, email, image);
+            } else {
                 checkAutoLoginLiveData.setValue(new Event<>(false));
             }
-        }else{
+        } else {
             checkAutoLoginLiveData.setValue(new Event<>(false));
         }
     }
@@ -199,14 +232,14 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
     }
 
     //구글 계정으로 사용자 정보 얻어오기
-    private void googleLogin(String name, String email, String image){
-        Log.i(TAG, "googleLogin: dddd"+advertId);
+    private void googleLogin(String name, String email, String image) {
+        Log.i(TAG, "googleLogin: dddd" + advertId);
         MemberRequest member = new MemberRequest();
         member.setMem_name(name);
         member.setMem_email(email);
         member.setMem_image(image);
         member.setAd_id(advertId);
-        Log.i(TAG, "googleLogin: "+advertId);
+        Log.i(TAG, "googleLogin: " + advertId);
         APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(member), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
@@ -253,7 +286,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
         editor.putInt("mem_id", member.getMem_id());
-        editor.putString("dev_id",member.getDev_id());
+        editor.putString("dev_id", member.getDev_id());
         editor.apply();
     }
 

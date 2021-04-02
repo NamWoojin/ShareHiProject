@@ -39,7 +39,7 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public void startSocket(String path) {
         rootPath = path;
-        socketInfo = new SocketInfo(this);
+        socketInfo = new SocketInfo(this,mActivityRef.get());
         Log.i("TAG", "startSocket: ");
         SocketStartThread sst = new SocketStartThread();
         sst.start();
@@ -208,15 +208,15 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public boolean getFile(FileStat fs){
         boolean shouldProviceRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
-
+                ActivityCompat.shouldShowRequestPermissionRationale(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
+        Log.i("TAG", "getFile: "+shouldProviceRationale);
         if (shouldProviceRationale) {
             //앱에 필요한 권한이 없어서 권한 요청
 //            ActivityCompat.requestPermissions(mActivityRef.get(),
 //                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_CODE);
             return false;
         } else {
-            SocketData sd = new SocketData(fs);
+            SocketData sd = new SocketData(fs,mActivityRef.get());
             sd.connect();
             return true;
         }

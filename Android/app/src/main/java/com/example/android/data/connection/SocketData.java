@@ -1,5 +1,12 @@
 package com.example.android.data.connection;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -19,6 +26,7 @@ public class SocketData {
     private File file;
 
     private Socket socket;
+    private Activity activity;
     Gson gson = new Gson();
 
     FileOutputStream fileOutput = null;
@@ -26,14 +34,15 @@ public class SocketData {
     byte[] buf = null;
     BufferedInputStream bufferdInput = null;
 
-    public SocketData(FileStat fs) {
+    public SocketData(FileStat fs, Activity activity) {
         super();
         this.fs = fs;
+        this.activity = activity;
     }
 
     public void connect() {
         try {
-            file = new File(fs.getPath() +"/"+ fs.getName() + fs.getExt());
+            file = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(SocketInfo.IP, SocketInfo.PORT);
             socket.connect(socketAddress, 8288);
@@ -69,7 +78,7 @@ public class SocketData {
                 }
                 if (size - tmp <= CHUNK_SIZE) {
                     int i = 0;
-                    buf = new byte[(int)(size - tmp)];
+                    buf = new byte[(int) (size - tmp)];
                     while (i < size - tmp) {
                         buf[i] = (byte) bufferdInput.read();
                         i++;
@@ -79,10 +88,14 @@ public class SocketData {
                 }
 
                 fileOutput.flush();
-                File newFile = new File(fs.getPath() + fs.getName() + fs.getExt());
-
+//                boolean shouldProviceRationale =
+//                        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
+//
+//                if (shouldProviceRationale) {
+                File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
                 boolean isSuc = file.renameTo(newFile);
                 System.out.println("FILE을 모두 썼습니다.");
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
