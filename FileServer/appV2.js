@@ -2,19 +2,19 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 
-const option = {
-  ca: fs.readFileSync('./test/key/fullchain.pem'),
-  key: fs.readFileSync('./test/key/privkey.pem'),
-  cert: fs.readFileSync('./test/key/cert.pem'),
-  requestCert: false,
-  rejectUnauthorized: false
-};
+// const option = {
+//   ca: fs.readFileSync('./test/key/fullchain.pem'),
+//   key: fs.readFileSync('./test/key/privkey.pem'),
+//   cert: fs.readFileSync('./test/key/cert.pem'),
+//   requestCert: false,
+//   rejectUnauthorized: false
+// };
 
 // var privkey = fs.readFileSync('./test/key/fullchain.pem');
 // var key = fs.readFileSync('./test/key/privkey.pem');
 // var cert = fs.readFileSync('./test/key/cert.pem');
-// const server = require('http').createServer(app);
-const server = require('http').createServer(option, app);
+const server = require('http').createServer(app);
+// const server = require('http').createServer(option, app);
 
 const io = require('socket.io')(server, {
   cors: {
