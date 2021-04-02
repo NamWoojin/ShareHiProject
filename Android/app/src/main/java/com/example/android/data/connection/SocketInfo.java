@@ -1,6 +1,10 @@
 package com.example.android.data.connection;
 
+import android.Manifest;
+import android.app.Activity;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,14 +34,16 @@ public class SocketInfo {
 
     private SocketRepository socketRepository;
     private Socket socket;
+    private Activity activity;
     private String adID;
     private boolean closeSocketByUser;
     BufferedReader in;
     PrintWriter out;
     Gson gson = new Gson();
 
-    public SocketInfo(SocketRepository socketRepository) {
+    public SocketInfo(SocketRepository socketRepository,Activity activity) {
         this.socketRepository = socketRepository;
+        this.activity = activity;
     }
 
     public void connect(String adID) {
@@ -56,6 +62,7 @@ public class SocketInfo {
             closeSocketByUser = false;
         } catch (Exception e) {
             e.printStackTrace();
+            socketRepository.failSocketConnection();
         }
     }
 
@@ -85,10 +92,11 @@ public class SocketInfo {
                     String data = in.readLine();
 
                     if(data == null){
-                        throw new IOException();
+//                        throw new IOException();
+                        Log.i("TAG", "run: null");
+                        continue;
                     }
 
-                    Log.d("myTag", "here");
                     Log.d("myTag", data);
 
                     JSONObject jsonObject = new JSONObject(data);
@@ -319,38 +327,44 @@ public class SocketInfo {
 //                            String ext = element.getAsJsonObject().get("ext").getAsString();
                             String path7100 = jsonObject.getString("path");
                             String name7100 = jsonObject.getString("name");
-                            File file = new File(path7100 + name7100 + ext);
-                            // 1. 파일이 이미 있는지 확인한다
-                            if (file.length() == size) {
-                                System.out.println("이미 파일이 있습니다.");
-                                fs = new FileStat(name7100, path7100, ext, 0, 0);
-                                jobj = new JsonObject();
-                                jobj.addProperty("namespace", "7004");
-                                jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                                jobj.addProperty("status", "400"); // or 403 FORBIDDEN
-                                jobj.addProperty("message", "BAD REQUEST");
-                                jobj.addProperty("detail", "");
-                                jobj.addProperty("content", "이미 파일이 있습니다.");
-                                json = gson.toJson(jobj);
-                                write(json);
-                                break;
-                            } else {
+//                            boolean shouldProviceRationale =
+//                                    ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
+//                            Log.i("TAG", "run: "+shouldProviceRationale);
+//                            if (shouldProviceRationale) {
+                                File file = new File(path7100 + name7100 + ext);
 
-                                file = new File(path7100 + "/" + name7100 + ext);
-                                long tmpfileSize = 0;
-                                if (file.exists()) {
-                                    System.out.println("이어받기 로직을 수행합니다.");
-                                    tmpfileSize = file.length();
-                                    System.out.println("현재 청크 사이즈 : " + tmpfileSize);
-                                }
+                                // 1. 파일이 이미 있는지 확인한다
+                                if (file.length() == size) {
+                                    System.out.println("이미 파일이 있습니다.");
+                                    fs = new FileStat(name7100, path7100, ext, 0, 0);
+                                    jobj = new JsonObject();
+                                    jobj.addProperty("namespace", "7004");
+                                    jobj.addProperty("targetId", jsonObject.getString("targetId"));
+                                    jobj.addProperty("status", "400"); // or 403 FORBIDDEN
+                                    jobj.addProperty("message", "BAD REQUEST");
+                                    jobj.addProperty("detail", "");
+                                    jobj.addProperty("content", "이미 파일이 있습니다.");
+                                    json = gson.toJson(jobj);
+                                    write(json);
+                                    break;
+                                } else {
 
-                                fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
-                                // 새로운 TCP 연결 시도
-                                String targetId = jsonObject.getString("targetId");
-                            }
-                            socketRepository.getFile(fs);
+                                    file = new File(path7100 + "/" + name7100 + ext);
+                                    long tmpfileSize = 0;
+                                    if (file.exists()) {
+                                        System.out.println("이어받기 로직을 수행합니다.");
+                                        tmpfileSize = file.length();
+                                        System.out.println("현재 청크 사이즈 : " + tmpfileSize);
+                                    }
+
+                                    fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
+                                    // 새로운 TCP 연결 시도
+                                    String targetId = jsonObject.getString("targetId");
+//                                }
+                                socketRepository.getFile(fs);
 //                            SocketData sd = new SocketData(fs);
 //                            sd.connect();
+                            }
                             break;
 
                         case 7001: // 파일 전송
@@ -358,8 +372,9 @@ public class SocketInfo {
                             /**
                              * TODO 퍼센트 로직
                              */
+
                             int percentage = jsonObject.getInt("percent");
-                            Log.i("myTag", "percentage: " + percentage);
+//                            Log.i("myTag", "percentage: " + percentage);
                             break;
 
 

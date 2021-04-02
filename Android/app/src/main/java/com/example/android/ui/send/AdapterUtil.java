@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class AdapterUtil {
 
-    @BindingAdapter("folderAdapter")
+    @BindingAdapter("bindAdapter")
     public static void verAdapter(RecyclerView recyclerView, RecyclerView.Adapter<?> adapter) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);

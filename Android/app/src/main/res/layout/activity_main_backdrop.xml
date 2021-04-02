@@ -1,162 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.data.viewmodel.BackdropViewModel" />
     </data>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/green_3">
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/activity_backdrop_action_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_backdrop_action_bar_height"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-        <ImageView
-            android:id="@+id/activity_backdrop_action_bar_menu"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/green_3">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/activity_backdrop_action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/activity_backdrop_action_bar_height"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/activity_backdrop_action_bar_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
+                android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
+                android:onClick="@{() -> viewModel.toggleBackdropMenu()}"
+                android:src="@{viewModel.backdropMenuOpenLiveData ? @drawable/ic_close_white_24dp : @drawable/ic_menu_white_24dp}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/activity_backdrop_action_bar_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_backdrop_menu_text_marginStart"
+                android:text="@{viewModel.pageLiveData.equals(`send`)? @string/activity_main_send_button_text : @string/activity_main_user_button_text}"
+                android:textColor="@color/alwaysWhite"
+                android:textSize="@dimen/activity_backdrop_menu_text_textSize"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_action_bar_menu"
+                app:layout_constraintStart_toEndOf="@+id/activity_backdrop_action_bar_menu"
+                app:layout_constraintTop_toTopOf="@+id/activity_backdrop_action_bar_menu" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/activity_backdrop_action_bar_detail"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
-            android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
+            android:layout_marginHorizontal="@dimen/activity_backdrop_action_bar_detail_margin"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:onClick="@{() -> viewModel.toggleBackdropMenu()}"
-            android:src="@{viewModel.backdropMenuOpenLiveData ? @drawable/ic_close_white_24dp : @drawable/ic_menu_white_24dp}"
-            />
-        <TextView
-            android:id="@+id/activity_backdrop_action_bar_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_backdrop_menu_text_marginStart"
-            android:textStyle="bold"
-            android:textSize="@dimen/activity_backdrop_menu_text_textSize"
-            android:textColor="@color/alwaysWhite"
-            app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_action_bar_menu"
-            app:layout_constraintStart_toEndOf="@+id/activity_backdrop_action_bar_menu"
-            app:layout_constraintTop_toTopOf="@+id/activity_backdrop_action_bar_menu"
-            android:text="@{viewModel.pageLiveData.equals(`send`)? @string/activity_main_send_button_text : @string/activity_main_user_button_text}"/>
+            app:layout_constraintTop_toBottomOf="@id/activity_backdrop_action_bar">
+            <!--공유하기-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/activity_backdrop_go_send_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_backdrop_action_bar_height"
+                android:layout_marginBottom="10dp"
+                android:background="@{viewModel.pageLiveData.equals(`send`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}"
+                android:clickable="@{viewModel.backdropMenuOpenLiveData}"
+                android:onClick="@{() -> viewModel.changePage(`send`)}"
+                app:layout_constraintBottom_toTopOf="@id/activity_backdrop_go_user_layout"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/activity_backdrop_go_send_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
+                    android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
+                    android:src="@drawable/ic_baseline_call_made_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:id="@+id/activity_backdrop_go_send_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_backdrop_menu_text_marginStart"
+                    android:text="공유하기"
+                    android:textColor="@color/alwaysWhite"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_go_send_imageView"
+                    app:layout_constraintStart_toEndOf="@+id/activity_backdrop_go_send_imageView"
+                    app:layout_constraintTop_toTopOf="@+id/activity_backdrop_go_send_imageView" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--계정설정-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/activity_backdrop_go_user_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_backdrop_action_bar_height"
+                android:layout_marginBottom="10dp"
+                android:background="@{viewModel.pageLiveData.equals(`user`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}"
+                android:clickable="@{viewModel.backdropMenuOpenLiveData}"
+                android:onClick="@{() -> viewModel.changePage(`user`)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_backdrop_go_send_layout">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/activity_backdrop_action_bar_detail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/activity_backdrop_action_bar_detail_margin"
-        app:layout_constraintTop_toBottomOf="@id/activity_backdrop_action_bar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-        <!--공유하기-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/activity_backdrop_go_send_layout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/activity_backdrop_action_bar_height"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/activity_backdrop_go_user_layout"
-            android:clickable="@{viewModel.backdropMenuOpenLiveData}"
-            android:onClick="@{() -> viewModel.changePage(`send`)}"
-            android:background="@{viewModel.pageLiveData.equals(`send`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}">
-            <ImageView
-                android:id="@+id/activity_backdrop_go_send_imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
-                android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_baseline_call_made_24" />
-            <TextView
-                android:id="@+id/activity_backdrop_go_send_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_backdrop_menu_text_marginStart"
-                android:text="공유하기"
-                android:textSize="16sp"
-                android:textColor="@color/alwaysWhite"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_go_send_imageView"
-                app:layout_constraintStart_toEndOf="@+id/activity_backdrop_go_send_imageView"
-                app:layout_constraintTop_toTopOf="@+id/activity_backdrop_go_send_imageView" />
+                <ImageView
+                    android:id="@+id/activity_backdrop_go_user_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
+                    android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
+                    android:src="@drawable/ic_baseline_face_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:id="@+id/activity_backdrop_go_user_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_backdrop_menu_text_marginStart"
+                    android:text="계정설정"
+                    android:textColor="@color/alwaysWhite"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_go_user_imageView"
+                    app:layout_constraintStart_toEndOf="@+id/activity_backdrop_go_user_imageView"
+                    app:layout_constraintTop_toTopOf="@+id/activity_backdrop_go_user_imageView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <!--계정설정-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/activity_backdrop_go_user_layout"
+
+        <FrameLayout
+            android:id="@+id/activity_backdrop_fragment"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/activity_backdrop_action_bar_height"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintTop_toBottomOf="@id/activity_backdrop_go_send_layout"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:clickable="@{viewModel.backdropMenuOpenLiveData}"
-            android:onClick="@{() -> viewModel.changePage(`user`)}"
-            android:background="@{viewModel.pageLiveData.equals(`user`) ? @drawable/backdrop_detaillayout_radius : @drawable/backdrop_detaillayout_none}">
-            <ImageView
-                android:id="@+id/activity_backdrop_go_user_imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
-                android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_baseline_face_24" />
-            <TextView
-                android:id="@+id/activity_backdrop_go_user_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_backdrop_menu_text_marginStart"
-                android:text="계정설정"
-                android:textSize="16sp"
-                android:textColor="@color/alwaysWhite"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_backdrop_go_user_imageView"
-                app:layout_constraintStart_toEndOf="@+id/activity_backdrop_go_user_imageView"
-                app:layout_constraintTop_toTopOf="@+id/activity_backdrop_go_user_imageView" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-<!--        <Button-->
-<!--            android:id="@+id/activity_backdrop_go_send_button"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:drawableLeft="@drawable/ic_baseline_call_made_24"-->
-<!--            android:paddingVertical="@dimen/activity_backdrop_action_bar_detail_button_paddingVertical"-->
-<!--            android:layout_marginEnd="@dimen/activity_backdrop_action_bar_detail_margin"-->
-<!--            android:textStyle="bold"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintEnd_toStartOf="@id/activity_backdrop_go_user_button"-->
-<!--            android:text="@string/activity_main_send_button_text"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/activity_backdrop_go_receive_button"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/activity_backdrop_go_send_button"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            android:text="공유받기"/>-->
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_backdrop_action_bar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <FrameLayout
-        android:id="@+id/activity_backdrop_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/activity_backdrop_action_bar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

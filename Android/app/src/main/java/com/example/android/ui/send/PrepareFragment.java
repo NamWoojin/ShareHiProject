@@ -1,22 +1,15 @@
 package com.example.android.ui.send;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.R;
-import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.databinding.FragmentSendPrepareBinding;
@@ -27,7 +20,7 @@ public class PrepareFragment extends Fragment {
     private FragmentSendPrepareBinding binding;
     private SendViewModel mSendViewModel;
 
-    private static PrepareRecyclerAdapter adapter;
+    private static PrepareMemberRecyclerAdapter adapter;
 
     public PrepareFragment() {
         // Required empty public constructor
