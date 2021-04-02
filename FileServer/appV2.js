@@ -102,6 +102,7 @@ let andServer = net.createServer((socket) => {
    */
 
   socket.on('data', (data) => {
+    console.log(data);
     /**
      * @type Android
      * @description 데이터 전송 socket인지 구분한다.
@@ -560,13 +561,13 @@ io.on('connection', (socket) => {
    */
   socket.on(KEY.SEND_FILE, (data) => {
     console.log(data);
+    console.log('percent ::: ' + percent);
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
     }
 
     let percent = getFilePercent(socket, data.length);
-
     socket.emit(
       KEY.SEND_FILE,
       JSON.stringify({
@@ -580,8 +581,11 @@ io.on('connection', (socket) => {
         percent: percent,
       }) + '\n'
     );
-
-    getFileReceiver(socket).write(data);
+    console.log('------------------------------->>');
+    console.log(socket);
+    let fileReceiverMan = getFileReceiver(socket);
+    console.log(fileReceiverMan);
+    fileReceiverMan.write(data);
 
     if (percent >= 100) {
       initSocketData(socket);
