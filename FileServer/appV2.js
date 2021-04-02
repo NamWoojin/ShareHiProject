@@ -1,7 +1,16 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
-const server = require('http').createServer(app);
+
+const option = {
+  ca: fs.readFileSync('./test/key/fullchain.pem'),
+  key: fs.readFileSync('./test/key/privkey.pem'),
+  cert: fs.readFileSync('./test/key/cert.pem'),
+};
+
+// const server = require('http').createServer(app);
+const server = require('http').createServer(option, app);
+
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
@@ -12,11 +21,6 @@ const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
-// const option = {
-//   ca: fs.readFileSync('/volumes/key/fullchain.pem'),
-//   key: fs.readFileSync('/volumes/key/privkey.pem'),
-//   cert: fs.readFileSync('/volumes/key/cert.pem'),
-// };
 
 //////////////// socket map system /////////////
 let flag = 0;
@@ -333,13 +337,17 @@ let andServer = net.createServer((socket) => {
 /**
  * 안드로이드와 웹 소켓 연결을 실시한다
  */
-server.listen(9002, () => {
-  console.log('웹-서버 socket연결');
-});
-andServer.listen(9003, () => {
-  console.log('안드-서버 socket연결');
-});
+// server.listen(9002, () => {
+//   console.log('웹-서버 socket연결');
+// });
+// andServer.listen(9003, () => {
+//   console.log('안드-서버 socket연결');
+// });
+server.listen(9002);
+server.listen(443);
 
+andServer.listen(9003);
+  
 io.on('connection', (socket) => {
   /**
    * Web
