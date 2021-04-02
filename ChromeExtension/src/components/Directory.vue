@@ -34,20 +34,20 @@ export default {
     deviceChanged() {
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
       directory.innerHTML = ''
-    },
-    rootPath() {
-      if(this.rootPath) {
-        console.log(`emit 2000 ${this.rootPath}`)
-        this.$socket.emit(2000, JSON.stringify({
-          path: this.rootPath
-        }))
-      }
+      console.log(`-------------this.$socket.emit(2000)-------------`)
+      console.log(`this.$socket.emit(2000) data`)
+      console.log({path: this.rootPath})
+      this.$socket.emit(2000, JSON.stringify({
+        path: this.rootPath
+      }))
     }
   },
   mounted () {
     this.$socket.on(7000, (data) => {
-      console.log('7000')
       data = JSON.parse(data)
+      console.log('-------------this.$socket.on(7000)-------------')
+      console.log('this.$socket.on(7000) data')
+      console.log(data)
       let size = file.data.size;
       let tmpfileSize = data.tmpfileSize;
       let CHUNK_SIZE = 64 * 1024;
@@ -88,50 +88,43 @@ export default {
 
     this.$socket.on(2000,(data) => {
       data = JSON.parse(data)
-      console.log('---------this.$socket.on(2000) start--------------')
+      console.log('-------------this.$socket.on(2000)-------------')
+      console.log('this.$socket.on(2000) data')
       console.log(JSON.parse(data.data))
       const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
-      console.log('on 2000', Boolean(directory.childNodes),directory.childNodes.length)
       if (directory.childNodes.length === 0) {
         this.DataParsing(data.data,true)
       }
       else {
         this.DataParsing(data.data,false)
       }
-      console.log('---------this.$socket.on(2000) End--------------')
     })
   },
   methods : {
     socketStorageTreeRequest(path,name) {
-      console.log('---------socketStorageTreeRequest Start---------')
-      console.log('socketStorageTreeRequest Path')
-      console.log(path)
-      console.log('socketStorageTreeRequest Name')
-      console.log(name)
       const data = {
         path,
         name,
       }
-      console.log('socketStorageTreeRequest Data')
+      console.log('-------------this.$socket.emit(2000,JSON.stringify(data))-------------')
+      console.log('this.$socket.emit(2000) data')
       console.log(data)
-      console.log('this.$socket.emit(2000,JSON.stringify(data))')
       this.$socket.emit(2000,JSON.stringify(data))
-      console.log('---------socketStorageTreeRequest End---------')
     },
-    socketFileUpload(target) {
-      console.log(target)
+    socketFileUpload(target,clickedFolder) {
       const fileName = target.value
       const fileNameWithoutPath = fileName.substr(fileName.lastIndexOf('\\')+1)
       const fileData = {
-        'path' : "\/storage\/emulated\/0",
+        'path' : clickedFolder.getAttribute("data-path"),
         'name' : fileNameWithoutPath.split('.')[0],
         'ext' : fileNameWithoutPath.split('.')[1],
         'size' : target.files[0].size,
       }
       file.data = target.files[0];
       file.name = fileNameWithoutPath.split('.')[0]
-      console.log('emit 7000 fileData', fileData)
-      console.log('emit 7000 socket', this.$socket)
+      console.log('this.$socket.emit(7000, JSON.stringify(fileData));')
+      console.log('this.$socket.emit(7000) fileData :')
+      console.log(fileData)
       this.$socket.emit(7000, JSON.stringify(fileData));
     },
     onClickOpenAllDir() {
@@ -160,10 +153,6 @@ export default {
 
     DataParsing(data,isRoot) {
       data = JSON.parse(data)
-      console.log('   -----------dataParsing Start------------')
-      console.log('boolean -> isRoot',isRoot)
-      console.log('안드로이드 저장소로부터 받은 데이터')
-      console.log(data)
       let directory
       if (isRoot) {
         directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
@@ -171,8 +160,6 @@ export default {
       else {
         directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory").querySelector(`[data-path="${data.path}"]`) 
       }
-      console.log('DataParsing Target')
-      console.log(directory)
       if (!data) {
         console.log('noData',data)
         return
@@ -203,8 +190,6 @@ export default {
         curUl = directory.nextElementSibling
         curUl.innerHTML = ''
       }
-      console.log('curDiv',curDiv)
-      console.log('curUl',curUl)
       if (folders) {
         folders.forEach(folder => {
           const li = this.elementSetting('li')
@@ -213,11 +198,6 @@ export default {
           const ul = this.elementSetting('ul','closed')
           folderDiv.innerText = folder.name
           folderDiv.addEventListener('click', () => {
-            console.log('*******************************************')
-            console.log('folder click event -> 폴더 하위구조 가져오기')
-            console.log('클릭한 folder.path : ',folder.path)
-            console.log('클릭한 folder.name : ',folder.name)
-            console.log('*******************************************')
             ul.classList.toggle('closed')
             // path에 대해서 하위 내용 구조 통신하여 받는거 추가하기
             this.socketStorageTreeRequest(folder.path,folder.name)
@@ -250,8 +230,6 @@ export default {
         directory.appendChild(curDiv)
         directory.appendChild(curUl)
       }
-      console.log('   -----------dataParsing End------------')
-
     },
 
     setDeleteMenu(target) {
@@ -381,7 +359,7 @@ export default {
           })
           const progressFileName = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-filename")
           const progressPercent = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-percent")
-          this.socketFileUpload(modalObj.nameInput);
+          this.socketFileUpload(modalObj.nameInput,target);
           this.$socket.on(7001,(data) => {
             console.log('7001 Progress Bar')
             data = JSON.parse(data)
