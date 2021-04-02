@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-
+const fs = require('fs');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
   cors: {
@@ -11,6 +11,12 @@ const net = require('net');
 const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
+
+// const option = {
+//   ca: fs.readFileSync('/volumes/key/fullchain.pem'),
+//   key: fs.readFileSync('/volumes/key/privkey.pem'),
+//   cert: fs.readFileSync('/volumes/key/cert.pem'),
+// };
 
 //////////////// socket map system /////////////
 let flag = 0;
