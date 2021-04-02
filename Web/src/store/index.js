@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     member: null,
     login: false,
+    socket: null,
   },
   mutations: {
     login(state, data) {
@@ -17,6 +18,9 @@ export default new Vuex.Store({
     logout(state) {
       state.member = null;
       state.login = false;
+    },
+    socket(state, data) {
+      state.socket = data
     }
   },
   actions: {
@@ -26,6 +30,9 @@ export default new Vuex.Store({
     LOGOUT({ commit }) {
       commit("logout")
       localStorage.removeItem("token")
+    },
+    SOCKET({ commit }, data) {
+      commit("socket", data)
     }
   },
   modules: {

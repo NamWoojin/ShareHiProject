@@ -3,6 +3,7 @@ const fs = require('fs');
 
 let config = {
   host: 'http://localhost:9002',
+  //host: 'http://j4f001.p.ssafy.io:9002',
   filename: './img/sample.mp4',
 };
 
@@ -17,10 +18,14 @@ let socket = io.connect(config.host, { transports: ['websocket'] });
  * 설명 : 서버와 첫 연결 후 수행되는 콜백 함수 예제
  * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
  */
+let flag = 0;
 socket.on(1010, (data) => {
   console.log(1010);
   console.log(data);
-  socket.emit(1050);
+  if (flag === 0) {
+    flag = 1;
+    socket.emit(1050);
+  }
 });
 
 /**
@@ -66,7 +71,17 @@ socket.on(1070, () => {
     size: stats.size,
   };
   console.log(fileStat);
-  socket.emit(7000, JSON.stringify(fileStat));
+  //socket.emit(7000, JSON.stringify(fileStat));
+
+  //자! 파일 다운로드를 시작해 보자!
+  socket.emit(
+    8000,
+    JSON.stringify({
+      path: './',
+      name: 'sample-for-download',
+      ext: '.mp4',
+    })
+  );
 });
 
 /**
@@ -98,6 +113,10 @@ socket.on(7001, (data) => {
  */
 socket.on(2000, (data) => {
   console.log(2000);
+  console.log(data);
+});
+socket.on(8000, (data) => {
+  console.log(8000);
   console.log(data);
 });
 

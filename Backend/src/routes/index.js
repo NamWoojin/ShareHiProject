@@ -8,6 +8,7 @@ const login = require('./login');
 const follow = require('./follow');
 const device = require('./device');
 const share = require('./share');
+const alert = require('./alert')
 
 // router.use('/user', auth, user);
 router.use('/member', member);
@@ -15,5 +16,6 @@ router.use('/login', login);
 router.use('/follow', follow);
 router.use('/device', device);
 router.use('/share', share);
+router.use('/alert', alert);
 
 module.exports = router;
