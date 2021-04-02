@@ -46,7 +46,6 @@
                 </v-btn>
                     
                 <v-btn class="navicon" @click="downloadFile"
-                  :disabled="selectitem.length != 1"
                 >
                   <div style="width: 50px; height: 50px;">
                     <v-icon x-large style="margin-top: 5px !important">mdi-download</v-icon>
@@ -256,9 +255,27 @@ export default {
       currentpath: '',
       percent: 100,
       originalpath: '',
+      saveFile: null,
     };
   },
   methods: {
+    async selectWindowFile() {
+      try {
+    const handle = await window.showSaveFilePicker({
+      types: [{
+        description: 'myfile',
+        accept: {
+          // Omitted
+        },
+      }],
+      suggestedFileName : 'savedFile',
+    })
+
+    const writable = await handle.createWritable();
+      } catch (err) {
+        console.log(err)
+      }
+    },
     dragMouseDown(event) {
       event.preventDefault()
       this.positions.clientX = event.clientX
@@ -443,6 +460,12 @@ export default {
     },
     downloadFile() {
       console.log('this is downloadFile')
+      let file = this.selectWindowFile();
+      this.$socket.emit(8000, JSON.stringify({
+        path: './',
+        name: 'sample-for-download',
+        ext: '.txt'
+      }))
     },
     selectFolder(i) {
       console.log(i)
@@ -570,7 +593,10 @@ export default {
         }
       };
     })
-
+    this.$socket.on(8000, (data) => {
+      console.log('this is json datas')
+      console.log(typeof data)
+    })
     this.$socket.on(7001, (data) => {
       console.log('this is bar: ', JSON.parse(data).percent)
       console.log(typeof JSON.parse(data).percent)
