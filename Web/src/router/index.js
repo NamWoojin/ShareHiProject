@@ -69,7 +69,8 @@ const routes = [
       {
         path: 'filebrowser',
         name: 'FileBrowser',
-        component: () => import('../views/FileBrowser.vue')
+        component: () => import('../views/FileBrowser.vue'),
+        props: true
       },
       {
         path: 'profile',

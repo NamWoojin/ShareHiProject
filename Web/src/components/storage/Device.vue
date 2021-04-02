@@ -19,15 +19,16 @@ export default {
       squareUrl: "https://logodix.com/logo/14982.png",
     }
   },
+
   methods: {
     clickDevice() {
-      this.$socket.emit(1070, JSON.stringify({
-        id: this.device.id
-      }))
-      this.$socket.on(1070, () => {
-        this.$socket.emit(1050)
-      })
-      this.$router.push({ name: 'FileBrowser' })
+      // this.$socket.emit(1070, JSON.stringify({
+      //   id: this.device.id
+      // }))
+      // this.$socket.on(1070, () => {
+      //   this.$socket.emit(1050)
+      // })
+      this.$router.push({ name: 'FileBrowser', params: {device: this.device} })
     }
   }
 }
