@@ -30,6 +30,7 @@ import com.example.android.ui.main.BackdropActivity;
 import com.example.android.ui.send.CreateFolderFragment;
 import com.example.android.ui.send.FolderFragment;
 import com.example.android.ui.send.FolderRecyclerAdapter;
+import com.example.android.ui.send.PrepareMemberRecyclerAdapter;
 import com.example.android.ui.send.ShareFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -48,6 +49,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
     private WeakReference<Activity> mActivityRef;
 
+    //공유 폴더 선택
     private MutableLiveData<String> selectedPathLiveData = new MutableLiveData<>("");
     private MutableLiveData<String> folderTitleLiveData = new MutableLiveData<>("");
     private MutableLiveData<String> folderPathLiveData = new MutableLiveData<>("");
@@ -55,10 +57,14 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     private FolderRecyclerAdapter folderRecyclerAdapter = new FolderRecyclerAdapter(this);
     private String mRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
 
+    //새 폴더 생성
     private MutableLiveData<String> newFolderNameLiveData;
 
+    //공유 대상 선택
     private MutableLiveData<List<Member>> selectedMemberLiveData = new MutableLiveData<>(new ArrayList<>());
+    private PrepareMemberRecyclerAdapter prepareMemberRecyclerAdapter = new PrepareMemberRecyclerAdapter(this);
 
+    //공유 가능 여부
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
 
     private ShareFragment shareFragment;
@@ -76,6 +82,21 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         mSocketRepository.setParentContext(parentContext);
         setSocketObserver();
 //        mSocketRepository.deleteFolder(mRoot,"sample.mp4");
+        createMemberList();
+    }
+
+    private void createMemberList(){
+        List<Member> newList = new ArrayList<>();
+
+        Member m = new Member();
+        m.setMem_name("김싸피");
+        newList.add(m);
+        Member md = new Member();
+        md.setMem_name("박싸피");
+        newList.add(md);
+
+        selectedMemberLiveData.setValue(newList);
+        prepareMemberRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -240,6 +261,26 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     @Override
     public String getName(int pos) {
         return folderItems.get(pos).getName();
+    }
+
+    @Override
+    public PrepareMemberRecyclerAdapter getPrepareMemberRecyclerAdapter() {
+        return prepareMemberRecyclerAdapter;
+    }
+
+    @Override
+    public List<Member> getMemberItems() {
+        return selectedMemberLiveData.getValue();
+    }
+
+    @Override
+    public String getMemberName(int pos) {
+        return selectedMemberLiveData.getValue().get(pos).getMem_name();
+    }
+
+    @Override
+    public String getMemberImage(int pos) {
+        return selectedMemberLiveData.getValue().get(pos).getMem_image();
     }
 
 

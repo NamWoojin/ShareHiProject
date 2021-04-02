@@ -64,7 +64,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_folder_file_recyclerView"
-            folderAdapter="@{viewModel.folderRecyclerAdapter}"
+            bindAdapter="@{viewModel.folderRecyclerAdapter}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:divider="@color/gray"
