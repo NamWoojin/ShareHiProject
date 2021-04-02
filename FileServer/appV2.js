@@ -645,7 +645,7 @@ let getFilePercent = (socket, length) => {
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       size = sockets[i]['size'];
-      console.log('saved size in send socket : ' + sockets[i]['size']);
+      if (size === 0) return -1;
       sockets[i]['tmpfileSize'] += length;
       tmpfileSize = sockets[i]['tmpfileSize'];
       let ans = Math.floor((tmpfileSize / size) * 100);
