@@ -6,9 +6,9 @@
       <!-- {{followings}} -->
       <Profile />
       <hr>
-      <UserStatus @state="setState" />
+      <UserStatus @state="setState" :follower_len="followers.length" :following_len="followings.length" />
       <hr>
-      <v-row>
+      <v-row v-if="state == 0">
         <v-col>
           <div v-for="(follower, idx) in followers" :key="idx">
             <div style="display: flex; align-items: center; margin: 1rem;">
@@ -16,6 +16,22 @@
               <div style="text-align: left;">
                 <p style="margin: 0;">{{follower.mem_name}}</p>
                 <p style="margin: 0;">{{follower.mem_email}}</p>
+              </div>
+              <!-- <div>
+                <v-btn>팔로우</v-btn>
+              </div> -->
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row v-else-if="state == 1">
+        <v-col>
+          <div v-for="(following, idx) in followings" :key="idx">
+            <div style="display: flex; align-items: center; margin: 1rem;">
+              <img style="width: 60px; height: 60px;" :src="following.mem_image">
+              <div style="text-align: left;">
+                <p style="margin: 0;">{{following.mem_name}}</p>
+                <p style="margin: 0;">{{following.mem_email}}</p>
               </div>
               <!-- <div>
                 <v-btn>팔로우</v-btn>

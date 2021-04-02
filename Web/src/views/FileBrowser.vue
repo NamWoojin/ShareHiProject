@@ -20,11 +20,19 @@
           </v-col>
           <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0; padding-top: 0; padding-bottom: 0;">
             <div style="display: flex; justify-content: space-between" class="icon-container">
+              <div style="display: flex;">
+
                 <v-btn class="navicon" :disabled="!lastpath" @click="gotoLastpath">
                   <div style="width: 50px; height: 50px;">
                     <v-icon x-large style="margin-top: 5px !important">mdi-keyboard-backspace</v-icon>
                   </div>
                 </v-btn>
+                <v-btn class="navicon" @click="gotoOriginpath">
+                  <div style="width: 50px; height: 50px;">
+                    <v-icon x-large style="margin-top: 5px !important">mdi-home</v-icon>
+                  </div>
+                </v-btn>
+              </div>
               <div>
                 <!-- <span style="font-size: 1.5rem;">{{customPath}}</span> -->
                 <span style="font-size: 1.5rem;">{{currentpath}}</span>
@@ -107,6 +115,15 @@
                 <v-icon @click="selectFolder(item)" v-else-if="item.type=='folder'">
                   mdi-folder
                 </v-icon>
+                <v-icon v-else-if="item.type=='jpg'">
+                  mdi-image
+                </v-icon>
+                <v-icon v-else-if="item.type=='pdf'">
+                  mdi-file-pdf
+                </v-icon>
+                <v-icon v-else-if="item.type=='mp4'">
+                  mdi-movie
+                </v-icon>
                 <!-- <v-icon v-else>
                   {{ files[item.file] }}
                 </v-icon> -->
@@ -136,7 +153,7 @@
                               height="100px"
                             />
                           </div>
-                          <span style="display:inline-block; width: 100px;">{{child.name}}</span>
+                          <span class="child-name" :class="{showChild: selectitem.includes(child)}">{{child.name}}</span>
                         </div>
                       </div>
                       <div v-else>
@@ -148,7 +165,7 @@
                               height="100px"
                             />
                           </div>
-                          <span style="display:inline-block; width: 100px;">{{child.name}}</span>
+                          <span class="child-name" :class="{showChild: selectitem.includes(child)}">{{child.name}}</span>
                         </div>
                       </div>
                     </div>
@@ -199,6 +216,9 @@
 /*eslint-disable*/
 export default {
   name: 'FileBrowser',
+  props: {
+    device: Object
+  },
   data() {
     return {
       positions: {
@@ -235,6 +255,7 @@ export default {
       lastpath: '',
       currentpath: '',
       percent: 100,
+      originalpath: '',
     };
   },
   methods: {
@@ -435,12 +456,20 @@ export default {
         path: this.lastpath
       }))
     },
+    gotoOriginpath() {
+      this.$socket.emit(2000, JSON.stringify({
+        path: this.originalpath
+      }))
+    }
   },
   mounted() {
+    const data = {
+      id: this.device.id
+    }
+    this.$socket.emit(1070, JSON.stringify(data))
+
     // this.node = this.data[0];
-    this.$socket.emit(2000, JSON.stringify({
-      path: '\/storage\/emulated\/0'
-    }))
+    
   },
   watch: {
     fileList: function () {
@@ -459,11 +488,22 @@ export default {
     }
   },
   computed: {
+    originalSize() {
+      if (this.originalpath) {
+        return this.originalpath.split('\/').length
+      }
+    },
     customPath() {
-      if (this.node.path)
-      return this.node.path.split('\/').slice(3).join(' > ')
+      if (this.node.path) {
+        return this.node.path.split('\/').slice(3).join(' > ')
+      }
       // return this.node.path.split('\/').join(' > ')
     },
+    originArrayPath() {
+      if (this.originalpath) {
+        return this.originalpath.split('\/')
+      }
+    }
   },
   created() {
     this.$socket.on(2000, (data) => {
@@ -482,6 +522,13 @@ export default {
       this.node = this.data[0];
     })
 
+    this.$socket.on(1070, (data) => {
+      data = JSON.parse(data)
+      this.originalpath = data.path
+      this.$socket.emit(2000, JSON.stringify({
+        path: data.path
+      }))
+    })
 
     this.$socket.on(7000, (data) => {
       data = JSON.parse(data)
@@ -626,5 +673,18 @@ export default {
 
   >>> .v-treeview-node__label {
     text-align: left;
+  }
+
+  .child-name {
+    display: inline-block; 
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .showChild {
+    overflow: visible;
+    white-space: normal;
   }
 </style>

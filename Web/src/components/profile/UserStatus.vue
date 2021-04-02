@@ -9,7 +9,7 @@
           tile
         >
           <v-card-text class="pb-0 pt-2">팔로워</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">20</v-card-text>
+          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{follower_len}}</v-card-text>
         </v-card>
       </v-col>
       <v-col>
@@ -21,7 +21,7 @@
           tile
         >
           <v-card-text class="pb-0 pt-2">팔로잉</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">130</v-card-text>
+          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{following_len}}</v-card-text>
         </v-card>
       </v-col>
       <v-col>
@@ -42,6 +42,10 @@
 <script>
 export default {
   name: 'UserStatus',
+  props: {
+    follower_len: Number,
+    following_len: Number,
+  },
   data() {
     return {
       state: 0,
