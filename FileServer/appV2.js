@@ -574,7 +574,7 @@ io.on('connection', (socket) => {
     }
 
     let percent = getFilePercent(socket, data.length);
-
+    console.log('percent : ' + percent);
     socket.emit(
       KEY.SEND_FILE,
       JSON.stringify({
