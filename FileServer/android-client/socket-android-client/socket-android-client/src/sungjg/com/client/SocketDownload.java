@@ -2,9 +2,15 @@ package sungjg.com.client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -22,10 +28,15 @@ public class SocketDownload {
 	Gson gson = new Gson();
 
 	FileInputStream fileInput = null;
-	DataOutputStream dataOutput = null;
-	byte[] buf = null;
-	BufferedOutputStream bufferdOutput = null;
+	DataInputStream dis = null;
 	BufferedInputStream bis = null;
+
+	//BufferedOutputStream bos = null;
+	OutputStream os = null;
+	
+	PrintWriter out = null;
+
+	byte[] buf = null;
 
 	public SocketDownload(FileStat fs) {
 		super();
@@ -39,12 +50,17 @@ public class SocketDownload {
 			SocketAddress socketAddress = new InetSocketAddress(Client.IP, Client.PORT);
 			socket.connect(socketAddress, 8288);
 			socket.setSoTimeout(10000);
+
 			buf = new byte[CHUNK_SIZE];
 			fileInput = new FileInputStream(file);
-			dataOutput = new DataOutputStream(socket.getOutputStream());
+			dis = new DataInputStream(fileInput);
 			bis = new BufferedInputStream(fileInput);
+
+			//bos = new BufferedOutputStream(socket.getOutputStream());
+			os = socket.getOutputStream();
 			
-			bufferdOutput = new BufferedOutputStream(dataOutput);
+			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
+			
 			getIO.start();
 
 		} catch (Exception e) {
@@ -56,37 +72,38 @@ public class SocketDownload {
 		@Override
 		public void run() {
 			try {
-				int size = (int)fs.getSize();
+				int size = (int) fs.getSize();
 				System.out.println("size : " + size);
 				int tmp = 0;
+
 				while (size - tmp > CHUNK_SIZE) {
-					bis.read(buf, 0, CHUNK_SIZE);
-					tmp += (CHUNK_SIZE);
-					bufferdOutput.write(buf);
-					System.out.println("tmp : " + tmp);
-					bufferdOutput.flush();
+					dis.read(buf);
+					os.write(buf);
+					tmp += CHUNK_SIZE;
+					os.flush();
 				}
 				if (size - tmp <= CHUNK_SIZE) {
 					buf = new byte[(int) (size - tmp)];
-					bis.read(buf, 0, (size-tmp));
-					bufferdOutput.write(buf);
+					dis.read(buf);
+					os.write(buf);
 					tmp += (size - tmp);
 					System.out.println("tmp : " + tmp);
-					bufferdOutput.flush();
+					os.flush();
 				}
-
 
 				System.out.println("FILE을 모두 전송했습니다..");
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (bufferdOutput != null)
-						bufferdOutput.close();
-					if (dataOutput != null)
-						dataOutput.close();
+					if (os != null)
+						os.close();
+					if (bis != null)
+						bis.close();
 					if (fileInput != null)
 						fileInput.close();
+					if (dis != null)
+						dis.close();
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -94,5 +111,5 @@ public class SocketDownload {
 			}
 		}
 	};
-	
+
 }

@@ -121,6 +121,12 @@ public class SocketInfo {
 						/**
 						 * LOGIC
 						 */
+						jobj = new JsonObject();
+						jobj.addProperty("namespace", "1070");
+						jobj.addProperty("path", "./");
+						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
+						json = gson.toJson(jobj);
+						write(json);
 						break;
 						
 						
@@ -159,7 +165,7 @@ public class SocketInfo {
 						jobj = new JsonObject();
 						jobj.addProperty("namespace", "2100");
 						jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
-						jobj.addProperty("data", "folder directory JSON object ");
+						jobj.addProperty("data", "./");
 						json = gson.toJson(jobj);
 						write(json);
 						break;
