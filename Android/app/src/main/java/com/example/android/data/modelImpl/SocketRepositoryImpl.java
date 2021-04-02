@@ -216,7 +216,7 @@ public class SocketRepositoryImpl implements SocketRepository {
 //                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_CODE);
             return false;
         } else {
-            SocketData sd = new SocketData(fs,mActivityRef.get());
+            SocketData sd = new SocketData(fs);
             sd.connect();
             return true;
         }

@@ -331,7 +331,7 @@ public class SocketInfo {
 //                                    ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
 //                            Log.i("TAG", "run: "+shouldProviceRationale);
 //                            if (shouldProviceRationale) {
-                                File file = new File(path7100 + name7100 + ext);
+                                File file = new File(path7100 +"/"+ name7100 + ext);
 
                                 // 1. 파일이 이미 있는지 확인한다
                                 if (file.length() == size) {

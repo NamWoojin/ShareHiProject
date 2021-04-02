@@ -26,7 +26,6 @@ public class SocketData {
     private File file;
 
     private Socket socket;
-    private Activity activity;
     Gson gson = new Gson();
 
     FileOutputStream fileOutput = null;
@@ -34,10 +33,9 @@ public class SocketData {
     byte[] buf = null;
     BufferedInputStream bufferdInput = null;
 
-    public SocketData(FileStat fs, Activity activity) {
+    public SocketData(FileStat fs) {
         super();
         this.fs = fs;
-        this.activity = activity;
     }
 
     public void connect() {
@@ -88,10 +86,6 @@ public class SocketData {
                 }
 
                 fileOutput.flush();
-//                boolean shouldProviceRationale =
-//                        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
-//
-//                if (shouldProviceRationale) {
                 File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
                 boolean isSuc = file.renameTo(newFile);
                 System.out.println("FILE을 모두 썼습니다.");
