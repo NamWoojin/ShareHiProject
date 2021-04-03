@@ -23,6 +23,7 @@ const KEY = require('./src/config/key/key');
 
 //////////////// socket map system /////////////
 let flag = 0;
+let pathData = '';
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
   this.id = id; // 소켓 자체를 유일하게 구분하는 PK
   this.name = name; // ad_id
@@ -325,15 +326,49 @@ let andServer = net.createServer((socket) => {
         console.log(8100);
 
         setDownloadReceiverSize(data.size, data.targetId);
-        socket.write(
+        getSocketByTargetId(data.targetId).emit(
+          8001,
           JSON.stringify({
-            namespace: 8200,
-          }) + '\n'
+            size: data.size,
+          })
         );
+
         break;
       case 7002:
         if (percent >= 100) {
           initSocketData(socket);
+        }
+        break;
+      case 2100:
+        pathData = '';
+        pathDataChunkCount = data.chunkCount;
+        socket.write(
+          JSON.stringify({
+            namespace: 2150,
+            path: data.path,
+            targetId: data.targetId,
+            chunkCount: pathDataChunkCount,
+            pathDataChunkCount: pathDataChunkCount,
+          }) + '\n'
+        );
+        break;
+
+      case 2150:
+        pathData += data.data;
+        --pathDataChunkCount;
+        if (pathDataChunkCount == 0) {
+          console.log(pathData.length);
+          getSocket(data.targetId, pathData);
+        } else {
+          socket.write(
+            JSON.stringify({
+              namespace: 2150,
+              path: data.path,
+              targetId: data.targetId,
+              chunkCount: data.chunkCount,
+              pathDataChunkCount: pathDataChunkCount,
+            }) + '\n'
+          );
         }
         break;
     }
@@ -637,6 +672,19 @@ io.on('connection', (socket) => {
   });
 });
 
+/**
+ * @type Web
+ * @namespace 8001
+ * @description 웹에서 파일 사이즈를 보낸 것을 동기화한다.
+ * @data
+ */
+socket.on(8001, () => {
+  getFileReceiver(socket).write(
+    JSON.stringify({
+      namespace: 8200,
+    }) + '\n'
+  );
+});
 ////////////// LOGIC ///////////////////
 
 let getFilePercent = (socket, length) => {

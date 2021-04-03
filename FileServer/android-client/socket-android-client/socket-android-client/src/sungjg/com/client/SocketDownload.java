@@ -80,6 +80,7 @@ public class SocketDownload {
 					dis.read(buf);
 					os.write(buf);
 					tmp += CHUNK_SIZE;
+					System.out.println("tmp : " + tmp);
 					os.flush();
 				}
 				if (size - tmp <= CHUNK_SIZE) {
