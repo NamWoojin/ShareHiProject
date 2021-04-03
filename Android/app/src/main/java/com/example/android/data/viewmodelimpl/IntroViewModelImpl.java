@@ -60,10 +60,11 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
     @Override
     public void getAdID() {
-        getadid.start();
+        GetAdidThread getAdidThread = new GetAdidThread();
+        getAdidThread.start();
     }
 
-    private Thread getadid = new Thread() {
+    public class GetAdidThread extends Thread {
         @Override
         public void run() {
             super.run();
@@ -82,7 +83,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                 Log.i("TAG", "run: " + advertId);
                 mActivityRef.get().runOnUiThread(() -> {    //현재 스레드가 UI스레드가 아니니 UI스레드에서 실행하도록 runOnUiThread설정
                     // TODO.
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         getExternalStoragePermission();
                     }
                     else{
@@ -94,7 +95,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                 e.printStackTrace();
                 mActivityRef.get().runOnUiThread(() -> {
                     // TODO.
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         getExternalStoragePermission();
                     }
                     else{
@@ -110,6 +111,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         if(Environment.isExternalStorageManager()){
             getPermissionAndLogin();
         }else{
+            Toast.makeText(mActivityRef.get(), "접근 권한을 허용해주세요", Toast.LENGTH_SHORT).show();
             Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
             mActivityRef.get().startActivityForResult(permissionIntent,EXTERNAL_STORAGE_MANAGER);
         }
