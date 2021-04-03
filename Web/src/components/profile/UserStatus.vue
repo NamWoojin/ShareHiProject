@@ -1,5 +1,5 @@
 <template>
-    <v-row no-gutters>
+    <v-row no-gutters style="border: 1px solid gray">
       <v-col>
         <v-card
           class="pa-2 text-center cursor-pointer"
@@ -9,7 +9,7 @@
           tile
         >
           <v-card-text class="pb-0 pt-2">팔로워</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{follower_len}}</v-card-text>
+          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{follower_len}}명</v-card-text>
         </v-card>
       </v-col>
       <v-col>
@@ -21,19 +21,7 @@
           tile
         >
           <v-card-text class="pb-0 pt-2">팔로잉</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{following_len}}</v-card-text>
-        </v-card>
-      </v-col>
-      <v-col>
-        <v-card
-          class="pa-2 text-center cursor-pointer"
-          @click="state = 2"
-          :class="{ selected: state==2}"
-          flat
-          tile
-        >
-          <v-card-text class="pb-0 pt-2">디바이스</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">3</v-card-text>
+          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{following_len}}명</v-card-text>
         </v-card>
       </v-col>
     </v-row>
