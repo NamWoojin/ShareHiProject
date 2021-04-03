@@ -23,6 +23,7 @@ const KEY = require('./src/config/key/key');
 
 //////////////// socket map system /////////////
 let flag = 0;
+let pathData = '';
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
   this.id = id; // 소켓 자체를 유일하게 구분하는 PK
   this.name = name; // ad_id
@@ -336,6 +337,38 @@ let andServer = net.createServer((socket) => {
       case 7002:
         if (percent >= 100) {
           initSocketData(socket);
+        }
+        break;
+      case 2100:
+        pathData = '';
+        pathDataChunkCount = data.chunkCount;
+        socket.write(
+          JSON.stringify({
+            namespace: 2150,
+            path: data.path,
+            targetId: data.targetId,
+            chunkCount: pathDataChunkCount,
+            pathDataChunkCount: pathDataChunkCount,
+          }) + '\n'
+        );
+        break;
+
+      case 2150:
+        pathData += data.data;
+        --pathDataChunkCount;
+        if (pathDataChunkCount == 0) {
+          console.log(pathData.length);
+          getSocket(data.targetId, pathData);
+        } else {
+          socket.write(
+            JSON.stringify({
+              namespace: 2150,
+              path: data.path,
+              targetId: data.targetId,
+              chunkCount: data.chunkCount,
+              pathDataChunkCount: pathDataChunkCount,
+            }) + '\n'
+          );
         }
         break;
     }
