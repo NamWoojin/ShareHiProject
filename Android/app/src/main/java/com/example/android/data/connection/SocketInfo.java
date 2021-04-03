@@ -368,7 +368,7 @@ public class SocketInfo {
                                 fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
                                 // 새로운 TCP 연결 시도
                                 socketRepository.getFile(fs);
-                                downloadNotification = new DownloadNotification(context,name7100,path7100);
+//                                downloadNotification = new DownloadNotification(context,name7100,path7100);
                             }
                             break;
 
@@ -379,7 +379,7 @@ public class SocketInfo {
                              */
 
                             int percentage = jsonObject.getInt("percent");
-                            downloadNotification.startNotification(percentage);
+//                            downloadNotification.startNotification(percentage);
 //                            Log.i("myTag", "percentage: " + percentage);
                             break;
 
