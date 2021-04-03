@@ -579,6 +579,7 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE_STAT, (data) => {
+    console.log(7000);
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
