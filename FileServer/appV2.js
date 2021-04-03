@@ -670,21 +670,22 @@ io.on('connection', (socket) => {
       }) + '\n'
     );
   });
+
+  /**
+   * @type Web
+   * @namespace 8001
+   * @description 웹에서 파일 사이즈를 보낸 것을 동기화한다.
+   * @data
+   */
+  socket.on(8001, () => {
+    getFileReceiver(socket).write(
+      JSON.stringify({
+        namespace: 8200,
+      }) + '\n'
+    );
+  });
 });
 
-/**
- * @type Web
- * @namespace 8001
- * @description 웹에서 파일 사이즈를 보낸 것을 동기화한다.
- * @data
- */
-socket.on(8001, () => {
-  getFileReceiver(socket).write(
-    JSON.stringify({
-      namespace: 8200,
-    }) + '\n'
-  );
-});
 ////////////// LOGIC ///////////////////
 
 let getFilePercent = (socket, length) => {
