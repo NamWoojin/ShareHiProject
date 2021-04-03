@@ -23,7 +23,7 @@ var cert = fs.readFileSync('/volumes/key/cert.pem').toString();
 //   },
 // });
 
-const io = require('socket.io').listen(9002, {
+const io = require('socket.io')(9002, {
   key : privkey,
   cert: cert,
   ca : key,
