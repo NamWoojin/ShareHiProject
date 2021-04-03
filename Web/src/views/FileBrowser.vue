@@ -458,6 +458,8 @@ export default {
       });
     },
     uploadFile() {
+      console.log(this.node)
+      console.log(this.node.path)
       this.viewMenu = false
       document.getElementById('fileinput').click()
     },
@@ -504,11 +506,11 @@ export default {
   },
   watch: {
     fileList: function () {
-      if (this.fileList.size) {
+      if (this.fileList.size > 0) {
         console.log(this.fileList.name)
         // console.log(this.fileList[0].size)
         const fileData = {
-          'path': './',
+          'path': this.node.path,
           'name': this.fileList.name.split('.')[0],
           'ext': this.fileList.name.substr(this.fileList.name.split('.')[0].length),
           'size': this.fileList.size,
@@ -565,44 +567,47 @@ export default {
     })
 
     this.$socket.on(7000, (data) => {
+      console.log('7000 on')
       data = JSON.parse(data)
       // const fileData = this.fileList
+      if (this.fileList.size) {
 
-      let size = this.fileList.size;
-      let tmpfileSize = data.tmpfileSize;
-      let CHUNK_SIZE = 64 * 1024;
-      let start = tmpfileSize;
-
-      let fileReader = new FileReader();
-
-      // 1. 파일을 슬라이스한다(start ~ start + CHUNK_SIZE) // 만약, (start + CHUNK_SIZE < size) ->
-      // slice : start ~ start + CHUNK_SIZE,            slice : start ~ size
-      let tmp;
-
-      if(start + CHUNK_SIZE < size) {
-        tmp = this.fileList.slice(start, start + CHUNK_SIZE);
-        start += CHUNK_SIZE;
-        fileReader.readAsArrayBuffer(tmp);
-      } else {
-        tmp = this.fileList.slice(start, size);
-        start = size;
-        fileReader.readAsArrayBuffer(tmp);
-      }
-
-      fileReader.onloadend = (e) => {
-        this.$socket.emit(7001, e.target.result);
-
-        if(start == size) return;
+        let size = this.fileList.size;
+        let tmpfileSize = data.tmpfileSize;
+        let CHUNK_SIZE = 64 * 1024;
+        let start = tmpfileSize;
+  
+        let fileReader = new FileReader();
+  
+        // 1. 파일을 슬라이스한다(start ~ start + CHUNK_SIZE) // 만약, (start + CHUNK_SIZE < size) ->
+        // slice : start ~ start + CHUNK_SIZE,            slice : start ~ size
+        let tmp;
+  
         if(start + CHUNK_SIZE < size) {
           tmp = this.fileList.slice(start, start + CHUNK_SIZE);
           start += CHUNK_SIZE;
-          e.target.readAsArrayBuffer(tmp);
+          fileReader.readAsArrayBuffer(tmp);
         } else {
           tmp = this.fileList.slice(start, size);
           start = size;
-          e.target.readAsArrayBuffer(tmp);
+          fileReader.readAsArrayBuffer(tmp);
         }
-      };
+  
+        fileReader.onloadend = (e) => {
+          this.$socket.emit(7001, e.target.result);
+  
+          if(start == size) return;
+          if(start + CHUNK_SIZE < size) {
+            tmp = this.fileList.slice(start, start + CHUNK_SIZE);
+            start += CHUNK_SIZE;
+            e.target.readAsArrayBuffer(tmp);
+          } else {
+            tmp = this.fileList.slice(start, size);
+            start = size;
+            e.target.readAsArrayBuffer(tmp);
+          }
+        };
+      }
     })
     this.$socket.on(8000, (data) => {
       this.blobArray.push(new Blob([data]))
