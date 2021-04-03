@@ -115,6 +115,7 @@ let andServer = net.createServer((socket) => {
      */
     console.log(data);
     if (isFileSender(socket)) {
+      console.log(data.byteLength);
       console.log('send 8000 to web client');
       let fileSender = getFileSender(socket);
       console.log('sending');
