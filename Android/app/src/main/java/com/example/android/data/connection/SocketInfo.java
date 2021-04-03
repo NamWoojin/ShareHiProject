@@ -2,6 +2,7 @@ package com.example.android.data.connection;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -19,6 +20,7 @@ import java.net.SocketAddress;
 
 import com.example.android.data.connection.dto.FileStat;
 import com.example.android.data.model.SocketRepository;
+import com.example.android.notification.DownloadNotification;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -27,24 +29,27 @@ import org.json.JSONObject;
 
 
 public class SocketInfo {
-//        public static final String IP = "j4f001.p.ssafy.io";
+    public static final String IP = "j4f001.p.ssafy.io";
 //    public static final String IP = "10.0.2.2";
-    public static final String IP = "192.168.35.127";
+//    public static final String IP = "192.168.35.127";
     public static final int PORT = 9003;
 
     private FileStat fs;
 
     private SocketRepository socketRepository;
+    private Context context;
     private Socket socket;
     private String adID;
     private int CHUNK_SIZE = 256;
     private boolean closeSocketByUser;
+    private DownloadNotification downloadNotification;
     BufferedReader in;
     PrintWriter out;
     Gson gson = new Gson();
 
-    public SocketInfo(SocketRepository socketRepository) {
+    public SocketInfo(SocketRepository socketRepository, Context context) {
         this.socketRepository = socketRepository;
+        this.context = context;
     }
 
     public void connect(String adID) {
@@ -211,16 +216,16 @@ public class SocketInfo {
                             // pathDataChunkCount
                             returnJSONObjectString = socketRepository.getFolderDirectory(jsonObject.getString("path")).toString();
                             int length = returnJSONObjectString.length();
-                            chunkCount =jsonObject.getInt("chunkCount");
-                            int num =  chunkCount - jsonObject.getInt("pathDataChunkCount");
-                            if(num == chunkCount){
+                            chunkCount = jsonObject.getInt("chunkCount");
+                            int num = chunkCount - jsonObject.getInt("pathDataChunkCount");
+                            if (num == chunkCount) {
                                 break;
                             }
                             int start = num * CHUNK_SIZE;
                             int next = Math.min(length, CHUNK_SIZE * (num + 1));
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "2150");
-                            jobj.addProperty("targetId",jsonObject.getString("targetId"));
+                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
                             jobj.addProperty("path", jsonObject.getString("path"));
                             jobj.addProperty("chunkCount", chunkCount);
                             jobj.addProperty("data", returnJSONObjectString.substring(start, next));
@@ -230,203 +235,176 @@ public class SocketInfo {
                             write(json);
 
                             break;
-                                /**
-                                 * Android
-                                 * 2101
-                                 * 설명 : 폴더를 수정한다
-                                 * 메시지 :
-                                 */
-                                case 2101:
-                                    /**
-                                     * TODO 폴더 이름 수정 로직!
-                                     */
-                                    String newName = jsonObject.getString("newName");
-                                    String path = jsonObject.getString("path");
-                                    String name = jsonObject.getString("name");
-                                    boolean result2001 = socketRepository.changeFolderName(path, name, newName);
+                        /**
+                         * Android
+                         * 2101
+                         * 설명 : 폴더를 수정한다
+                         * 메시지 :
+                         */
+                        case 2101:
+                            /**
+                             * TODO 폴더 이름 수정 로직!
+                             */
+                            String newName = jsonObject.getString("newName");
+                            String path = jsonObject.getString("path");
+                            String name = jsonObject.getString("name");
+                            boolean result2001 = socketRepository.changeFolderName(path, name, newName);
 
-                                    jobj = new JsonObject();
-                                    jobj.addProperty("namespace", "2101");
-                                    jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                                    jobj.addProperty("detail", "");
-                                    jobj.addProperty("content", "");
-                                    if (result2001) {
-                                        jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-                                        jobj.addProperty("message", "OK");
-                                    } else {
-                                        jobj.addProperty("status", "403");
-                                        jobj.addProperty("message", "FORBIDDEN");
-                                    }
-                                    json = gson.toJson(jobj);
-                                    write(json);
-
-                                    break;
-
-                                /**
-                                 * Android
-                                 * 2102
-                                 * 설명 : 폴더를 삭제한다
-                                 * 메시지 :
-                                 */
-                                case 2102:
-
-                                    /**
-                                     * TODO 폴더 삭제 로직! (여러 개의 폴더, 파일 삭제가 요청을 올 수도 있음)
-                                     */
-
-                                    boolean result2002 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-
-                                    jobj = new JsonObject();
-                                    jobj.addProperty("namespace", "2102");
-                                    jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                                    jobj.addProperty("detail", "");
-                                    jobj.addProperty("content", "");
-                                    if (result2002) {
-                                        jobj.addProperty("status", "200"); // or 401 UNAUTHORIZED
-                                        jobj.addProperty("message", "OK");
-                                    } else {
-                                        jobj.addProperty("status", "401");
-                                        jobj.addProperty("message", "UNAUTHORIZED");
-                                    }
-
-                                    json = gson.toJson(jobj);
-                                    write(json);
-
-                                    break;
-
-                                /**
-                                 * Android
-                                 * 2103
-                                 * 설명 : 폴더를 추가한다
-                                 * 메시지 :
-                                 */
-                                case 2103:
-
-                                    /**
-                                     * TODO 폴더 추가 로직!
-                                     */
-                                    ;
-                                    boolean result2003 = socketRepository.createFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-
-                                    jobj = new JsonObject();
-                                    jobj.addProperty("namespace", "2103");
-                                    jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                                    jobj.addProperty("detail", "");
-                                    jobj.addProperty("content", "");
-                                    if (result2003) {
-                                        jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-                                        jobj.addProperty("message", "OK");
-                                    } else {
-                                        jobj.addProperty("status", "403");
-                                        jobj.addProperty("message", "FORBIDDEN");
-                                    }
-                                    json = gson.toJson(jobj);
-                                    write(json);
-                                    break;
-
-                                case 7100: // 파일 스텟 확인
-
-                                    /**
-                                     * TODO 파일 스텟 로직
-                                     */
-
-                                    int size = jsonObject.getInt("size");
-                                    String ext = jsonObject.getString("ext");
-                                    String path7100 = jsonObject.getString("path");
-                                    String name7100 = jsonObject.getString("name");
-
-                                    File file = new File(path7100 + "/" + name7100 + ext);
-
-                                    // 1. 파일이 이미 있는지 확인한다
-                                    if (file.length() == size) {
-                                        System.out.println("이미 파일이 있습니다.");
-                                        fs = new FileStat(name7100, path7100, ext, 0, 0);
-                                        jobj = new JsonObject();
-                                        jobj.addProperty("namespace", "7004");
-                                        jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                                        jobj.addProperty("status", "400"); // or 403 FORBIDDEN
-                                        jobj.addProperty("message", "BAD REQUEST");
-                                        jobj.addProperty("detail", "");
-                                        jobj.addProperty("content", "이미 파일이 있습니다.");
-                                        json = gson.toJson(jobj);
-                                        write(json);
-                                        break;
-                                    } else {
-
-                                        long tmpfileSize = 0;
-                                        if (file.exists()) {
-                                            System.out.println("이어받기 로직을 수행합니다.");
-                                            tmpfileSize = file.length();
-                                            System.out.println("현재 청크 사이즈 : " + tmpfileSize);
-                                        }
-
-                                        fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
-                                        // 새로운 TCP 연결 시도
-                                        socketRepository.getFile(fs);
-                                    }
-                                    break;
-
-                                case 7001: // 파일 전송
-
-                                    /**
-                                     * TODO 퍼센트 로직
-                                     */
-
-                                    int percentage = jsonObject.getInt("percent");
-//                            Log.i("myTag", "percentage: " + percentage);
-                                    break;
-
-
-                                case 7200: // 파일 전송을 위한 TCP 연결이 완료되었다.
-                                    System.out.println("fs size : " + fs.getSize());
-                                    if (fs.getSize() == 0) break;
-                                    jobj = new JsonObject();
-                                    jobj.addProperty("namespace", "7100");
-                                    jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
-                                    jobj.addProperty("size", fs.getSize());
-                                    json = gson.toJson(jobj);
-                                    write(json);
-                                    break;
-
-                                /**
-                                 * 1020
-                                 * 해당 디바이스를 공유 디바이스로 설정하기 위한 코드
-                                 * 설명 : 1020으로 서버에 전달하면 서버는 이 디바이스를 공유할 수 있도록 설정한다.
-                                 * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
-                                 */
-                                /*
-                                 * jobj = new JsonObject();
-                                 * jobj.addProperty("namespace", "1020");
-                                 * json = gson.toJson(jobj);
-                                 * write(json);
-                                 */
-
-
-                                /**
-                                 * Android
-                                 * 2100
-                                 * 설명 : 폴더 디렉토리 구조를 공유 디바이스에게 요청한다.
-                                 * 메시지 :
-                                 */
-                        /*
-                        jobj = new JsonObject();
-                        jobj.addProperty("namespace", "2100");
-                        jobj.addProperty("targetId", element.getAsJsonObject().get("targetId").getAsString());
-                        jobj.addProperty("content", "folder directory JSON object ");
-                        json = gson.toJson(jobj);
-                        write(json);
-                        */
-
+                            jobj = new JsonObject();
+                            jobj.addProperty("namespace", "2101");
+                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+                            jobj.addProperty("detail", "");
+                            jobj.addProperty("content", "");
+                            if (result2001) {
+                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
+                                jobj.addProperty("message", "OK");
+                            } else {
+                                jobj.addProperty("status", "403");
+                                jobj.addProperty("message", "FORBIDDEN");
                             }
-                    }
-                } catch(IOException | JSONException e){
-                    e.printStackTrace();
-                    //사용자의 의도에 의한 종료가 아닐 경우
-                    if (!closeSocketByUser)
-                        socketRepository.failSocketConnection();
+                            json = gson.toJson(jobj);
+                            write(json);
 
-                    Log.i("TAG", "run: socketStop");
+                            break;
+
+                        /**
+                         * Android
+                         * 2102
+                         * 설명 : 폴더를 삭제한다
+                         * 메시지 :
+                         */
+                        case 2102:
+
+                            /**
+                             * TODO 폴더 삭제 로직! (여러 개의 폴더, 파일 삭제가 요청을 올 수도 있음)
+                             */
+
+                            boolean result2002 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
+
+                            jobj = new JsonObject();
+                            jobj.addProperty("namespace", "2102");
+                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+                            jobj.addProperty("detail", "");
+                            jobj.addProperty("content", "");
+                            if (result2002) {
+                                jobj.addProperty("status", "200"); // or 401 UNAUTHORIZED
+                                jobj.addProperty("message", "OK");
+                            } else {
+                                jobj.addProperty("status", "401");
+                                jobj.addProperty("message", "UNAUTHORIZED");
+                            }
+
+                            json = gson.toJson(jobj);
+                            write(json);
+
+                            break;
+
+                        /**
+                         * Android
+                         * 2103
+                         * 설명 : 폴더를 추가한다
+                         * 메시지 :
+                         */
+                        case 2103:
+
+                            /**
+                             * TODO 폴더 추가 로직!
+                             */
+                            ;
+                            boolean result2003 = socketRepository.createFolder(jsonObject.getString("path"), jsonObject.getString("name"));
+
+                            jobj = new JsonObject();
+                            jobj.addProperty("namespace", "2103");
+                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+                            jobj.addProperty("detail", "");
+                            jobj.addProperty("content", "");
+                            if (result2003) {
+                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
+                                jobj.addProperty("message", "OK");
+                            } else {
+                                jobj.addProperty("status", "403");
+                                jobj.addProperty("message", "FORBIDDEN");
+                            }
+                            json = gson.toJson(jobj);
+                            write(json);
+                            break;
+
+                        case 7100: // 파일 스텟 확인
+
+                            /**
+                             * TODO 파일 스텟 로직
+                             */
+
+                            int size = jsonObject.getInt("size");
+                            String ext = jsonObject.getString("ext");
+                            String path7100 = jsonObject.getString("path");
+                            String name7100 = jsonObject.getString("name");
+
+                            File file = new File(path7100 + "/" + name7100 + ext);
+
+                            // 1. 파일이 이미 있는지 확인한다
+                            if (file.length() == size) {
+                                System.out.println("이미 파일이 있습니다.");
+                                fs = new FileStat(name7100, path7100, ext, 0, 0);
+                                jobj = new JsonObject();
+                                jobj.addProperty("namespace", "7004");
+                                jobj.addProperty("targetId", jsonObject.getString("targetId"));
+                                jobj.addProperty("status", "400"); // or 403 FORBIDDEN
+                                jobj.addProperty("message", "BAD REQUEST");
+                                jobj.addProperty("detail", "");
+                                jobj.addProperty("content", "이미 파일이 있습니다.");
+                                json = gson.toJson(jobj);
+                                write(json);
+                                break;
+                            } else {
+
+                                long tmpfileSize = 0;
+                                if (file.exists()) {
+                                    System.out.println("이어받기 로직을 수행합니다.");
+                                    tmpfileSize = file.length();
+                                    System.out.println("현재 청크 사이즈 : " + tmpfileSize);
+                                }
+
+                                fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
+                                // 새로운 TCP 연결 시도
+                                socketRepository.getFile(fs);
+//                                downloadNotification = new DownloadNotification(context,name7100,path7100);
+                            }
+                            break;
+
+                        case 7001: // 파일 전송
+
+                            /**
+                             * TODO 퍼센트 로직
+                             */
+
+                            int percentage = jsonObject.getInt("percent");
+//                            downloadNotification.startNotification(percentage);
+//                            Log.i("myTag", "percentage: " + percentage);
+                            break;
+
+
+                        case 7200: // 파일 전송을 위한 TCP 연결이 완료되었다.
+                            System.out.println("fs size : " + fs.getSize());
+                            if (fs.getSize() == 0) break;
+                            jobj = new JsonObject();
+                            jobj.addProperty("namespace", "7100");
+                            jobj.addProperty("tmpfileSize", fs.getTmpfileSize());
+                            jobj.addProperty("size", fs.getSize());
+                            json = gson.toJson(jobj);
+                            write(json);
+                            break;
+
+                    }
                 }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+                //사용자의 의도에 의한 종료가 아닐 경우
+                if (!closeSocketByUser)
+                    socketRepository.failSocketConnection();
+
+                Log.i("TAG", "run: socketStop");
+            }
 
         }
     };

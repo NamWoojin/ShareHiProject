@@ -39,7 +39,7 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public void startSocket(String path) {
         rootPath = path;
-        socketInfo = new SocketInfo(this);
+        socketInfo = new SocketInfo(this,mActivityRef.get());
         Log.i("TAG", "startSocket: ");
         SocketStartThread sst = new SocketStartThread();
         sst.start();
