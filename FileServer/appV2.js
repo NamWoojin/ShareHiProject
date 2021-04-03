@@ -6,16 +6,9 @@ const option = {
   ca: fs.readFileSync('/volumes/key/fullchain.pem'),
   key: fs.readFileSync('/volumes/key/privkey.pem'),
   cert: fs.readFileSync('/volumes/key/cert.pem'),
-  // requestCert: false,
-  // rejectUnauthorized: false
 };
 
-// var key = fs.readFileSync('/volumes/key/fullchain.pem').toString();
-// var privkey = fs.readFileSync('/volumes/key/privkey.pem').toString();
-// var cert = fs.readFileSync('/volumes/key/cert.pem').toString();
-
-// const server = require('http').createServer(app);
-const server = require('https').Server(option,app);
+const server = require('https').Server(option, app);
 
 const io = require('socket.io')(server, {
   cors: {
@@ -23,11 +16,6 @@ const io = require('socket.io')(server, {
   },
 });
 
-// const io = require('socket.io')(9002, {
-//   cors: {
-//       origin: '*',
-//     },
-//   });
 const net = require('net');
 const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
