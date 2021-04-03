@@ -15,7 +15,7 @@ const option = {
 // var cert = fs.readFileSync('/volumes/key/cert.pem').toString();
 
 // const server = require('http').createServer(app);
-const server = require('https').Server(app);
+const server = require('https').Server(option,app);
 
 const io = require('socket.io')(server, {
   cors: {
