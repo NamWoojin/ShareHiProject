@@ -7,7 +7,7 @@ import vuetify from './plugins/vuetify';
 import VueFullPage from 'vue-fullpage.js';
 
 import io from 'socket.io-client';
-const socket = io('http://j4f001.p.ssafy.io:9002');
+const socket = io('https://j4f001.p.ssafy.io:9002');
 // const socket = io('http://localhost:9002');
 
 Vue.prototype.$socket = socket;

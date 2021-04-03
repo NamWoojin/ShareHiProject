@@ -39,7 +39,7 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public void startSocket(String path) {
         rootPath = path;
-        socketInfo = new SocketInfo(this,mActivityRef.get());
+        socketInfo = new SocketInfo(this);
         Log.i("TAG", "startSocket: ");
         SocketStartThread sst = new SocketStartThread();
         sst.start();
@@ -216,7 +216,7 @@ public class SocketRepositoryImpl implements SocketRepository {
 //                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_CODE);
             return false;
         } else {
-            SocketData sd = new SocketData(fs,mActivityRef.get());
+            SocketData sd = new SocketData(fs);
             sd.connect();
             return true;
         }

@@ -17,7 +17,7 @@ const io = require('socket.io')(server, {
 });
 
 const net = require('net');
-const HashMap = require('hashmap');
+// const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
