@@ -26,7 +26,6 @@ public class SocketData {
     private File file;
 
     private Socket socket;
-    Gson gson = new Gson();
 
     FileOutputStream fileOutput = null;
     DataInputStream dataInput = null;
@@ -69,7 +68,6 @@ public class SocketData {
                         i++;
                     }
                     tmp += (CHUNK_SIZE);
-                    i = 0;
                     fileOutput.write(buf);
                     System.out.println("tmp : " + tmp);
                     fileOutput.flush();
@@ -82,12 +80,11 @@ public class SocketData {
                         i++;
                     }
                     fileOutput.write(buf);
-                    tmp += (size - tmp);
                 }
 
                 fileOutput.flush();
-                File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
-                boolean isSuc = file.renameTo(newFile);
+//                File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
+//                boolean isSuc = file.renameTo(newFile);
                 System.out.println("FILE을 모두 썼습니다.");
 //                }
             } catch (Exception e) {

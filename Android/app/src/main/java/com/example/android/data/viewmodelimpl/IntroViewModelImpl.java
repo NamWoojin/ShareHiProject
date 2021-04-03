@@ -60,10 +60,11 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
     @Override
     public void getAdID() {
-        getadid.start();
+        GetAdidThread getAdidThread = new GetAdidThread();
+        getAdidThread.start();
     }
 
-    private Thread getadid = new Thread() {
+    public class GetAdidThread extends Thread {
         @Override
         public void run() {
             super.run();
