@@ -9,7 +9,6 @@ const option = {
 };
 
 const server = require('https').Server(option, app);
-//const server = require('https').Server(app);
 
 const io = require('socket.io')(server, {
   cors: {
