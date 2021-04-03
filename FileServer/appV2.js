@@ -3,9 +3,9 @@ const app = express();
 const fs = require('fs');
 
 const option = {
-  ca: fs.readFileSync('./test/key/fullchain.pem'),
-  key: fs.readFileSync('./test/key/privkey.pem'),
-  cert: fs.readFileSync('./test/key/cert.pem'),
+  ca: fs.readFileSync('/volumes/key/fullchain.pem'),
+  key: fs.readFileSync('/volumes/key/privkey.pem'),
+  cert: fs.readFileSync('/volumes/key/cert.pem'),
   // requestCert: false,
   // rejectUnauthorized: false
 };
