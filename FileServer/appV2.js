@@ -679,7 +679,7 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(8001, () => {
-    getFileReceiver(socket).write(
+    getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 8200,
       }) + '\n'
