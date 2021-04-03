@@ -2,25 +2,20 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 
-// const option = {
-//   ca: fs.readFileSync('./test/key/fullchain.pem'),
-//   key: fs.readFileSync('./test/key/privkey.pem'),
-//   cert: fs.readFileSync('./test/key/cert.pem'),
-//   requestCert: false,
-//   rejectUnauthorized: false
-// };
+const option = {
+  ca: fs.readFileSync('/volumes/key/fullchain.pem'),
+  key: fs.readFileSync('/volumes/key/privkey.pem'),
+  cert: fs.readFileSync('/volumes/key/cert.pem'),
+};
 
-// var privkey = fs.readFileSync('./test/key/fullchain.pem');
-// var key = fs.readFileSync('./test/key/privkey.pem');
-// var cert = fs.readFileSync('./test/key/cert.pem');
-const server = require('http').createServer(app);
-// const server = require('http').createServer(option, app);
+const server = require('https').Server(option, app);
 
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
   },
 });
+
 const net = require('net');
 const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
@@ -356,8 +351,8 @@ let andServer = net.createServer((socket) => {
 // andServer.listen(9003, () => {
 //   console.log('안드-서버 socket연결');
 // });
-server.listen(9002);
 // server.listen(443);
+server.listen(9002);
 
 andServer.listen(9003);
 
