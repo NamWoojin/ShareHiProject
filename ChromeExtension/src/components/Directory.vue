@@ -22,6 +22,7 @@ export default {
     directoryData: Object,
     rootPath : String,
     deviceChanged : Number,
+    deviceRemoved : Number,
   },
   data() {
     return {
@@ -40,6 +41,10 @@ export default {
       this.$socket.emit(2000, JSON.stringify({
         path: this.rootPath
       }))
+    },
+    deviceRemoved() {
+      const directory = document.querySelector('#shadowElement').shadowRoot.querySelector(".directory")
+      directory.innerHTML = ''
     }
   },
   mounted () {
