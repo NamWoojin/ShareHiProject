@@ -2,13 +2,13 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 
-// const option = {
-//   ca: fs.readFileSync('/volumes/key/fullchain.pem'),
-//   key: fs.readFileSync('/volumes/key/privkey.pem'),
-//   cert: fs.readFileSync('/volumes/key/cert.pem'),
-// };
+const option = {
+  ca: fs.readFileSync('/volumes/key/fullchain.pem'),
+  key: fs.readFileSync('/volumes/key/privkey.pem'),
+  cert: fs.readFileSync('/volumes/key/cert.pem'),
+};
 
-// const server = require('https').Server(option, app);
+const server = require('https').Server(option, app);
 const server = require('https').Server(app);
 
 const io = require('socket.io')(server, {
