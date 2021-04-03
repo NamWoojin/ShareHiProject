@@ -117,7 +117,7 @@ export default {
       const fileData = {
         'path' : clickedFolder.getAttribute("data-path"),
         'name' : fileNameWithoutPath.split('.')[0],
-        'ext' : fileNameWithoutPath.split('.')[1],
+        'ext' : '.' + fileNameWithoutPath.split('.')[1],
         'size' : target.files[0].size,
       }
       file.data = target.files[0];
