@@ -2,35 +2,32 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 
-// const option = {
-//   ca: fs.readFileSync('/volumes/key/fullchain.pem'),
-//   key: fs.readFileSync('/volumes/key/privkey.pem'),
-//   cert: fs.readFileSync('/volumes/key/cert.pem'),
-//   // requestCert: false,
-//   // rejectUnauthorized: false
-// };
+const option = {
+  ca: fs.readFileSync('/volumes/key/fullchain.pem'),
+  key: fs.readFileSync('/volumes/key/privkey.pem'),
+  cert: fs.readFileSync('/volumes/key/cert.pem'),
+  // requestCert: false,
+  // rejectUnauthorized: false
+};
 
-var key = fs.readFileSync('/volumes/key/fullchain.pem').toString();
-var privkey = fs.readFileSync('/volumes/key/privkey.pem').toString();
-var cert = fs.readFileSync('/volumes/key/cert.pem').toString();
+// var key = fs.readFileSync('/volumes/key/fullchain.pem').toString();
+// var privkey = fs.readFileSync('/volumes/key/privkey.pem').toString();
+// var cert = fs.readFileSync('/volumes/key/cert.pem').toString();
 
 // const server = require('http').createServer(app);
-// const server = require('http').createServer(option);
+const server = require('https').Server(option,app);
 
-// const io = require('socket.io')(server, {
-//   cors: {
-//     origin: '*',
-//   },
-// });
-
-const io = require('socket.io')(9002, {
-  key : privkey,
-  cert: cert,
-  ca : key,
+const io = require('socket.io')(server, {
   cors: {
-      origin: '*',
-    },
-  });
+    origin: '*',
+  },
+});
+
+// const io = require('socket.io')(9002, {
+//   cors: {
+//       origin: '*',
+//     },
+//   });
 const net = require('net');
 const HashMap = require('hashmap');
 const { v4: uuidv4 } = require('uuid');
@@ -365,7 +362,7 @@ let andServer = net.createServer((socket) => {
 //   console.log('안드-서버 socket연결');
 // });
 // server.listen(443);
-// server.listen(9002);
+server.listen(9002);
 
 andServer.listen(9003);
 
