@@ -206,6 +206,12 @@
     >
       {{ percent }}
     </v-progress-circular>
+    <v-progress-linear
+      v-if="saveFileLength > 0"
+      height="25"
+    >
+      <strong>{{ Math.ceil(saveFileLength/saveFileLengthOrigin) * 100 }}%</strong>
+    </v-progress-linear>
   </div>
 </template>
 
@@ -256,7 +262,9 @@ export default {
       percent: 100,
       originalpath: '',
       saveFile: '',
-      saveFileLength: 10
+      saveFileLengthOrigin: '',
+      saveFileLength: '',
+      blobArray: [],
     };
   },
   methods: {
@@ -406,8 +414,8 @@ export default {
       this.node.directory.push(
         {
           name: name,
-          // directory: [],
-          path: this.node.path + '\/' + name,
+          // path: this.node.path + '\/' + name,
+          path: this.originalpath,
           type: 'folder'
         }
         )
@@ -463,8 +471,8 @@ export default {
       // let file = this.selectWindowFile();
       this.$socket.emit(8000, JSON.stringify({
         path: './',
-        name: 'sample-for-download',
-        ext: '.txt'
+        name: 'a',
+        ext: '.jpg'
       }))
     },
     selectFolder(i) {
@@ -597,27 +605,32 @@ export default {
       };
     })
     this.$socket.on(8000, (data) => {
-      // console.log('this is json datas')
-      // console.log(data)
-      // this.saveFile = this.saveFile + data
-      // console.log(this.saveFile)
-      // console.log('File Object?')
-      // let reader = new FileReader()
-      // console.log(reader.readAsArrayBuffer(data))
-      // console.log(FileReader.readAsArrayBuffer(data))
-      const a = document.createElement('a');
-      a.download = 'my-file.txt';
-      a.href = URL.createObjectURL(new Blob([data]))
-      a.style.display = 'none';
-      a.addEventListener('click', (e) => {
-        setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+      this.blobArray.push(new Blob([data]))
+      this.saveFileLength = this.saveFileLength - data.byteLength
+      console.log(data.byteLength, this.saveFileLength)
+      if (this.saveFileLength == 0) {
+        console.log('download complete')
+        const a = document.createElement('a');
+        a.download = 'my-file.jpg';
+        let blob = new Blob(this.blobArray)
+        a.href = URL.createObjectURL(blob)
+        a.style.display = 'none';
+        a.addEventListener('click', (e) => {
+          setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
 
-      });
-      a.click();
+        });
+        a.click();
+        this.blobArray = [],
+        this.saveFileLength = 0
+      }
 
     })
     this.$socket.on(8001, (data) => {
       this.saveFileLength = JSON.parse(data).size
+      this.saveFileLengthOrigin = JSON.parse(data).size
+      console.log('this is saveFileLength on 8001')
+      console.log(this.saveFileLength)
+      this.$socket.emit(8001)
     })
     this.$socket.on(7001, (data) => {
       console.log('this is bar: ', JSON.parse(data).percent)
