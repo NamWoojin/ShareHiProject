@@ -33,7 +33,7 @@
       </div>
     </nav>
     <SearchResult :directoryData="directoryData" v-if="searchFlag" />
-    <Directory :directoryData="directoryData" :deviceChanged="deviceChanged" :rootPath="rootPath" ref="directory" v-else />
+    <Directory :directoryData="directoryData" :deviceChanged="deviceChanged" :deviceRemoved="deviceRemoved" :rootPath="rootPath" ref="directory" v-else />
   </div>
 </template>
 
@@ -53,6 +53,8 @@ export default {
       devices : [],
       rootPath : "",
       deviceChanged : 0,
+      deviceRemoved  :0,
+      currentDeviceId : '',
       directoryData : {
         "name":"0",
         "path":"\/storage\/emulated\/0",
@@ -118,6 +120,17 @@ export default {
       console.log('this.$socket.on(1050) data')
       console.log(data)
       this.deviceCnt = data.devices.length
+      let deviceCheckFlag = false
+      for (let i=0;i<data.devices.length;i++) {
+        const device = data.devices[i]
+        if (device.id === this.currentDeviceId) {
+          deviceCheckFlag = true
+          break
+        }
+      }
+      if (!deviceCheckFlag) {
+        this.deviceRemoved += 1
+      }
       const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
       const navItem = this.findNavitem(deviceBtn.parentNode)
       navItem.innerHTML = ''
@@ -190,6 +203,7 @@ export default {
           this.$socket.emit(1070, JSON.stringify(data))
           const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
           const navItem = this.findNavitem(deviceBtn.parentNode)
+          this.currentDeviceId = device.id
           navItem.classList.toggle('nav-item-display')
         })
         navItem.appendChild(contentDiv)
