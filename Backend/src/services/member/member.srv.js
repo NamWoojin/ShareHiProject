@@ -421,7 +421,7 @@ const upload = async (req, res) => {
       function (callback) {
         var image = req.file;
 
-        console.log(test);
+        // console.log(test);
         console.log(image);
         callback(true, {
           message: 'SUCCESS',
