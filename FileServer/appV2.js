@@ -23,7 +23,8 @@ const KEY = require('./src/config/key/key');
 
 //////////////// socket map system /////////////
 let flag = 0;
-let pathData = '';
+var pathData = '';
+var pathDataChunkCount = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
   this.id = id; // 소켓 자체를 유일하게 구분하는 PK
   this.name = name; // ad_id
