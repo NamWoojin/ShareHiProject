@@ -419,21 +419,37 @@ const upload = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        var image = req.file;
-        if(!image) {
+        let mem_id = req.body.mem_id;
+        let image = req.file;
+        if (!image) {
           callback(true, {
-            message: 'FAI:',
-            detail: 'NOT EXIST IMAGE ',
+            message: 'FAIL',
+            detail: 'NOT EXIST IMAGE',
             content: {},
           });
+        } else {
+          let path = "https://j4f001.p.ssafy.io/profileImg/" + image.filename;
+          console.log(image.filename);
+          
+          callback(null, path, mem_id);
+          
         }
-        console.log(image);
-        callback(true, {
-          message: 'SUCCESS',
-          detail: '',
-          content: {},
-        });
       },
+      function(path, mem_id, callback) {
+        pool.query(UserQuery.updateProfileImg, [path, mem_id], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.affectedRows == 0) {
+            callback(err);
+          } else if (result.affectedRows == 1) {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      }
     ],
     function (err, data) {
       if (!data) {
