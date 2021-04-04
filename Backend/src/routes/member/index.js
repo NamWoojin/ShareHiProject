@@ -35,10 +35,12 @@ router.get('/checkEmail', UserService.checkEmail);
 router.put('/update', UserService.update);
 router.post('/checkPassword', UserService.checkPassword);
 router.put('/updatePassword', UserService.updatePassword);
-router.get('/checkEmail/:memID', UserService.checkEmail);
+router.get('/checkEmail', UserService.checkEmail);
 router.post('/requireEmailAuth', UserService.requireEmailAuth);
 router.post('/checkEmailAuth', UserService.checkEmailAuth);
 router.post('/upload', upload.single('image'), UserService.upload);
+router.post('/findPW', UserService.findPW);
+
 // router.post('/upload', upload.single('image'), function(req, res) {
 //     var test = req.body.test;
 //     var image = req.file;

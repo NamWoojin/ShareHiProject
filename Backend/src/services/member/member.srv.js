@@ -316,6 +316,94 @@ const updatePassword = async (req, res) => {
   );
 };
 
+const findPW = async (req, res) => {
+  async.waterfall(
+    [
+      function(callback) {
+        console.log('>> 이메일존재유무확인')
+        let member = req.body;
+
+        pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.length == 0) {
+            callback(true, {
+              message: 'FAIL',
+              detail: 'NOT FOUND MEMBER',
+              content: {},
+            });
+          } else if (result.length == 1) {
+            callback(null, result[0].mem_id, member.mem_email);
+          }
+        });
+      },
+      function (mem_id, mem_email, callback) {
+        console.log('>> 임시비밀번호발급')
+        let authPW = Math.random().toString(36).substr(2, 11);
+
+        callback(null, mem_id, mem_email, authPW);
+      },
+      function(mem_id, mem_email, authPW, callback) {
+        console.log('>> 임시비밀번호암호화')
+
+          bcrypt.hash(authPW, 10, async function (err, hash) {
+            if (err) {
+              callback(err);
+            } else {
+              let insertPW = hash;
+              callback(null, mem_id, mem_email, authPW, insertPW);
+            }
+          });
+      },
+      function(mem_id, mem_email, authPW, insertPW, callback) {
+        pool.query(UserQuery.updatePassword, [insertPW, mem_id], function (err, result) {
+          if (err) {
+            callback(err);
+          } else if (result.affectedRows == 0) {
+            callback(err);
+          } else if (result.affectedRows == 1) {
+            callback(null, mem_email, authPW);
+          }
+        });
+      },
+      function (mem_email, authPW, callback) {
+          const mailOptions = {
+          from: 'filedsolar@gmail.com',
+          to: mem_email,
+          subject: '[ShareHi] 임시비밀번호가 도착했습니다.',
+          text: '임시비밀번호 : ' + authPW,
+        };
+
+        callback(null, mailOptions);
+      },
+      function (mailOptions, callback) {
+        transport.sendMail(mailOptions, (err) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback(true, {
+              message: 'SUCCESS',
+              detail: '',
+              content: {},
+            });
+          }
+        });
+      },
+    ],
+    function (err, data) {
+      if (!data) {
+        console.log(err);
+        return res.status(500).json({
+          message: 'FAIL',
+          detail: err,
+          content: {},
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    }
+  );
+};
 const requireEmailAuth = async (req, res) => {
   async.waterfall(
     [
@@ -428,14 +516,13 @@ const upload = async (req, res) => {
             content: {},
           });
         } else {
-          let path = "https://j4f001.p.ssafy.io/profileImg/" + image.filename;
+          let path = 'https://j4f001.p.ssafy.io/profileImg/' + image.filename;
           console.log(image.filename);
-          
+
           callback(null, path, mem_id);
-          
         }
       },
-      function(path, mem_id, callback) {
+      function (path, mem_id, callback) {
         pool.query(UserQuery.updateProfileImg, [path, mem_id], function (err, result) {
           if (err) {
             callback(err);
@@ -449,7 +536,7 @@ const upload = async (req, res) => {
             });
           }
         });
-      }
+      },
     ],
     function (err, data) {
       if (!data) {
@@ -476,4 +563,5 @@ module.exports = {
   checkEmailAuth,
   checkPassword,
   upload,
+  findPW,
 };
