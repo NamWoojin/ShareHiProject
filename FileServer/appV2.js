@@ -642,9 +642,9 @@ io.on('connection', (socket) => {
     if (fileReceiverMan === undefined) return;
     fileReceiverMan.write(data);
 
-    // if (percent >= 100) {
-    //   initSocketData(socket);
-    // }
+    if (percent >= 100) {
+      initSocketData(socket);
+    }
   });
 
   /**
