@@ -206,6 +206,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                 }
             } catch (ApiException e) {
                 //로그인 취소
+//                Toast.makeText(mActivityRef.get(), "로그인을 취소했습니다.", Toast.LENGTH_SHORT).show();
             }
         }
     }

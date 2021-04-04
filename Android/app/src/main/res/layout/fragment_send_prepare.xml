@@ -19,7 +19,7 @@
             android:id="@+id/fragment_prepare_choice_folder_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/fragment_prepare_choice_member_layout"
+            app:layout_constraintBottom_toTopOf="@id/fragment_prepare_go_share_Button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -91,66 +91,66 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fragment_prepare_choice_member_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/fragment_prepare_go_share_Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_prepare_choice_folder_layout">
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:id="@+id/fragment_prepare_choice_member_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/fragment_prepare_go_share_Button"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/fragment_prepare_choice_folder_layout">-->
 
-            <TextView
-                android:id="@+id/fragment_prepare_member_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/fragment_prepare_TextView_marginStart"
-                android:layout_marginTop="@dimen/fragment_prepare_TextView_marginTop"
-                android:text="@string/fragment_prepare_member_TextView_text"
-                android:textSize="@dimen/fragment_prepare_TextView_textSize"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+<!--            <TextView-->
+<!--                android:id="@+id/fragment_prepare_member_TextView"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="@dimen/fragment_prepare_TextView_marginStart"-->
+<!--                android:layout_marginTop="@dimen/fragment_prepare_TextView_marginTop"-->
+<!--                android:text="@string/fragment_prepare_member_TextView_text"-->
+<!--                android:textSize="@dimen/fragment_prepare_TextView_textSize"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"/>-->
 
-            <ImageView
-                android:id="@+id/fragment_prepare_go_member_Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/fragment_prepare_TextView_marginStart"
-                android:onClick="@{() -> viewModel.switchPage(`member`)}"
-                android:visibility="@{viewModel.selectedPathLiveData.length() > 0 ? View.GONE : View.VISIBLE}"
-                android:src="@drawable/ic_add_black_24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/fragment_prepare_member_TextView"
-                app:layout_constraintBottom_toBottomOf="@id/fragment_prepare_member_TextView"
-                android:contentDescription="@string/imageView_description" />
-
-<!--            <Button-->
+<!--            <ImageView-->
 <!--                android:id="@+id/fragment_prepare_go_member_Button"-->
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"-->
-<!--                android:text="@string/fragment_prepare_go_member_Button_text"-->
-<!--               -->
-<!--                app:layout_constraintStart_toStartOf="@id/fragment_prepare_member_TextView"-->
+<!--                android:layout_marginEnd="@dimen/fragment_prepare_TextView_marginStart"-->
+<!--                android:onClick="@{() -> viewModel.switchPage(`member`)}"-->
+<!--                android:visibility="@{viewModel.selectedPathLiveData.length() > 0 ? View.GONE : View.VISIBLE}"-->
+<!--                android:src="@drawable/ic_add_black_24dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="@id/fragment_prepare_member_TextView"-->
+<!--                app:layout_constraintBottom_toBottomOf="@id/fragment_prepare_member_TextView"-->
+<!--                android:contentDescription="@string/imageView_description" />-->
+
+<!--&lt;!&ndash;            <Button&ndash;&gt;-->
+<!--&lt;!&ndash;                android:id="@+id/fragment_prepare_go_member_Button"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_marginTop="@dimen/fragment_prepare_element_marginTop"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:text="@string/fragment_prepare_go_member_Button_text"&ndash;&gt;-->
+<!--&lt;!&ndash;               &ndash;&gt;-->
+<!--&lt;!&ndash;                app:layout_constraintStart_toStartOf="@id/fragment_prepare_member_TextView"&ndash;&gt;-->
+<!--&lt;!&ndash;                app:layout_constraintTop_toBottomOf="@id/fragment_prepare_member_TextView"&ndash;&gt;-->
+<!--&lt;!&ndash;                app:layout_constraintBottom_toTopOf="@id/fragment_prepare_choice_members_RecyclerView"&ndash;&gt;-->
+<!--&lt;!&ndash;               />&ndash;&gt;-->
+
+
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:id="@+id/fragment_prepare_choice_members_RecyclerView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_marginVertical="@dimen/fragment_prepare_element_marginTop"-->
+<!--                android:layout_marginHorizontal="@dimen/fragment_prepare_marginHorizontal"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
 <!--                app:layout_constraintTop_toBottomOf="@id/fragment_prepare_member_TextView"-->
-<!--                app:layout_constraintBottom_toTopOf="@id/fragment_prepare_choice_members_RecyclerView"-->
-<!--               />-->
+<!--                bindAdapter="@{viewModel.getPrepareMemberRecyclerAdapter()}"/>-->
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fragment_prepare_choice_members_RecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginVertical="@dimen/fragment_prepare_element_marginTop"
-                android:layout_marginHorizontal="@dimen/fragment_prepare_marginHorizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_prepare_member_TextView"
-                bindAdapter="@{viewModel.getPrepareMemberRecyclerAdapter()}"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
         <Button
