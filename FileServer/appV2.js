@@ -44,18 +44,6 @@ let sockets = [];
 console.log('서버 가동중...');
 
 ////////// Android Server /////////////////
-function initFunction(socket) {
-  flag = 0;
-  for (let i in sockets) {
-    if (sockets[i]['socket'] === socket) {
-      sockets[i]['flag'] = 0;
-      sockets[i]['fileReceiver'] = undefined;
-      sockets[i]['fileSender'] = undefined;
-      sockets[i]['size'] = 0;
-      sockets[i]['tmpfileSize'] = 0;
-    }
-  }
-}
 let andServer = net.createServer((socket) => {
   /**
    * Android
@@ -344,7 +332,7 @@ let andServer = net.createServer((socket) => {
         break;
       case 7002:
         if (percent >= 100) {
-          initSocketData(socket);
+          setTimeout(initAll, 5000);
         }
         break;
       case 2100:
@@ -594,7 +582,6 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE_STAT, (data) => {
-    initSocketData(socket);
     console.log(7000);
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
@@ -656,7 +643,7 @@ io.on('connection', (socket) => {
     fileReceiverMan.write(data);
 
     if (percent >= 100) {
-      setTimeout(initFunction, 5000, socket);
+      setTimeout(initAll, 5000);
     }
   });
 
@@ -1132,4 +1119,15 @@ let getShareDevicesAll = () => {
     }
   }
   return val;
+};
+
+let initAll = () => {
+  flag = 0;
+  for (let i in sockets) {
+    sockets[i]['flag'] = 0;
+    sockets[i]['fileReceiver'] = undefined;
+    sockets[i]['fileSender'] = undefined;
+    sockets[i]['size'] = 0;
+    sockets[i]['tmpfileSize'] = 0;
+  }
 };
