@@ -55,7 +55,7 @@
                   <router-link :to="{ name: 'Signup'}" style="text-decoration: none;">
                     <span class="link-text">회원가입</span>
                   </router-link>
-                  <span class="link-text">비밀번호찾기</span>
+                  <span style="cursor: pointer;" @click="dialog=true" class="link-text">비밀번호찾기</span>
                 </div>
               </v-col>
               <v-col cols="12">
@@ -70,6 +70,41 @@
           </v-row>
         </v-container>
       </v-form>
+      <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="600px"
+      >
+        <v-card>
+          <v-card-title>
+            <span>이메일을 입력해 주세요.</span>
+            <span style="position: absolute; right: 20px;"><v-icon @click="dialog = false">mdi-close</v-icon></span>
+          </v-card-title>
+          <v-card-text>
+              <v-text-field
+                solo
+                flat
+                dense
+                outlined
+                required
+                label="이메일 주소"
+                v-model="findpasswordemail"
+                @keypress.enter="login"
+              >
+                <template v-slot:append>
+                  <v-fade-transition leave-absolute>
+                    <v-btn
+                      class="color-box"
+                      @click="resendpassword"
+                    >
+                      임시비밀번호전송
+                    </v-btn>
+                  </v-fade-transition>
+                </template>
+              </v-text-field>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </div>
   </v-app>
 </template>
@@ -90,7 +125,9 @@ export default {
       form: {
         mem_email: '',
         mem_password: '',
-      }
+      },
+      dialog: false,
+      findpasswordemail: '',
     }
   },
   created() {
@@ -157,6 +194,20 @@ export default {
 
       }
       // login and router link
+    },
+    resendpassword() {
+      this.dialog = false
+      axios.post(`https://j4f001.p.ssafy.io/api/member/findPW`, {
+        mem_email: this.findpasswordemail
+      })
+        .then(res => {
+          if (res.data.message == 'SUCCESS') {
+            this.$message({
+              type: 'success',
+              message: '임시비밀번호를 발송하였습니다.'
+            })
+          }
+        })
     }
   }
 }

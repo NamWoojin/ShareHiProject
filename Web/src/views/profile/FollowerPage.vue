@@ -6,6 +6,7 @@
       <v-row>
         <v-col cols="10">
           <v-combobox
+            id="searchbox"
             v-model="select"
             :items="people"
             :filter="filterObject"
@@ -40,14 +41,14 @@
 
           </v-combobox>
         </v-col>
-        <v-col cols="2" v-if="select && select.mem_id != this.member.mem_id">
+        <v-col cols="2" v-if="select && (select.mem_id != this.member.mem_id)">
           <div style="margin-top: 10px;">
             <v-btn v-if="includeCheck(select.mem_id)" @click="cancelFollow(select)">팔로우취소</v-btn>
             <v-btn v-else @click="follow(select)">팔로우</v-btn>
           </div>
         </v-col>
       </v-row>
-      <v-row v-if="state == 0">
+      <v-row v-if="state == 1">
         <v-col>
           <div v-for="(follower, idx) in followers" :key="idx">
             <div style="display: flex; align-items: center; margin: 1rem;" class="followcard">
@@ -67,7 +68,7 @@
           </div>
         </v-col>
       </v-row>
-      <v-row v-else-if="state == 1">
+      <v-row v-else-if="state == 0">
         <v-col>
           <div v-for="(following, idx) in followings" :key="idx">
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem;" class="followcard">
@@ -111,7 +112,7 @@ export default {
       
       followers: [],
       followings: [],
-      select: '',
+      select: {},
     }
   },
   created() {
@@ -130,7 +131,9 @@ export default {
       }
     })
       .then((res) => {
-        this.followers = res.data.content.member
+        if (res.data.content.member) {
+          this.followers = res.data.content.member
+        }
       })
     
     axios.get(`https://j4f001.p.ssafy.io/api/follow/getFollowing`, {
@@ -139,10 +142,13 @@ export default {
       }
     })
       .then((res) => {
-        this.followings = res.data.content.member
+        if (res.data.content.member) {
+          this.followings = res.data.content.member
+        }
       })
-    
-
+  },
+  mounted() {
+    this.select = null;
   },
   methods: {
     setState(data) {
