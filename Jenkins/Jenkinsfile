@@ -39,17 +39,17 @@ pipeline {
             -p 9002:9002 \
             -p 9003:9003 \
             -v /volumes/fileServer_home:/volumes \
-            -v /volumes/back_home/profile:/volumes/profile \
             -v /volumes/web_home/key:/volumes/key \
             --network field-network \
             field-pjt-fileserver:latest'
-        // sh 'docker run -d --name field-pjt-front \
-        //     -p 80:80 \
-        //     -p 443:443 \
-        //     -v /volumes/web_home:/volumes \
-        //     -v /volumes/web_home/log:/var/log/nginx/host.access.log \
-        //     --network field-network \
-        //     field-pjt-front:latest'
+        sh 'docker run -d --name field-pjt-front \
+            -p 80:80 \
+            -p 443:443 \
+            -v /volumes/web_home:/volumes \
+            -v /volumes/back_home/profile:/volumes/profile \
+            -v /volumes/web_home/log:/var/log/nginx/host.access.log \
+            --network field-network \
+            field-pjt-front:latest'
         
       }
     }
