@@ -3,6 +3,50 @@
     <div>
       <Profile />
       <UserStatus @state="setState" :follower_len="followers.length" :following_len="followings.length" />
+      <v-row>
+        <v-col cols="10">
+          <v-combobox
+            v-model="select"
+            :items="people"
+            :filter="filterObject"
+            solo
+            outlined
+            label="친구를 검색해 보세요"
+          >
+            <template v-slot:selection="data">
+              <v-list-item-avatar>
+                <img v-if="data.item.mem_image != 'default.img'" :src="data.item.mem_image">
+                <img v-else src="https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png">
+              </v-list-item-avatar>
+
+              <v-list-item-title>
+                <span style="font-weight: bold;">{{data.item.mem_name}}</span>
+                {{data.item.mem_email}}
+              </v-list-item-title>              
+            </template>
+            <template v-slot:item="data">
+              <template>
+                <v-list-item-avatar>
+                  <img v-if="data.item.mem_image != 'default.img'" :src="data.item.mem_image">
+                  <img v-else src="https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png">
+                </v-list-item-avatar>
+
+                <v-list-item-title>
+                  <span style="font-weight: bold;">{{data.item.mem_name}}</span>
+                  {{data.item.mem_email}}
+                </v-list-item-title>
+              </template>
+            </template>
+
+          </v-combobox>
+        </v-col>
+        <v-col cols="2" v-if="select && select.mem_id != this.member.mem_id">
+          <div style="margin-top: 10px;">
+            <v-btn v-if="includeCheck(select.mem_id)" @click="cancelFollow(select)">팔로우취소</v-btn>
+            <v-btn v-else @click="follow(select)">팔로우</v-btn>
+          </div>
+        </v-col>
+      </v-row>
       <v-row v-if="state == 0">
         <v-col>
           <div v-for="(follower, idx) in followers" :key="idx">
@@ -67,6 +111,7 @@ export default {
       
       followers: [],
       followings: [],
+      select: '',
     }
   },
   created() {
@@ -104,12 +149,14 @@ export default {
       this.state = data
     },
     includeCheck(id) {
-      for (let i=0; i < this.followings.length; i++) {
-        if (this.followings[i].mem_id == id) {
-          return true
+      if (id) {
+        for (let i=0; i < this.followings.length; i++) {
+          if (this.followings[i].mem_id == id) {
+            return true
+          }
         }
+        return false
       }
-      return false
     },
     follow(follower) {
       axios.post(`https://j4f001.p.ssafy.io/api/follow/insertFollowing`, {
@@ -148,13 +195,22 @@ export default {
             this.followings.splice(this.followings.indexOf(following), 1)
           }
         })
+    },
+    filterObject(item, queryText) {
+      return (
+        item.mem_name.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1 ||
+        item.mem_email.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
+      );
+    },
+    clickObject() {
+      console.log('click')
     }
   },
   computed: {
     ...mapState([
       'member'
     ])
-  }
+  },
 }
 </script>
 
