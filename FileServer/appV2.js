@@ -644,7 +644,7 @@ io.on('connection', (socket) => {
     fileReceiverMan.write(data);
 
     if (percent >= 100) {
-      initSocketData(socket);
+      setTimeout(initSocketData(socket), 5000);
     }
   });
 
