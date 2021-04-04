@@ -17,6 +17,9 @@ const checkPassword = 'select * \
 const updatePassword = 'update member \
                            set mem_password=? \
                          where mem_id=?';
+const updateProfileImg = 'update member \
+                            set mem_image=? \
+                          where mem_id=?';
 module.exports = {
   signup,
   signout,
@@ -25,4 +28,5 @@ module.exports = {
   update,
   updatePassword,
   checkPassword,
+  updateProfileImg,
 };
