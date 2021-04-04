@@ -238,18 +238,6 @@ let andServer = net.createServer((socket) => {
           }) + '\n'
         );
         break;
-
-      /**
-       * Android
-       * 2100
-       * 설명 : 폴더 디렉토리 구조를 받아서 클라이언트에게 제공한다
-       * 메시지 :{"data":"folder directory JSON object "}
-       */
-      case 2100:
-        getSocket(data.targetId, data.data);
-
-        break;
-
       /**
        * Android
        * 2001
