@@ -350,9 +350,9 @@ let andServer = net.createServer((socket) => {
         break;
 
       case 2150:
-        console.log('here!!!');
         pathData += data.data;
-        let pathDataChunkCount = data.pathDataChunkCount + 1;
+        if (pathDataChunkCount > data.pathDataChunkCount) break;
+        pathDataChunkCount = data.pathDataChunkCount + 1;
         if (pathDataChunkCount == data.chunkCount) {
           console.log(pathData.length);
           console.log('pathData : ' + pathData);
