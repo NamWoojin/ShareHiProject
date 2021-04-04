@@ -356,7 +356,7 @@ let andServer = net.createServer((socket) => {
         if (pathDataChunkCount == data.chunkCount) {
           console.log(pathData.length);
           console.log('pathData : ' + pathData);
-          getSocket(data.targetId, JSON.stringify(pathData));
+          getSocket(data.targetId, pathData);
         } else {
           socket.write(
             JSON.stringify({
