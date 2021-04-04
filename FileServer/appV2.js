@@ -161,6 +161,7 @@ let andServer = net.createServer((socket) => {
       case KEY.SET_SHARE_DATA:
         shareData = socketMap.get(socket);
         console.log('share data : ' + shareData);
+        if (idMap.get(shareDevice) === undefined) return;
         idMap.get(shareDevice).write(
           JSON.stringify({
             namespace: KEY.SET_SHARE_DATA,
@@ -175,6 +176,7 @@ let andServer = net.createServer((socket) => {
        */
       case 1050:
         let val = getShareDevices(socket);
+        if (socket === undefined) return;
         socket.write(
           JSON.stringify({
             namespace: 1050,
@@ -226,6 +228,7 @@ let andServer = net.createServer((socket) => {
        */
       case KEY.GET_TREE_OF_FOLDERS:
         let targetSocket = getTargetSocket(socket);
+        if (targetSocket === undefinde) return;
         targetSocket.write(
           JSON.stringify({
             namespace: 2100,
@@ -254,6 +257,7 @@ let andServer = net.createServer((socket) => {
        */
       case KEY.UPDATE_NAME_OF_FOLDER:
         let targetSocket2 = getTargetSocket(socket);
+        if (targetSocket2 === undefined) return;
         targetSocket2.write(
           JSON.stringify({
             namespace: 2101,
@@ -272,6 +276,7 @@ let andServer = net.createServer((socket) => {
        */
       case KEY.DELETE_FOLDERS:
         let targetSocket3 = getTargetSocket(socket);
+        if (targetSocket3 === undefined) return;
         targetSocket3.write(
           JSON.stringify({
             namespace: 2102,
@@ -289,6 +294,7 @@ let andServer = net.createServer((socket) => {
        */
       case KEY.ADD_FOLDERS:
         let targetSocket4 = getTargetSocket(socket);
+        if (targetSocket4 === undefined) return;
         targetSocket4.write(
           JSON.stringify({
             namespace: 2103,
@@ -454,6 +460,7 @@ io.on('connection', (socket) => {
     if (!data) return;
     data = JSON.parse(data);
     connectToShareDevice(socket, data.id);
+    if (getTargetSocket(socket) === undefined) return;
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 1070,
@@ -479,6 +486,7 @@ io.on('connection', (socket) => {
       return;
     }
     let targetSocket = getTargetSocket(socket);
+    if (targetSocket === undefined) return;
     targetSocket.write(
       JSON.stringify({
         namespace: 2100,
@@ -506,6 +514,7 @@ io.on('connection', (socket) => {
     }
     data = JSON.parse(data);
     let targetSocket = getTargetSocket(socket);
+    if (targetSocket === undefined) return;
     targetSocket.write(
       JSON.stringify({
         namespace: 2101,
@@ -534,6 +543,7 @@ io.on('connection', (socket) => {
     }
     data = JSON.parse(data);
     let targetSocket = getTargetSocket(socket);
+    if (targetSocket === undefined) return;
     targetSocket.write(
       JSON.stringify({
         namespace: 2102,
@@ -561,6 +571,7 @@ io.on('connection', (socket) => {
     }
     data = JSON.parse(data);
     let targetSocket = getTargetSocket(socket);
+    if (targetSocket === undefined) return;
     targetSocket.write(
       JSON.stringify({
         namespace: 2103,
@@ -592,6 +603,7 @@ io.on('connection', (socket) => {
     setSocketFlag(socket);
 
     let targetSocket = getTargetSocket(socket);
+    if (targetSocket === undefined) return;
     targetSocket.write(
       JSON.stringify({
         namespace: 7100,
@@ -626,7 +638,7 @@ io.on('connection', (socket) => {
         percent: percent,
       })
     );
-
+    if (getTargetSocket(socket) === undefined) return;
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 7001,
@@ -635,7 +647,7 @@ io.on('connection', (socket) => {
     );
 
     let fileReceiverMan = getFileReceiver(socket);
-
+    if (fileReceiverMan === undefined) return;
     fileReceiverMan.write(data);
 
     // if (percent >= 100) {
@@ -662,7 +674,7 @@ io.on('connection', (socket) => {
     flag = 2;
     if (!data) return;
     setDownloadReceiver(socket);
-
+    if (getTargetSocket === undefined) return;
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 8100,
@@ -681,6 +693,7 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(8001, () => {
+    if (getTargetSocket(socket) === undefined) return;
     getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 8200,
