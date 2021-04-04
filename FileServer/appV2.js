@@ -582,6 +582,7 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE_STAT, (data) => {
+    initSocketData(socket);
     console.log(7000);
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
@@ -988,6 +989,7 @@ let getFileReceiver = (socket) => {
 };
 
 let initSocketData = (socket) => {
+  flag = 0;
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       sockets[i]['flag'] = 0;
