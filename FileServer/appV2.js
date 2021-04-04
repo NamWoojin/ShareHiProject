@@ -338,22 +338,21 @@ let andServer = net.createServer((socket) => {
         break;
       case 2100:
         pathData = '';
-        pathDataChunkCount = data.chunkCount;
         socket.write(
           JSON.stringify({
             namespace: 2150,
             path: data.path,
             targetId: data.targetId,
-            chunkCount: pathDataChunkCount,
-            pathDataChunkCount: pathDataChunkCount,
+            chunkCount: data.chunkCount,
+            pathDataChunkCount: 0,
           }) + '\n'
         );
         break;
 
       case 2150:
         pathData += data.data;
-        --pathDataChunkCount;
-        if (pathDataChunkCount == 0) {
+        let pathDataChunkCount = data.pathDataChunkCount;
+        if (pathDataChunkCount == data.chunkCount) {
           console.log(pathData.length);
           getSocket(data.targetId, pathData);
         } else {
@@ -363,7 +362,7 @@ let andServer = net.createServer((socket) => {
               path: data.path,
               targetId: data.targetId,
               chunkCount: data.chunkCount,
-              pathDataChunkCount: pathDataChunkCount,
+              pathDataChunkCount: pathDataChunkCount + 1,
             }) + '\n'
           );
         }
