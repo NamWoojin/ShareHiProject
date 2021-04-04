@@ -351,7 +351,7 @@ let andServer = net.createServer((socket) => {
 
       case 2150:
         pathData += data.data;
-        let pathDataChunkCount = data.pathDataChunkCount;
+        let pathDataChunkCount = data.pathDataChunkCount + 1;
         if (pathDataChunkCount == data.chunkCount) {
           console.log(pathData.length);
           getSocket(data.targetId, pathData);
@@ -362,7 +362,7 @@ let andServer = net.createServer((socket) => {
               path: data.path,
               targetId: data.targetId,
               chunkCount: data.chunkCount,
-              pathDataChunkCount: pathDataChunkCount + 1,
+              pathDataChunkCount: pathDataChunkCount,
             }) + '\n'
           );
         }
