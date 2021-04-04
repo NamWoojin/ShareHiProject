@@ -103,7 +103,7 @@ public class SocketInfo {
                         continue;
                     }
 
-                    Log.d("myTag", data);
+                    Log.d("myTagReceive", data);
 
                     JSONObject jsonObject = new JSONObject(data);
                     int namespace = jsonObject.getInt("namespace");
@@ -208,26 +208,30 @@ public class SocketInfo {
                             json = gson.toJson(jobj);
                             write(json);
 
-                            Log.i("myTag", "2100: " + json);
+                            Log.i("myTagSend", "2100: " + json);
                             break;
 
                         case 2150:
                             //chunkCount 보내야 할 개수
                             // pathDataChunkCount
-                            returnJSONObjectString = socketRepository.getFolderDirectory(jsonObject.getString("path")).toString();
-                            int length = returnJSONObjectString.length();
+                            String path = jsonObject.getString("path");
+                            String targetId =  jsonObject.getString("targetId");
                             chunkCount = jsonObject.getInt("chunkCount");
-                            int num = chunkCount - jsonObject.getInt("pathDataChunkCount");
-                            if (num == chunkCount) {
+                            int num = jsonObject.getInt("pathDataChunkCount");
+                            if (num < 0 || num >= chunkCount) {
                                 break;
                             }
+                            returnJSONObjectString = socketRepository.getFolderDirectory(path).toString();
+                            int length = returnJSONObjectString.length();
                             int start = num * CHUNK_SIZE;
                             int next = Math.min(length, CHUNK_SIZE * (num + 1));
+                            Log.i("TAG", "run: "+returnJSONObjectString.length() +" "+start+" "+next);
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "2150");
-                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                            jobj.addProperty("path", jsonObject.getString("path"));
+                            jobj.addProperty("targetId", targetId);
+                            jobj.addProperty("path", path );
                             jobj.addProperty("chunkCount", chunkCount);
+                            jobj.addProperty("pathDataChunkCount", num);
                             jobj.addProperty("data", returnJSONObjectString.substring(start, next));
                             json = gson.toJson(jobj);
 
@@ -246,7 +250,7 @@ public class SocketInfo {
                              * TODO 폴더 이름 수정 로직!
                              */
                             String newName = jsonObject.getString("newName");
-                            String path = jsonObject.getString("path");
+                            path = jsonObject.getString("path");
                             String name = jsonObject.getString("name");
                             boolean result2001 = socketRepository.changeFolderName(path, name, newName);
 
