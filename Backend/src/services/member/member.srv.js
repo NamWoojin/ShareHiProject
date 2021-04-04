@@ -339,7 +339,7 @@ const findPW = async (req, res) => {
       },
       function (mem_id, mem_email, callback) {
         console.log('>> 임시비밀번호발급')
-        let authPW = Math.random().toString(36).substr(2, 11);
+        let authPW = Math.random().toString(36).substr(2, 11) + '!';
 
         callback(null, mem_id, mem_email, authPW);
       },
