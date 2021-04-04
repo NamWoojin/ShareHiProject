@@ -23,14 +23,19 @@ export default {
       devices: [],
     }
   },
+  mounted() {
+    console.log('Emit items')
+  },
   created() {
+    console.log('created MyDevice Page')
     this.$socket.on(1050, (data) => {
       data = JSON.parse(data);
       this.devices = data.devices
     })
+    // this.$socket.emit(1050)
+    setTimeout(this.$socket.emit(1050), 1000)
 
-    this.$socket.emit(1050)
-    
+
   }
 }
 </script>

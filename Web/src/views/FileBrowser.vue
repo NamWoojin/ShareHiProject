@@ -16,7 +16,7 @@
                 <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
                 <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
 
-                <v-icon style="cursor: pointer;" @click="$router.push({ name: 'MyDevice' })">mdi-close</v-icon>
+                <v-icon style="cursor: pointer;" @click="gotoDevicePage">mdi-close</v-icon>
               </div>
               
             </div>
@@ -36,7 +36,7 @@
                   </div>
                 </v-btn>
               </div>
-              <div style="width: 60%; border: 1px solid; padding: 0.4rem; text-align: left;">
+              <div style="width: 50%; border: 1px solid; padding: 0.4rem; text-align: left;">
                 <!-- <span style="font-size: 1.5rem;">{{customPath}}</span> -->
                   <v-icon>mdi-folder</v-icon>
                   <span v-for="(link, idx) in customPath" :key="idx">
@@ -531,6 +531,10 @@ export default {
       this.$socket.emit(2000, JSON.stringify({
         path: selectPath
       }))
+    },
+    gotoDevicePage() {
+      this.$router.replace({ name: 'Main' })
+      // this.$router.go(`http://localhost:8080`)
     }
   },
   mounted() {
@@ -580,8 +584,12 @@ export default {
   },
   created() {
     this.$socket.on(2000, (data) => {
+      console.log(2000)
+      console.log(data)
+      console.log(typeof data)
       data = JSON.parse(data)
       console.log(data)
+      console.log(typeof data)
       this.currentpath = JSON.parse(data.data).path
       if (this.node.path && (this.currentpath != this.node.path)) {
         this.lastpath = this.node.path
@@ -596,6 +604,7 @@ export default {
     })
 
     this.$socket.on(1070, (data) => {
+      console.log(1070)
       data = JSON.parse(data)
       this.originalpath = data.path
       this.$socket.emit(2000, JSON.stringify({
@@ -644,28 +653,35 @@ export default {
             e.target.readAsArrayBuffer(tmp);
           }
         };
+        this.node.directory.push({
+          'name': 'my-file.mp4',
+          'path': this.node.path + '\/' + 'my-file.mp4',
+          'type': 'mp4'
+        })
       }
     })
     this.$socket.on(8000, (data) => {
-      this.blobArray.push(new Blob([data]))
-      this.saveFileLength = this.saveFileLength - data.byteLength
-      console.log(data.byteLength, this.saveFileLength)
-      if (this.saveFileLength == 0) {
-        console.log('download complete')
-        const a = document.createElement('a');
-        a.download = 'my-file.jpg';
-        let blob = new Blob(this.blobArray)
-        a.href = URL.createObjectURL(blob)
-        a.style.display = 'none';
-        a.addEventListener('click', (e) => {
-          setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+      if (data.length) {
+        this.blobArray.push(new Blob([data]))
+        this.saveFileLength = this.saveFileLength - data.byteLength
+        console.log(data.byteLength, this.saveFileLength)
+        if (this.saveFileLength == 0) {
+          console.log('download complete')
+          const a = document.createElement('a');
+          a.download = 'my-file.jpg';
+          let blob = new Blob(this.blobArray)
+          a.href = URL.createObjectURL(blob)
+          a.style.display = 'none';
+          a.addEventListener('click', (e) => {
+            setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+  
+          });
+          a.click();
+          this.blobArray = [],
+          this.saveFileLength = 0
 
-        });
-        a.click();
-        this.blobArray = [],
-        this.saveFileLength = 0
+        }
       }
-
     })
     this.$socket.on(8001, (data) => {
       this.saveFileLength = JSON.parse(data).size
@@ -740,7 +756,7 @@ export default {
 
   .small-window {
     position: absolute;
-    min-width: 30%;
+    min-width: 800px;
     max-width: 75%;
     width: 50%;
     margin: auto;
