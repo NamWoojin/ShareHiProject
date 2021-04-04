@@ -7,7 +7,6 @@ const redis = require('../../config/redis/redis.emailAuth');
 const bcrypt = require('bcrypt');
 const async = require('async');
 // const multer = require('../../util/multer/multer');
-const multer = require('multer');
 
 const signup = async (req, res) => {
   async.waterfall(
@@ -417,65 +416,18 @@ const checkEmailAuth = async (req, res) => {
 };
 
 const upload = async (req, res) => {
-  // async.waterfall([
-  //   function(callback) {
-  //     console.log('>>>> 프로필이미지업로드');
-  //     multer.upload(req, res, (file) => {
-  //       console.log(file);
-  //       if (err) {
-  //         callback(err);
-  //       } else {
-  //         callback(true, {
-  //           message: 'SUCCESS',
-  //           detail: '',
-  //           content: { device: result },
-  //         });
-  //       }
-  //     });
-  //   }
-  // ], function(err, data) {
-  //   if (!data) {
-  //     console.log(err);
-  //     return res.status(500).json({
-  //       message: 'FAIL',
-  //       detail: err,
-  //       content: {},
-  //     });
-  //   } else {
-  //     res.status(200).json(data);
-  //   }
-  // })
-
   async.waterfall(
     [
       function (callback) {
-        console.log(req.body);
-        console.log(file);
-        console.log('>>> upload');
-        var storage = multer.diskStorage({
-          // 서버에 저장할 폴더
-          destination: function (req, file, cb) {
-            console.log('>>> destination');
-            cb(null, 'upload/');
-          },
+        var image = req.file;
 
-          // 서버에 저장할 파일 명
-          filename: function (req, file, cb) {
-            console.log('>>> filename');
-            console.log(file);
-            file.uploadedFile = {
-              name: req.params.filename,
-              ext: file.mimetype.split('/')[1],
-            };
-            cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
-          },
+        console.log(test);
+        console.log(image);
+        callback(true, {
+          message: 'SUCCESS',
+          detail: '',
+          content: {},
         });
-        callback(null, storage);
-      },
-      function (storage, callback) {
-        multer({
-          storage: storage,
-        }).single('myfile');
       },
     ],
     function (err, data) {
