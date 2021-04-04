@@ -420,8 +420,13 @@ const upload = async (req, res) => {
     [
       function (callback) {
         var image = req.file;
-
-        // console.log(test);
+        if(!image) {
+          callback(true, {
+            message: 'FAI:',
+            detail: 'NOT EXIST IMAGE ',
+            content: {},
+          });
+        }
         console.log(image);
         callback(true, {
           message: 'SUCCESS',
