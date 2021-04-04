@@ -115,6 +115,7 @@ let andServer = net.createServer((socket) => {
      */
     console.log(data);
     if (isFileSender(socket)) {
+      console.log('send 8000 to web client');
       let fileSender = getFileSender(socket);
       console.log('sending');
       fileSender.emit(8000, data);
@@ -678,7 +679,7 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(8001, () => {
-    getFileReceiver(socket).write(
+    getTargetSocket(socket).write(
       JSON.stringify({
         namespace: 8200,
       }) + '\n'
