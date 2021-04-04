@@ -44,6 +44,18 @@ let sockets = [];
 console.log('서버 가동중...');
 
 ////////// Android Server /////////////////
+function initFunction(socket) {
+  flag = 0;
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      sockets[i]['flag'] = 0;
+      sockets[i]['fileReceiver'] = undefined;
+      sockets[i]['fileSender'] = undefined;
+      sockets[i]['size'] = 0;
+      sockets[i]['tmpfileSize'] = 0;
+    }
+  }
+}
 let andServer = net.createServer((socket) => {
   /**
    * Android
@@ -644,7 +656,7 @@ io.on('connection', (socket) => {
     fileReceiverMan.write(data);
 
     if (percent >= 100) {
-      setTimeout(initSocketData(socket), 5000);
+      setTimeout(initFunction(socket), 5000);
     }
   });
 
