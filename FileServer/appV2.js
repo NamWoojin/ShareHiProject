@@ -22,9 +22,9 @@ const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
 //////////////// socket map system /////////////
+let myFlag = 0;
 let flag = 0;
 var pathData = '';
-var pathDataChunkCount = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
   this.id = id; // 소켓 자체를 유일하게 구분하는 PK
   this.name = name; // ad_id
@@ -351,9 +351,9 @@ let andServer = net.createServer((socket) => {
 
       case 2150:
         pathData += data.data;
-        if (pathDataChunkCount > data.pathDataChunkCount) break;
-        pathDataChunkCount = data.pathDataChunkCount + 1;
+        let pathDataChunkCount = data.pathDataChunkCount + 1;
         if (pathDataChunkCount == data.chunkCount) {
+          myFlag = 0;
           console.log(pathData.length);
           console.log('pathData : ' + pathData);
           getSocket(data.targetId, pathData);
@@ -466,6 +466,8 @@ io.on('connection', (socket) => {
    * 메시지 :{"data":"folder directory JSON object "}
    */
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
+    if (myFlag == 4) break;
+    myFlag = 4;
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
