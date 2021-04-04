@@ -336,6 +336,7 @@ let andServer = net.createServer((socket) => {
         }
         break;
       case 2100:
+        console.log('emit : ' + 2100);
         pathData = '';
         socket.write(
           JSON.stringify({
