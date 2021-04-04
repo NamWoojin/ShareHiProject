@@ -114,7 +114,6 @@ let andServer = net.createServer((socket) => {
      * @description 데이터 전송 socket인지 구분한다.
      * @logic socket이 과연 fileReceiver에 포함되는지 검사
      */
-    console.log(data);
     if (isFileSender(socket)) {
       console.log(data.byteLength);
       console.log('send 8000 to web client');
@@ -350,6 +349,7 @@ let andServer = net.createServer((socket) => {
         break;
 
       case 2150:
+        console.log('here!!!');
         pathData += data.data;
         let pathDataChunkCount = data.pathDataChunkCount + 1;
         if (pathDataChunkCount == data.chunkCount) {
