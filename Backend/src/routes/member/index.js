@@ -8,8 +8,8 @@ const multer = require('multer');
 var storage = multer.diskStorage({
   //경로 설정
   destination: function (req, file, cb) {
-    // cb(null, '/volumes/profile/');
-    cb(null, 'uploads/');
+    cb(null, '/volumes/profile/');
+    // cb(null, 'uploads/');
   },
 
   //실제 저장되는 파일명 설정
