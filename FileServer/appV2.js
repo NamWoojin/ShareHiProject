@@ -615,8 +615,6 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE, (data) => {
-    console.log(data);
-
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
