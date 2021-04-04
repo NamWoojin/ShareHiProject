@@ -7,19 +7,22 @@
             <div 
               id="windowheader" 
               :class="{ cursor: !browsersize }" 
-              style="display: flex; justify-content: flex-end;"
+              style="display: flex; justify-content: space-between"
               @mousedown="dragMouseDown"
               @dblclick="resize"
             >
-              <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
-              <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
+              <span style="font-weight: bold;">{{device.name}}</span>
+              <div style="display: flex; justify-content: flex-end;">
+                <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
+                <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
 
-              <v-icon style="cursor: pointer;" @click="$router.push({ name: 'MyDevice' })">mdi-close</v-icon>
+                <v-icon style="cursor: pointer;" @click="$router.push({ name: 'MyDevice' })">mdi-close</v-icon>
+              </div>
               
             </div>
           </v-col>
           <v-col cols="12" style="border: 1px solid black; border-bottom: none; margin: -1px 0; padding-top: 0; padding-bottom: 0;">
-            <div style="display: flex; justify-content: space-between" class="icon-container">
+            <div style="display: flex; justify-content: space-between; align-items: center;" class="icon-container">
               <div style="display: flex;">
 
                 <v-btn class="navicon" :disabled="!lastpath" @click="gotoLastpath">
@@ -33,9 +36,13 @@
                   </div>
                 </v-btn>
               </div>
-              <div>
+              <div style="width: 60%; border: 1px solid; padding: 0.4rem; text-align: left;">
                 <!-- <span style="font-size: 1.5rem;">{{customPath}}</span> -->
-                <span style="font-size: 1.5rem;">{{currentpath}}</span>
+                  <v-icon>mdi-folder</v-icon>
+                  <span v-for="(link, idx) in customPath" :key="idx">
+                    <v-icon v-if="(idx != 0)">mdi-menu-right</v-icon>
+                    <span class="link" style="cursor: pointer" @click="gotoSelectpath(idx)">{{link}}</span>
+                  </span>
               </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
@@ -45,7 +52,7 @@
                   />
                 </v-btn>
                     
-                <v-btn class="navicon" @click="downloadFile"
+                <v-btn class="navicon" @click="downloadFile" :disabled="!(selectitem.length == 1 && selectitem[0].type != 'folder')"
                 >
                   <div style="width: 50px; height: 50px;">
                     <v-icon x-large style="margin-top: 5px !important">mdi-download</v-icon>
@@ -66,15 +73,6 @@
                     <v-icon x-large color="red" style="margin-top: 5px !important">mdi-close</v-icon>
                   </div>
                 </v-btn>
-                <!-- <v-btn 
-                  class="navicon" 
-                  @click="editName"
-                  :disabled="selectitem.length != 1"
-                >
-                  <div style="width: 50px; height: 50px;">
-                    <v-icon x-large color="black" style="margin-top: 5px !important">mdi-folder-edit-outline</v-icon>
-                  </div>
-                </v-btn> -->
               </div>
             </div>
           </v-col>
@@ -123,9 +121,9 @@
                 <v-icon v-else-if="item.type=='mp4'">
                   mdi-movie
                 </v-icon>
-                <!-- <v-icon v-else>
-                  {{ files[item.file] }}
-                </v-icon> -->
+                <v-icon v-else>
+                  mdi-file
+                </v-icon>
               </template>
             </v-treeview>
           </v-col>
@@ -155,6 +153,39 @@
                           <span class="child-name" :class="{showChild: selectitem.includes(child)}">{{child.name}}</span>
                         </div>
                       </div>
+
+                      <div v-else-if="child.type == 'jpg'">
+                        <div :class="{selectBox: selectitem.includes(child)}">
+                          <div class="box">
+                            <v-icon
+                              size="100"
+                            >mdi-image</v-icon>
+                          </div>
+                          <span class="child-name" :class="{showChild: selectitem.includes(child)}">{{child.name}}</span>
+                        </div>
+                      </div>
+
+                      <div v-else-if="child.type == 'mp4'">
+                        <div :class="{selectBox: selectitem.includes(child)}">
+                          <div class="box">
+                            <v-icon
+                              size="100"
+                            >mdi-movie</v-icon>
+                          </div>
+                          <span class="child-name" :class="{showChild: selectitem.includes(child)}">{{child.name}}</span>
+                        </div>
+                      </div>
+                      <div v-else-if="child.type == 'pdf'">
+                        <div :class="{selectBox: selectitem.includes(child)}">
+                          <div class="box">
+                            <v-icon
+                              size="100"
+                            >mdi-file-pdf</v-icon>
+                          </div>
+                          <span class="child-name" :class="{showChild: selectitem.includes(child)}">{{child.name}}</span>
+                        </div>
+                      </div>
+
                       <div v-else>
                         <div :class="{selectBox: selectitem.includes(child)}">
                           <div class="box">
@@ -384,6 +415,7 @@ export default {
     },
     openFolder(c) {
       // this.node = c;
+      console.log('openFolder')
       this.$socket.emit(2000, JSON.stringify({
         path: c.path
       }))
@@ -493,6 +525,12 @@ export default {
       this.$socket.emit(2000, JSON.stringify({
         path: this.originalpath
       }))
+    },
+    gotoSelectpath(idx) {
+      let selectPath = this.currentpath.split('\/').slice(0, this.originalSize + idx + 1).join('\/')
+      this.$socket.emit(2000, JSON.stringify({
+        path: selectPath
+      }))
     }
   },
   mounted() {
@@ -502,7 +540,6 @@ export default {
     this.$socket.emit(1070, JSON.stringify(data))
 
     // this.node = this.data[0];
-    
   },
   watch: {
     fileList: function () {
@@ -526,12 +563,12 @@ export default {
   computed: {
     originalSize() {
       if (this.originalpath) {
-        return this.originalpath.split('\/').length
+        return this.originalpath.split('\/').length - 1
       }
     },
     customPath() {
       if (this.node.path) {
-        return this.node.path.split('\/').slice(3).join(' > ')
+        return this.node.path.split('\/').slice(this.originalSize)
       }
       // return this.node.path.split('\/').join(' > ')
     },
@@ -543,8 +580,8 @@ export default {
   },
   created() {
     this.$socket.on(2000, (data) => {
-      console.log('directory loading')
       data = JSON.parse(data)
+      console.log(data)
       this.currentpath = JSON.parse(data.data).path
       if (this.node.path && (this.currentpath != this.node.path)) {
         this.lastpath = this.node.path
@@ -751,6 +788,13 @@ export default {
 
   .showChild {
     overflow: visible;
-    white-space: normal;
+    /* white-space: inherit; */
+    /* white-space: initial */
+    /* white-space: pre-line; */
+    white-space: pre-wrap;
+  }
+
+  .link:hover {
+    background-color: lightskyblue;
   }
 </style>
