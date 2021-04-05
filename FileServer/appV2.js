@@ -552,6 +552,8 @@ io.on('connection', (socket) => {
    * 메시지 :
    */
   socket.on(KEY.ADD_FOLDERS, (data) => {
+    console.log(2003);
+    console.log(data);
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -568,7 +570,7 @@ io.on('connection', (socket) => {
         namespace: 2103,
         targetId: getId(socket),
         path: data.path,
-        newFolder: data.newFolder,
+        name: data.name,
       }) + '\n'
     );
   });
