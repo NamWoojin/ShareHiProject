@@ -502,7 +502,6 @@ io.on('connection', (socket) => {
       responseBad(socket, 'web');
       return;
     }
-    data = JSON.parse(data);
     let targetSocket = getTargetSocket(socket);
     if (targetSocket === undefined) return;
     targetSocket.write(
