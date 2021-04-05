@@ -8,6 +8,7 @@ import com.example.android.data.connection.dto.FileStat;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 public interface SocketRepository {
@@ -19,7 +20,7 @@ public interface SocketRepository {
     void successSocketClosed();
     void failSocketClosed();
     void stopSocket();
-    boolean getFile(FileStat fs);
+    boolean getSocketFile(FileStat fs);
     JSONObject getFolderDirectory(String path);
     boolean changeFolderName(String path, String prevName, String newName);
     boolean deleteFolder(String path,String name);

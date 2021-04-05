@@ -1,11 +1,7 @@
 package com.example.android.data.connection;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,7 +26,7 @@ import org.json.JSONObject;
 
 public class SocketInfo {
     public static final String IP = "j4f001.p.ssafy.io";
-//    public static final String IP = "10.0.2.2";
+    //    public static final String IP = "10.0.2.2";
 //    public static final String IP = "192.168.35.127";
     public static final int PORT = 9003;
 
@@ -215,7 +211,7 @@ public class SocketInfo {
                             //chunkCount 보내야 할 개수
                             // pathDataChunkCount
                             String path = jsonObject.getString("path");
-                            String targetId =  jsonObject.getString("targetId");
+                            String targetId = jsonObject.getString("targetId");
                             chunkCount = jsonObject.getInt("chunkCount");
                             int num = jsonObject.getInt("pathDataChunkCount");
                             if (num < 0 || num >= chunkCount) {
@@ -225,11 +221,11 @@ public class SocketInfo {
                             int length = returnJSONObjectString.length();
                             int start = num * CHUNK_SIZE;
                             int next = Math.min(length, CHUNK_SIZE * (num + 1));
-                            Log.i("TAG", "run: "+returnJSONObjectString.length() +" "+start+" "+next);
+                            Log.i("TAG", "run: " + returnJSONObjectString.length() + " " + start + " " + next);
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "2150");
                             jobj.addProperty("targetId", targetId);
-                            jobj.addProperty("path", path );
+                            jobj.addProperty("path", path);
                             jobj.addProperty("chunkCount", chunkCount);
                             jobj.addProperty("pathDataChunkCount", num);
                             jobj.addProperty("data", returnJSONObjectString.substring(start, next));
@@ -371,7 +367,7 @@ public class SocketInfo {
 
                                 fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
                                 // 새로운 TCP 연결 시도
-                                socketRepository.getFile(fs);
+                                socketRepository.getSocketFile(fs);
 //                                downloadNotification = new DownloadNotification(context,name7100,path7100);
                             }
                             break;
@@ -398,9 +394,35 @@ public class SocketInfo {
                             json = gson.toJson(jobj);
                             write(json);
                             break;
+                        /**
+                         * Android
+                         * 8100
+                         * 설명 : 안드로이드가 파일을 업로드한다.
+                         * 메시지 :
+                         */
+                        case 8100:
+                            String name2 = jsonObject.getString("name");
+                            String path2 = jsonObject.getString("path");
+                            String ext2 = jsonObject.getString("ext");
+                            File file2 = new File(path2 + "/" + name2 + ext2);
+                            fs = new FileStat(name2, path2, ext2, file2.length(), 0);
+                            targetId = jsonObject.getString("targetId");
 
+                            jobj = new JsonObject();
+                            jobj.addProperty("namespace", "8100");
+                            jobj.addProperty("size", file2.length());
+                            jobj.addProperty("targetId", targetId);
+                            json = gson.toJson(jobj);
+                            write(json);
+                            break;
+                        case 8200:
+                            SocketDownload sdown = new SocketDownload(fs);
+                            sdown.connect();
+                            break;
                     }
+
                 }
+
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 //사용자의 의도에 의한 종료가 아닐 경우
