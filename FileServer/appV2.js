@@ -466,6 +466,7 @@ io.on('connection', (socket) => {
    * 메시지 :{"data":"folder directory JSON object "}
    */
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
+    console.log('myFlag : ' + myFlag);
     if (myFlag == 4) return;
     myFlag = 4;
     if (!isJsonString(data)) {
