@@ -30,19 +30,8 @@
                 @click="submitImage"
               >저장</v-btn>
             </div>
-            <div 
-              v-else-if="member.mem_image == 'default.img'"
-              style="position: relative;"
-            >
-              <img 
-                src="https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png"
-                style="width: 120px; height: 120px; cursor: pointer;"
-                class="image-container"
-                @click="changeImage"
-              >
-            </div>
             <div v-else>
-              <img :src="member.mem_image">
+              <img class="image-container" style="width: 120px; height: 120px;" :src="member.mem_image" @click="changeImage">
             </div>
           </td>
         </tr>
@@ -63,7 +52,7 @@
 <script>
 
 import { mapState } from 'vuex'
-// import axios from 'axios'
+import axios from 'axios'
 
 export default {
   name: 'UserModify',
@@ -89,7 +78,36 @@ export default {
     },
     submitImage() {
       // this.newImg를 submit 해라 mapState로 userid도 넘겨줘야댈듯.
-      // axios.post(`https://j4f001.p.ssafy.io/`)
+      console.log(document.getElementById('imageinput').files)
+      var selectedFile = document.getElementById('imageinput').files[0]
+      let formData = new FormData();
+      formData.append('mem_id', this.member.mem_id)
+      formData.append('image', selectedFile)
+      console.log(formData)
+      axios.post(`https://j4f001.p.ssafy.io/api/member/upload`, formData)
+        .then(res => {
+          console.log(res)
+          if (res.data.message == 'SUCCESS') {
+            this.$message({
+              type: 'success',
+              message: '이미지가 변경되었습니다.'
+            })
+            this.newImg = null
+            this.newImgURL = null
+            axios.get(`https://j4f001.p.ssafy.io/api/member/getUser`, {
+              params: {
+                mem_id: this.member.mem_id
+              }
+            })
+              .then(res => {
+                if (res.data.message == 'SUCCESS') {
+                  console.log(res.data.content.member)
+                  this.$store.dispatch("LOGIN", res.data.content.member)
+                  this.$router.go(this.$router.currentRoute)
+                }
+              })
+          }
+        })
     }
   }
 }
@@ -147,5 +165,6 @@ export default {
 
   .image-container:hover {
     box-shadow: 5px 5px 5px gray;
+    cursor: pointer;
   }
 </style>

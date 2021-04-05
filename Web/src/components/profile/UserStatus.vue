@@ -8,8 +8,8 @@
           flat
           tile
         >
-          <v-card-text class="pb-0 pt-2">팔로워</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{follower_len}}명</v-card-text>
+          <v-card-text class="pb-0 pt-2">팔로잉</v-card-text>
+          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{following_len}}명</v-card-text>
         </v-card>
       </v-col>
       <v-col>
@@ -20,8 +20,8 @@
           flat
           tile
         >
-          <v-card-text class="pb-0 pt-2">팔로잉</v-card-text>
-          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{following_len}}명</v-card-text>
+          <v-card-text class="pb-0 pt-2">팔로워</v-card-text>
+          <v-card-text class="pb-2 pt-0" style="font-weight: bold; color: black;">{{follower_len}}명</v-card-text>
         </v-card>
       </v-col>
     </v-row>
