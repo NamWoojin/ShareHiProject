@@ -349,6 +349,8 @@ let andServer = net.createServer((socket) => {
         console.log('myFlag : ' + myFlag);
         pathData += data.data;
         let pathDataChunkCount = data.pathDataChunkCount + 1;
+        console.log('pathDataChunkCount : ' + pathDataChunkCount);
+        console.log('pathData : ' + pathData);
         if (pathDataChunkCount == data.chunkCount) {
           myFlag = 0;
           getSocket(data.targetId, pathData);
