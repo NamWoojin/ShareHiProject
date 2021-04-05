@@ -25,7 +25,8 @@ public class DownloadNotification {
         this.path = path;
         notificationManager = NotificationManagerCompat.from(context);
         builder = new NotificationCompat.Builder(context,CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_logo_transparent)
+                .setSmallIcon(R.drawable.ic_file_download_black_24dp)
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

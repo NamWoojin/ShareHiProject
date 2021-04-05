@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -195,7 +196,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                     Log.i(TAG, "onActivityResult: " + tempFile);
                     MultipartBody.Part file = changeImageToMultipart(tempFile);
                     RequestBody id = changeIntegerToRequestbody(mem_id);
-                    onRequestChangeImage(id,file);
+                    onRequestChangeImage(id, file);
                 } finally {
                     if (cursor != null) {
                         cursor.close();
@@ -206,20 +207,28 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         }
     }
 
-    private MultipartBody.Part changeImageToMultipart(File file){
-        RequestBody rqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+//    public static Drawable getResizeFileImage(String file_route, int size, int width, int height){
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inSampleSize = size;
+//        Bitmap src = BitmapFactory.decodeFile(file_route, options);
+//        Bitmap resized = Bitmap.createScaledBitmap(src, width, height, true);
+//        return new BitmapDrawable(resized);
+//    }
+
+    private MultipartBody.Part changeImageToMultipart(File file) {
+        RequestBody rqFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
 
         MultipartBody.Part result = MultipartBody.Part.createFormData("image", file.getName(), rqFile); // 키값, 파일이름, 데이터
 
         return result;
     }
 
-    private RequestBody changeIntegerToRequestbody(int num){
-        return RequestBody.create(MediaType.parse("text/plain"), String.valueOf(num));
+    private RequestBody changeIntegerToRequestbody(int num) {
+        return RequestBody.create(String.valueOf(num), MediaType.parse("text/plain"));
     }
 
-    private void onRequestChangeImage(RequestBody id, MultipartBody.Part file){
-        APIRequest.request(RetrofitClient.getUserApiService().uploadImage(id,file), objectResponse -> {
+    private void onRequestChangeImage(RequestBody id, MultipartBody.Part file) {
+        APIRequest.request(RetrofitClient.getUserApiService().uploadImage(id, file), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
             String body = gson.toJson(objectResponse.body());

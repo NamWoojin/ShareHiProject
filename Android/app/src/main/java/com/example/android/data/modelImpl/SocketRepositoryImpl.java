@@ -164,6 +164,7 @@ public class SocketRepositoryImpl implements SocketRepository {
         return deleteFolderwithChild(path+"/"+name);
     }
 
+    //폴더의 하위 파일 전부 삭제
     private boolean deleteFolderwithChild(String path){
         boolean result = true;
         File dir = new File(path);
@@ -206,14 +207,11 @@ public class SocketRepositoryImpl implements SocketRepository {
     }
 
     @Override
-    public boolean getFile(FileStat fs){
+    public boolean getSocketFile(FileStat fs){
         boolean shouldProviceRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(mActivityRef.get(), Manifest.permission.READ_EXTERNAL_STORAGE);//사용자가 이전에 거절한적이 있어도 true 반환
         Log.i("TAG", "getFile: "+shouldProviceRationale);
         if (shouldProviceRationale) {
-            //앱에 필요한 권한이 없어서 권한 요청
-//            ActivityCompat.requestPermissions(mActivityRef.get(),
-//                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_CODE);
             return false;
         } else {
             SocketData sd = new SocketData(fs);
@@ -221,6 +219,7 @@ public class SocketRepositoryImpl implements SocketRepository {
             return true;
         }
     }
+
 
     @Override
     public MutableLiveData<String> getIsConnecting() {
