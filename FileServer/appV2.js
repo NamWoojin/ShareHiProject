@@ -303,6 +303,7 @@ let andServer = net.createServer((socket) => {
         setSenderTmpfileSize(socket, data.tmpfileSize, data.size);
 
         let sender = getSender(socket);
+        console.log('sender : ', sender);
         if (sender === undefined) break;
         sender.emit(
           KEY.SEND_FILE_STAT,
