@@ -638,7 +638,7 @@ io.on('connection', (socket) => {
 
     if (percent >= 100) {
       (function (socket) {
-        setTimeout(initSocketData, 5000);
+        setTimeout(initSocketData, 5000, socket);
       })(socket);
     }
   });
