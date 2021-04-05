@@ -341,9 +341,6 @@ let andServer = net.createServer((socket) => {
         break;
 
       case 2150:
-        (function () {
-          setTimeout(setMyFlag, 1000);
-        })();
         console.log('2150 from android');
         console.log('data : ' + data.data);
         console.log('myFlag : ' + myFlag);
@@ -455,6 +452,9 @@ io.on('connection', (socket) => {
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
     if (myFlag == 4) return;
     myFlag = 4;
+    (function () {
+      setTimeout(setMyFlag, 1000);
+    })();
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -1114,6 +1114,7 @@ let initAll = () => {
 
 let setMyFlag = () => {
   myFlag = 0;
+  console.log('NOW you can get file directories!');
 };
 
 let setName = (socket, adId) => {
