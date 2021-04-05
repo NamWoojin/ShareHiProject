@@ -330,11 +330,6 @@ let andServer = net.createServer((socket) => {
         );
 
         break;
-      case 7002:
-        if (percent >= 100) {
-          setTimeout(initAll, 5000);
-        }
-        break;
       case 2100:
         console.log('emit : ' + 2100);
         pathData = '';
@@ -642,7 +637,9 @@ io.on('connection', (socket) => {
     fileReceiverMan.write(data);
 
     if (percent >= 100) {
-      setTimeout(initAll, 5000);
+      (function (socket) {
+        setTimeout(initSocketData, 5000);
+      })(socket);
     }
   });
 
