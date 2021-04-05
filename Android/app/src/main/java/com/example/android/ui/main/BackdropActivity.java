@@ -52,6 +52,8 @@ public class BackdropActivity extends AppCompatActivity {
 
     private ActivityMainBackdropBinding binding;
 
+    private LoadingFragment loadingFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,7 @@ public class BackdropActivity extends AppCompatActivity {
         mSendViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(SendViewModelImpl.class);
         mSendViewModel.setParentContext(this);
         mSendViewModel.setSocketRepository(ModelInjection.provideSocketRepository(),this);   //의존성 주입
+        mSendViewModel.getLoadingLiveData().observe(this,this::doLoading);
 
         mSettingViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(SettingViewModelImpl.class);
         mSettingViewModel.setParentContext(this);
@@ -89,7 +92,7 @@ public class BackdropActivity extends AppCompatActivity {
 
         //backdrop 초기 값 설정
 //        frameLayout.setEnabled(false);
-
+        loadingFragment = LoadingFragment.newInstance();
 
     }
 
@@ -165,6 +168,17 @@ public class BackdropActivity extends AppCompatActivity {
             mSendViewModel.onActivityResult(requestCode, resultCode, data);
         }else{
             mSettingViewModel.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    //로딩 표시
+    private void doLoading(Boolean b){
+        if(b){
+            if(!loadingFragment.isAdded()) {
+                loadingFragment.show(getFragmentManager(), "loading");
+            }
+        }else{
+            loadingFragment.dismiss();
         }
     }
 }
