@@ -328,6 +328,7 @@ let andServer = net.createServer((socket) => {
         break;
       case 2100:
         console.log('2100 from android');
+        console.log('t2 : ' + new Date());
         pathData = '';
         socket.write(
           JSON.stringify({
@@ -342,13 +343,15 @@ let andServer = net.createServer((socket) => {
 
       case 2150:
         console.log('2150 from android');
-        console.log('data : ' + data.data);
-        console.log('myFlag : ' + myFlag);
+        console.log('t3 : ' + new Date());
+        // console.log('data : ' + data.data);
+        // console.log('myFlag : ' + myFlag);
         pathData += data.data;
         let pathDataChunkCount = data.pathDataChunkCount + 1;
-        console.log('pathDataChunkCount : ' + pathDataChunkCount);
-        console.log('pathData : ' + pathData);
+        // console.log('pathDataChunkCount : ' + pathDataChunkCount);
+        // console.log('pathData : ' + pathData);
         if (pathDataChunkCount == data.chunkCount) {
+          console.log('t4 : ' + new Date());
           myFlag = 0;
           getSocket(data.targetId, pathData);
         } else {
@@ -464,6 +467,8 @@ io.on('connection', (socket) => {
       responseBad(socket, 'web');
       return;
     }
+    console.log('t1 : ' + new Date());
+
     let targetSocket = getTargetSocket(socket);
     if (targetSocket === undefined) return;
     targetSocket.write(
