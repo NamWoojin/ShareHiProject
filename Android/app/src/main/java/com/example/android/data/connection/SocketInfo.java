@@ -255,8 +255,8 @@ public class SocketInfo {
                             String newName = jsonObject.getString("newName");
                             path = jsonObject.getString("path");
                             String name = jsonObject.getString("name");
-                            boolean result2001 = socketRepository.changeFolderName(path, name, newName);
-                            Log.i("TAG", "run: 2101 return "+result2001);
+                            boolean result2101 = socketRepository.changeFolderName(path, name, newName);
+                            Log.i("TAG", "run: 2101 return "+result2101);
 //                            returnJSONObjectString = socketRepository.getFolderDirectory(jsonObject.getString("path")).toString();
 //                            Log.i("myTag", "2100: " + returnJSONObjectString.length());
 //                            chunkCount = (returnJSONObjectString.length() / CHUNK_SIZE) + (returnJSONObjectString.length() % CHUNK_SIZE > 0 ? 1 : 0);
@@ -298,8 +298,8 @@ public class SocketInfo {
                              * TODO 폴더 삭제 로직! (여러 개의 폴더, 파일 삭제가 요청을 올 수도 있음)
                              */
 
-                            boolean result2002 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-                            Log.i("TAG", "run: 2101 return "+result2002);
+                            boolean result2102 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
+                            Log.i("TAG", "run: 2102 return "+result2102);
 //                            jobj = new JsonObject();
 //                            jobj.addProperty("namespace", "2102");
 //                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
@@ -330,22 +330,22 @@ public class SocketInfo {
                              * TODO 폴더 추가 로직!
                              */
                             ;
-                            boolean result2003 = socketRepository.createFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-
-                            jobj = new JsonObject();
-                            jobj.addProperty("namespace", "2103");
-                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                            jobj.addProperty("detail", "");
-                            jobj.addProperty("content", "");
-                            if (result2003) {
-                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-                                jobj.addProperty("message", "OK");
-                            } else {
-                                jobj.addProperty("status", "403");
-                                jobj.addProperty("message", "FORBIDDEN");
-                            }
-                            json = gson.toJson(jobj);
-                            write(json);
+                            boolean result2103 = socketRepository.createFolder(jsonObject.getString("path"), jsonObject.getString("name"));
+                            Log.i("TAG", "run: 2103 return "+result2103);
+//                            jobj = new JsonObject();
+//                            jobj.addProperty("namespace", "2103");
+//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+//                            jobj.addProperty("detail", "");
+//                            jobj.addProperty("content", "");
+//                            if (result2003) {
+//                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
+//                                jobj.addProperty("message", "OK");
+//                            } else {
+//                                jobj.addProperty("status", "403");
+//                                jobj.addProperty("message", "FORBIDDEN");
+//                            }
+//                            json = gson.toJson(jobj);
+//                            write(json);
                             break;
 
                         case 7100: // 파일 스텟 확인
