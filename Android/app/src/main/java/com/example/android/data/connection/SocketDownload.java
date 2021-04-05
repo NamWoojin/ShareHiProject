@@ -1,5 +1,7 @@
 package com.example.android.data.connection;
 
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -47,6 +49,7 @@ public class SocketDownload {
     public void connect() {
         try {
             file = new File(fs.getPath() +"/"+ fs.getName() + fs.getExt());
+            Log.i("TAG", "connecttttttt: "+file);
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(SocketInfo.IP, SocketInfo.PORT);
             socket.connect(socketAddress, 8288);
@@ -92,7 +95,7 @@ public class SocketDownload {
                     System.out.println("tmp : " + tmp);
                     os.flush();
                 }
-
+                Thread.sleep(10000);
                 System.out.println("FILE을 모두 전송했습니다..");
             } catch (Exception e) {
                 e.printStackTrace();

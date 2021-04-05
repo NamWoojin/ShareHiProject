@@ -36,8 +36,9 @@ public class SocketInfo {
     private Context context;
     private Socket socket;
     private String adID;
-    private int CHUNK_SIZE = 256;
+    private int CHUNK_SIZE = 1024;
     private boolean closeSocketByUser;
+    private boolean threadRunning;
     private DownloadNotification downloadNotification;
     BufferedReader in;
     PrintWriter out;
@@ -59,6 +60,7 @@ public class SocketInfo {
 
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            threadRunning = true;
             getIO.start();
             socketRepository.successSocketConnection();
             closeSocketByUser = false;
@@ -74,6 +76,7 @@ public class SocketInfo {
         try {
             closeSocketByUser = true;
             socket.close();
+            threadRunning = false;
             socketRepository.successSocketClosed();
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,13 +93,17 @@ public class SocketInfo {
         @Override
         public void run() {
             try {
-                while (true) {
+                while (threadRunning) {
                     String data = in.readLine();
 
                     if (data == null) {
-//                        throw new IOException();
                         Log.i("TAG", "run: null");
-                        continue;
+                        throw new IOException();
+//                        continue;
+                    }
+                    if(socket.isClosed()){
+                        Log.i("TAG", "run: 소켓 끝");
+                        break;
                     }
 
                     Log.d("myTagReceive", data);
@@ -249,21 +256,33 @@ public class SocketInfo {
                             path = jsonObject.getString("path");
                             String name = jsonObject.getString("name");
                             boolean result2001 = socketRepository.changeFolderName(path, name, newName);
+                            Log.i("TAG", "run: 2101 return "+result2001);
+//                            returnJSONObjectString = socketRepository.getFolderDirectory(jsonObject.getString("path")).toString();
+//                            Log.i("myTag", "2100: " + returnJSONObjectString.length());
+//                            chunkCount = (returnJSONObjectString.length() / CHUNK_SIZE) + (returnJSONObjectString.length() % CHUNK_SIZE > 0 ? 1 : 0);
+//                            jobj = new JsonObject();
+//                            jobj.addProperty("namespace", "2100");
+//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+//                            jobj.addProperty("path", jsonObject.getString("path"));
+//                            jobj.addProperty("chunkCount", chunkCount);
+//                            json = gson.toJson(jobj);
+//                            write(json);
 
-                            jobj = new JsonObject();
-                            jobj.addProperty("namespace", "2101");
-                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                            jobj.addProperty("detail", "");
-                            jobj.addProperty("content", "");
-                            if (result2001) {
-                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-                                jobj.addProperty("message", "OK");
-                            } else {
-                                jobj.addProperty("status", "403");
-                                jobj.addProperty("message", "FORBIDDEN");
-                            }
-                            json = gson.toJson(jobj);
-                            write(json);
+
+//                            jobj = new JsonObject();
+//                            jobj.addProperty("namespace", "2101");
+//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+//                            jobj.addProperty("detail", "");
+//                            jobj.addProperty("content", "");
+//                            if (result2001) {
+//                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
+//                                jobj.addProperty("message", "OK");
+//                            } else {
+//                                jobj.addProperty("status", "403");
+//                                jobj.addProperty("message", "FORBIDDEN");
+//                            }
+//                            json = gson.toJson(jobj);
+//                            write(json);
 
                             break;
 
@@ -280,22 +299,22 @@ public class SocketInfo {
                              */
 
                             boolean result2002 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-
-                            jobj = new JsonObject();
-                            jobj.addProperty("namespace", "2102");
-                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-                            jobj.addProperty("detail", "");
-                            jobj.addProperty("content", "");
-                            if (result2002) {
-                                jobj.addProperty("status", "200"); // or 401 UNAUTHORIZED
-                                jobj.addProperty("message", "OK");
-                            } else {
-                                jobj.addProperty("status", "401");
-                                jobj.addProperty("message", "UNAUTHORIZED");
-                            }
-
-                            json = gson.toJson(jobj);
-                            write(json);
+                            Log.i("TAG", "run: 2101 return "+result2002);
+//                            jobj = new JsonObject();
+//                            jobj.addProperty("namespace", "2102");
+//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
+//                            jobj.addProperty("detail", "");
+//                            jobj.addProperty("content", "");
+//                            if (result2002) {
+//                                jobj.addProperty("status", "200"); // or 401 UNAUTHORIZED
+//                                jobj.addProperty("message", "OK");
+//                            } else {
+//                                jobj.addProperty("status", "401");
+//                                jobj.addProperty("message", "UNAUTHORIZED");
+//                            }
+//
+//                            json = gson.toJson(jobj);
+//                            write(json);
 
                             break;
 
@@ -368,7 +387,7 @@ public class SocketInfo {
                                 fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
                                 // 새로운 TCP 연결 시도
                                 socketRepository.getSocketFile(fs);
-//                                downloadNotification = new DownloadNotification(context,name7100,path7100);
+                                downloadNotification = new DownloadNotification(context,name7100,path7100);
                             }
                             break;
 
@@ -379,7 +398,7 @@ public class SocketInfo {
                              */
 
                             int percentage = jsonObject.getInt("percent");
-//                            downloadNotification.startNotification(percentage);
+                            downloadNotification.startNotification(percentage);
 //                            Log.i("myTag", "percentage: " + percentage);
                             break;
 

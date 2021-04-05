@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -205,6 +206,14 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
         }
     }
+
+//    public static Drawable getResizeFileImage(String file_route, int size, int width, int height){
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inSampleSize = size;
+//        Bitmap src = BitmapFactory.decodeFile(file_route, options);
+//        Bitmap resized = Bitmap.createScaledBitmap(src, width, height, true);
+//        return new BitmapDrawable(resized);
+//    }
 
     private MultipartBody.Part changeImageToMultipart(File file) {
         RequestBody rqFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
