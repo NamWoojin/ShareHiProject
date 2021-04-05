@@ -41,16 +41,16 @@ public class DownloadNotification {
         builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
         if(PROGRESS_CURRENT == PROGRESS_MAX){
             Log.i("TAG", "startNotification: "+PROGRESS_CURRENT);
-            builder .setContentTitle(fileName + "을 다운받았습니다.")
+            builder .setContentTitle(fileName + "을(를) 다운받았습니다.")
                     .setContentText("")
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(path+"에 "+fileName+"가 저장되었습니다."));
+                            .bigText(path+"에 "+fileName+"이(가) 저장되었습니다."));
             notificationManager.notify(notificationId, builder.build());
         }else{
-            builder .setContentTitle(fileName + "을 다운받는 중입니다.")
+            builder .setContentTitle(fileName + "을(를) 다운받는 중입니다.")
                     .setContentText(PROGRESS_CURRENT+"/"+PROGRESS_MAX)
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(path+"에 "+fileName+"를 받는 중입니다."));
+                            .bigText(path+"에 "+fileName+"을(를) 받는 중입니다."));
         }
         notificationManager.notify(notificationId, builder.build());
     }
