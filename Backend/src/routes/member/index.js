@@ -11,7 +11,7 @@ var storage = multer.diskStorage({
     cb(null, '/volumes/profile/');
     // cb(null, 'uploads/');
   },
-
+//
   //실제 저장되는 파일명 설정
   filename: function (req, file, cb) {
     //파일명 설정을 돕기 위해 요청정보(req)와 파일(file)에 대한 정보를 전달함
