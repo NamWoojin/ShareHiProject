@@ -8,15 +8,16 @@ const multer = require('multer');
 var storage = multer.diskStorage({
   //경로 설정
   destination: function (req, file, cb) {
-    cb(null, '/volumes/profile/');
-    // cb(null, 'uploads/');
+    // cb(null, '/volumes/profile/');
+    cb(null, 'uploads/');
   },
 
   //실제 저장되는 파일명 설정
   filename: function (req, file, cb) {
     //파일명 설정을 돕기 위해 요청정보(req)와 파일(file)에 대한 정보를 전달함
     file.uploadedFile = {
-      name: req.body.mem_id,
+      name: req.body.mem_id + '-' + file.originalname.split('.')[0],
+      // name: req.body.mem_id,
       ext: file.mimetype.split('/')[1],
     };
     // console.log(file.uploadedFile.name);
