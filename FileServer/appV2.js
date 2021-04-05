@@ -22,9 +22,9 @@ const { v4: uuidv4 } = require('uuid');
 const KEY = require('./src/config/key/key');
 
 //////////////// socket map system /////////////
+let myFlag = 0;
 let flag = 0;
 var pathData = '';
-var pathDataChunkCount = 0;
 function SocketInfo(id, name, socket, type, isShare, fileSender, fileReceiver, targetId) {
   this.id = id; // 소켓 자체를 유일하게 구분하는 PK
   this.name = name; // ad_id
@@ -114,7 +114,6 @@ let andServer = net.createServer((socket) => {
      * @description 데이터 전송 socket인지 구분한다.
      * @logic socket이 과연 fileReceiver에 포함되는지 검사
      */
-    console.log(data);
     if (isFileSender(socket)) {
       console.log(data.byteLength);
       console.log('send 8000 to web client');
@@ -238,18 +237,6 @@ let andServer = net.createServer((socket) => {
           }) + '\n'
         );
         break;
-
-      /**
-       * Android
-       * 2100
-       * 설명 : 폴더 디렉토리 구조를 받아서 클라이언트에게 제공한다
-       * 메시지 :{"data":"folder directory JSON object "}
-       */
-      case 2100:
-        getSocket(data.targetId, data.data);
-
-        break;
-
       /**
        * Android
        * 2001
@@ -345,28 +332,30 @@ let andServer = net.createServer((socket) => {
         break;
       case 7002:
         if (percent >= 100) {
-          initSocketData(socket);
+          setTimeout(initAll, 5000);
         }
         break;
       case 2100:
+        console.log('emit : ' + 2100);
         pathData = '';
-        pathDataChunkCount = data.chunkCount;
         socket.write(
           JSON.stringify({
             namespace: 2150,
             path: data.path,
             targetId: data.targetId,
-            chunkCount: pathDataChunkCount,
-            pathDataChunkCount: pathDataChunkCount,
+            chunkCount: data.chunkCount,
+            pathDataChunkCount: 0,
           }) + '\n'
         );
         break;
 
       case 2150:
         pathData += data.data;
-        --pathDataChunkCount;
-        if (pathDataChunkCount == 0) {
+        let pathDataChunkCount = data.pathDataChunkCount + 1;
+        if (pathDataChunkCount == data.chunkCount) {
+          myFlag = 0;
           console.log(pathData.length);
+          console.log('pathData : ' + pathData);
           getSocket(data.targetId, pathData);
         } else {
           socket.write(
@@ -477,6 +466,8 @@ io.on('connection', (socket) => {
    * 메시지 :{"data":"folder directory JSON object "}
    */
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
+    if (myFlag == 4) return;
+    myFlag = 4;
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -624,8 +615,6 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE, (data) => {
-    console.log(data);
-
     if (!checkSocket(getId(getTargetSocket(socket)))) {
       responseBad(socket, 'web');
       return;
@@ -651,9 +640,9 @@ io.on('connection', (socket) => {
     if (fileReceiverMan === undefined) return;
     fileReceiverMan.write(data);
 
-    // if (percent >= 100) {
-    //   initSocketData(socket);
-    // }
+    if (percent >= 100) {
+      setTimeout(initAll, 5000);
+    }
   });
 
   /**
@@ -997,6 +986,7 @@ let getFileReceiver = (socket) => {
 };
 
 let initSocketData = (socket) => {
+  flag = 0;
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       sockets[i]['flag'] = 0;
@@ -1127,4 +1117,15 @@ let getShareDevicesAll = () => {
     }
   }
   return val;
+};
+
+let initAll = () => {
+  flag = 0;
+  for (let i in sockets) {
+    sockets[i]['flag'] = 0;
+    sockets[i]['fileReceiver'] = undefined;
+    sockets[i]['fileSender'] = undefined;
+    sockets[i]['size'] = 0;
+    sockets[i]['tmpfileSize'] = 0;
+  }
 };
