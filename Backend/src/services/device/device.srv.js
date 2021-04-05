@@ -8,7 +8,6 @@ const getOnlineDevice = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 온라인디바이스가져오기');
         let memId = req.query.mem_id;
         pool.query(DeviceQuery.getOnlineDevice, memId, function (err, result) {
           if (err) {
@@ -41,7 +40,6 @@ const getOfflineDevice = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 오프라인디바이스가져오기');
         let memId = req.query.mem_id;
         pool.query(DeviceQuery.getOfflineDevice, memId, function (err, result) {
           if (err) {
@@ -74,7 +72,6 @@ const insertDevice = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 디바이스추가');
         let device = req.body;
         pool.query(checkDevice.checkDevice,[device.mem_id, device.dev_name, device.dev_type], function (err, result) {
           if (err) {
@@ -122,7 +119,6 @@ const deletetDevice = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 디바이스삭제');
         let devId = req.query.dev_id;
         pool.query(DeviceQuery.deletetDevice, devId, function (err, result) {
           if (err) {

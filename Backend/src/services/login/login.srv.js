@@ -10,8 +10,6 @@ const basic = (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>>회원정보가져오기');
-
         let member = req.body;
         pool.query(LoginQuery.checkPassword, member.mem_email, (err, result) => {
           if (err) {
@@ -24,8 +22,6 @@ const basic = (req, res) => {
       function (result_mem, member, callback) {
         if (result_mem.length == 1 && bcrypt.compareSync(member.mem_password, result_mem[0].mem_password)) {
           if (member.ad_id) {
-            console.log('>>>>비밀번호확인성공');
-
             // 기기가 등록되어있는지 확인
             pool.query(LoginQuery.checkDevice, [result_mem[0].mem_id, member.ad_id], (err, result) => {
               if (err) {
@@ -33,8 +29,6 @@ const basic = (req, res) => {
               }
               // 등록되어있지않다면 등록
               else if (result.length == 0) {
-                console.log('>>>>기기등록');
-
                 let dev_name = member.ad_id;
                 let mem_id = result_mem[0].mem_id;
                 let status = 'ON';
@@ -44,7 +38,6 @@ const basic = (req, res) => {
                     callback(err);
                   } else {
                     result_mem[0].mem_registDevice = result_mem[0].mem_registDevice + 1;
-                    console.log(result_mem[0]);
                     pool.query(LoginQuery.addDevice, [result_mem[0].mem_registDevice, result_mem[0].mem_id], (err, result) => {
                       if (err) {
                         callback(err);
@@ -54,7 +47,6 @@ const basic = (req, res) => {
                   }
                 });
               } else {
-                console.log('>>>>기기존재');
                 callback(null, result_mem[0], member);
               }
             });
@@ -70,7 +62,6 @@ const basic = (req, res) => {
         }
       },
       function (result_mem, member, callback) {
-        console.log('>>>>디바이스정보가져오기');
         pool.query(LoginQuery.checkDevice, [result_mem.mem_id, member.ad_id], (err, result) => {
           if (err) {
             callback(err);
@@ -80,7 +71,6 @@ const basic = (req, res) => {
         });
       },
       function (result_mem, result_dev, callback) {
-        console.log('>>>>토큰발급');
         const token = jwt.sign(
           {
             username: result_mem.mem_email,
@@ -146,8 +136,6 @@ const social = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>>회원정보가져오기');
-
         let member = req.body;
         if (!member.mem_image) member.mem_image = 'default.img';
 
@@ -155,8 +143,6 @@ const social = async (req, res) => {
           if (err) {
             callback(err);
           } else if (result.length == 0) {
-            console.log('>>>> 소셜회원등록');
-            console.log('>>>> 비밀번호암호화');
             let mem_password = member.mem_email;
             bcrypt.hash(mem_password, 10, async function (err, hash) {
               if (err) {
@@ -173,13 +159,11 @@ const social = async (req, res) => {
               }
             });
           } else {
-            console.log('>>>> 소셜회원존재');
             callback(null, member);
           }
         });
       },
       function (member, callback) {
-        console.log('>>>> 소셜회원정보가져오기');
         pool.query(LoginQuery.socialCheckEmail, member.mem_email, function (err, result) {
           if (err) {
             callback(err);
@@ -189,10 +173,7 @@ const social = async (req, res) => {
         });
       },
       function (result_mem, member, callback) {
-        console.log('>>>> 기기등록확인');
-        console.log(member)
         if (member.ad_id) {
-          console.log('>>>> ad_id존재');
           // 기기가 등록되어있는지 확인
           pool.query(LoginQuery.checkDevice, [result_mem.mem_id, member.ad_id], (err, result) => {
             if (err) {
@@ -200,8 +181,6 @@ const social = async (req, res) => {
             }
             // 등록되어있지않다면 등록
             else if (result.length == 0) {
-              console.log('>>>>기기등록');
-
               let dev_name = member.ad_id;
               let mem_id = result_mem.mem_id;
               let status = 'ON';
@@ -211,7 +190,6 @@ const social = async (req, res) => {
                   callback(err);
                 } else {
                     result_mem.mem_registDevice = result_mem.mem_registDevice + 1;
-                    console.log(result_mem);
                     pool.query(LoginQuery.addDevice, [result_mem.mem_registDevice, result_mem.mem_id], (err, result) => {
                       if (err) {
                         callback(err);
@@ -221,7 +199,6 @@ const social = async (req, res) => {
                 }
               });
             } else {
-              console.log('>>>>기기존재');
               callback(null, result_mem, member);
             }
           });
@@ -230,7 +207,6 @@ const social = async (req, res) => {
         }
       },
       function (result_mem, member, callback) {
-        console.log('>>>>디바이스정보가져오기');
         if(member.ad_id) {
         pool.query(LoginQuery.checkDevice, [result_mem.mem_id, member.ad_id], (err, result) => {
           if (err) {
@@ -244,7 +220,6 @@ const social = async (req, res) => {
       }
       },
       function (result_mem, result_dev, callback) {
-        console.log('>>>>토큰발급');
         const token = jwt.sign(
           {
             username: result_mem.mem_email,
@@ -293,7 +268,6 @@ const logout = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>> logout');
         let mem_id = req.query.mem_id;
         let dev_id = req.query.dev_id;
         pool.query(LoginQuery.logout, [mem_id, dev_id], (err, result) => {

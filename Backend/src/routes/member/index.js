@@ -20,8 +20,6 @@ var storage = multer.diskStorage({
       // name: req.body.mem_id,
       ext: file.mimetype.split('/')[1],
     };
-    // console.log(file.uploadedFile.name);
-    // console.log(file.uploadedFile.ext);
 
     cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
   },
@@ -41,14 +39,5 @@ router.post('/requireEmailAuth', UserService.requireEmailAuth);
 router.post('/checkEmailAuth', UserService.checkEmailAuth);
 router.post('/upload', upload.single('image'), UserService.upload);
 router.post('/findPW', UserService.findPW);
-
-// router.post('/upload', upload.single('image'), function(req, res) {
-//     var test = req.body.test;
-//     var image = req.file;
-
-//     console.log(test);
-//     console.log(image);
-
-// });
 
 module.exports = router;

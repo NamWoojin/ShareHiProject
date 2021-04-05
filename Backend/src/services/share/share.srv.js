@@ -8,7 +8,6 @@ const insertShareInfo = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 파일공유정보입력');
         let memId = req.query.mem_id;
         pool.query(ShareQuery.getOnlineDevice, memId, function (err, result) {
           if (err) {
@@ -25,7 +24,6 @@ const insertShareInfo = async (req, res) => {
     ],
     function (err, data) {
       if (!data) {
-        console.log(err);
         return res.status(500).json({
           message: 'FAIL',
           detail: err,
