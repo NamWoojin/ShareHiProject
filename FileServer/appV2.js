@@ -452,9 +452,9 @@ io.on('connection', (socket) => {
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
     if (myFlag == 4) return;
     myFlag = 4;
-    (function () {
-      setTimeout(setMyFlag, 1000);
-    })();
+    // (function () {
+    //   setTimeout(setMyFlag, 1000);
+    // })();
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
