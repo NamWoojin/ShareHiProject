@@ -294,6 +294,8 @@ let andServer = net.createServer((socket) => {
        */
       case 7100:
         console.log('7100 from android');
+        console.log('size : ' + data.size);
+        console.log('tmpfileSize : ' + data.tmpfileSize);
         setSenderTmpfileSize(socket, data.tmpfileSize, data.size);
 
         let sender = getSender(socket);
@@ -444,11 +446,11 @@ io.on('connection', (socket) => {
    * 메시지 :{"data":"folder directory JSON object "}
    */
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
-    if (myFlag == 4) return;
-    myFlag = 4;
     (function () {
       setTimeout(setMyFlag, 1000);
     })();
+    if (myFlag == 4) return;
+    myFlag = 4;
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
