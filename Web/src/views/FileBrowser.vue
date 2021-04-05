@@ -11,7 +11,7 @@
               @mousedown="dragMouseDown"
               @dblclick="resize"
             >
-              <span style="font-weight: bold;">{{device.name}}</span>
+              <span style="font-weight: bold;">{{device.name.split('-')[0]}}</span>
               <div style="display: flex; justify-content: flex-end;">
                 <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
                 <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
@@ -237,12 +237,16 @@
     >
       {{ percent }}
     </v-progress-circular>
-    <v-progress-linear
+    <!-- <v-progress-circular
       v-if="saveFileLength > 0"
-      height="25"
+      style="position: absolute; top: 50%; left: 50%; z-index: 99; transform: translate(-50%, -50%);"
+      color="teal"
+      :rotate="360"
+      :size="250"
+      :width="20"
+      :value="(100 - Math.ceil(saveFileLength*100/saveFileLengthOrigin))"
     >
-      <strong>{{ Math.ceil(saveFileLength/saveFileLengthOrigin) * 100 }}%</strong>
-    </v-progress-linear>
+    </v-progress-circular> -->
   </div>
 </template>
 
@@ -586,6 +590,7 @@ export default {
           'size': this.fileList.size,
         }
         // console.log(fileData)
+        console.log('send 7000')
         this.$socket.emit(7000, JSON.stringify(fileData));
       }
     },
@@ -643,9 +648,10 @@ export default {
 
     this.$socket.on(7000, (data) => {
       // console.log('7000 on')
+      console.log('this is 7000 : ', data)
       data = JSON.parse(data)
       // const fileData = this.fileList
-      if (this.fileList.size) {
+ 
 
         let size = this.fileList.size;
         let tmpfileSize = data.tmpfileSize;
@@ -693,7 +699,7 @@ export default {
         // this.$socket.emit(2000, JSON.stringify({
         //   path: this.node.path
         // }))
-      }
+      
     })
     this.$socket.on(8000, (data) => {
       if (data.byteLength) {
