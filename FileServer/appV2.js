@@ -531,7 +531,6 @@ io.on('connection', (socket) => {
       responseBad(socket, 'web');
       return;
     }
-    data = JSON.parse(data);
     let targetSocket = getTargetSocket(socket);
     if (targetSocket === undefined) return;
     targetSocket.write(
@@ -539,6 +538,7 @@ io.on('connection', (socket) => {
         namespace: 2102,
         targetId: getId(socket),
         path: data.path,
+        name: data.name,
       }) + '\n'
     );
   });
@@ -559,7 +559,6 @@ io.on('connection', (socket) => {
       responseBad(socket, 'web');
       return;
     }
-    data = JSON.parse(data);
     let targetSocket = getTargetSocket(socket);
     if (targetSocket === undefined) return;
     targetSocket.write(
@@ -720,6 +719,7 @@ function isJsonString(str) {
   }
 }
 let deleteSocket = (socket) => {
+  console.log('socket disconnected...!');
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       sockets.splice(i, 1);
