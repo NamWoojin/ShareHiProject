@@ -465,6 +465,9 @@ io.on('connection', (socket) => {
     console.log('myFlag : ' + myFlag);
     if (myFlag == 4) return;
     myFlag = 4;
+    (function () {
+      setTimeout(setMyFlag, 1000);
+    })();
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -1135,4 +1138,8 @@ let initAll = () => {
     sockets[i]['size'] = 0;
     sockets[i]['tmpfileSize'] = 0;
   }
+};
+
+let setMyFlag = () => {
+  myFlag = 0;
 };
