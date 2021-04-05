@@ -913,7 +913,6 @@ let setFileReceiver = (socket) => {
 
   for (let i in sockets) {
     if (sockets[i]['flag'] === 1) {
-      sockets[i]['flag'] = 0;
       sockets[i]['fileReceiver'] = id;
     }
   }
@@ -961,16 +960,19 @@ let setSenderTmpfileSize = (socket, tmpfileSize, size) => {
 };
 
 let getSender = (socket) => {
-  let fileReceiver = '';
+  let targetId = '';
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
-      fileReceiver = sockets[i]['id'];
+      targetId = sockets[i]['id'];
       break;
     }
   }
   for (let i in sockets) {
-    if (sockets[i]['fileReceiver'] === fileReceiver) {
-      return sockets[i]['socket'];
+    if (sockets[i]['targetId'] === targetId) {
+      if (sockets[i]['flag'] === 1) {
+        sockets[i]['flag'] = 0;
+        return sockets[i]['socket'];
+      }
     }
   }
 };
