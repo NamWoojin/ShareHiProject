@@ -400,6 +400,10 @@ export default {
           for(let i=0; i<this.selectitem.length; i++) {
             let idx = this.node.directory.indexOf(this.selectitem[i])
             if (idx > -1) this.node.directory.splice(idx, 1)
+            this.$socket.emit(2002, JSON.stringify({
+              path: this.node.path,
+              name: this.selectitem[i].name
+            }))
           }
           this.selectitem = [];
           this.$message({
@@ -448,11 +452,14 @@ export default {
       this.node.directory.push(
         {
           name: name,
-          // path: this.node.path + '\/' + name,
-          path: this.originalpath,
+          path: this.node.path + '\/' + name,
           type: 'folder'
         }
         )
+      this.$socket.emit(2003, JSON.stringify({
+        path: this.node.path,
+        name: name
+      }))
       this.componentKey++
       this.selectitem = [];
       this.viewMenu = false;
@@ -471,11 +478,20 @@ export default {
               message: '변경된 내용이 없습니다.'
             })
           } else if (this.checkFolder(value.value)) {
-            this.selectitem[0].name = value.value;
             this.$message({
               type: 'success',
               message: '수정되었습니다.'
             });
+            // socket emit edit name
+            console.log(this.selectitem[0].name)
+            console.log(this.selectitem[0].path)
+            this.$socket.emit(2001, JSON.stringify({
+              path: this.node.path,
+              name: this.selectitem[0].name,
+              newName: value.value
+            }))
+            this.selectitem[0].path = this.node.path + '\/' + value.value;
+            this.selectitem[0].name = value.value;
           } else {
             this.$message({
               type: 'info',
@@ -541,7 +557,8 @@ export default {
       }))
     },
     gotoDevicePage() {
-      this.$router.replace({ name: 'Main' })
+      // this.$router.replace({ name: 'Main' })
+      this.$router.push({ name: 'Main' })
       // this.$router.go(`http://localhost:8080`)
     }
   },
@@ -559,8 +576,8 @@ export default {
         this.uploadFileNameCopy = this.fileList.name
         console.log('watch fileList')
         console.log(this.uploadFileNameCopy)
-        // console.log(this.fileList)
-        // console.log(this.fileList.name)
+        console.log(this.fileList)
+        console.log(this.fileList.name)
         // console.log(this.fileList[0].size)
         const fileData = {
           'path': this.node.path,
@@ -684,7 +701,7 @@ export default {
         this.saveFileLength = this.saveFileLength - data.byteLength
         // console.log(data.byteLength, this.saveFileLength)
         if (this.saveFileLength == 0) {
-          // console.log(this.downloadFileNameCopy)
+          console.log(this.downloadFileNameCopy)
           // console.log('download complete')
           const a = document.createElement('a');
           a.download = this.downloadFileNameCopy;
