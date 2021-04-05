@@ -320,9 +320,9 @@ export default {
             if (child && child.innerText === folderName)  {
               flag = false
               folderName = '새 폴더' + ' (' + folderNumber + ')'
+              folderNumber += 1
               break
             }
-            folderNumber += 1
           }
           if (flag) {
             break
@@ -335,6 +335,7 @@ export default {
           }
         console.log({path : target.getAttribute("data-path"),name : folderName})
         this.$socket.emit(2003, JSON.stringify(data))
+        this.$socket.emit(2000, JSON.stringify(data))
         this.deleteContextMenu()
       })
       return addNewFolderMenu
@@ -409,7 +410,16 @@ export default {
       confirmBtn.addEventListener('click', ()=>{
       
         if (type === 0) { // 파일 및 폴더 삭제
-          target.parentNode.remove()
+          const dataPath = target.getAttribute("data-path")
+          const data = {
+            path: dataPath.substr(0,dataPath.lastIndexOf('\/')),
+            name: dataPath.substr(dataPath.lastIndexOf('\/')+1),
+          }
+          console.log('this.$socket.emit(2002)')
+          console.log('this.$socket.emit(2002) data')
+          console.log(data)
+          this.$socket.emit(2002, JSON.stringify(data))
+          this.$socket.emit(2000, JSON.stringify(data))
         }
         
         else if (type === 1) { // 파일 및 폴더 이름 변경
