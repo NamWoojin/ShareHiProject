@@ -491,6 +491,8 @@ io.on('connection', (socket) => {
    * 메시지 :{"namespace":2001,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
    */
   socket.on(KEY.UPDATE_NAME_OF_FOLDER, (data) => {
+    console.log(2001);
+    console.log(data);
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -508,7 +510,8 @@ io.on('connection', (socket) => {
         namespace: 2101,
         targetId: getId(socket),
         path: data.path,
-        newPath: data.newPath,
+        name: data.name,
+        newName: data.newName,
       }) + '\n'
     );
   });
