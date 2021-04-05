@@ -161,6 +161,10 @@ public class BackdropActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mSendViewModel.onActivityResult(requestCode,resultCode,data);
+        if(requestCode/1000 == 1) {
+            mSendViewModel.onActivityResult(requestCode, resultCode, data);
+        }else{
+            mSettingViewModel.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

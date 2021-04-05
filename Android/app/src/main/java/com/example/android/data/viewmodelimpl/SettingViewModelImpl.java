@@ -4,10 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -31,12 +36,22 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class SettingViewModelImpl extends ViewModel implements SettingViewModel {
+
+    private static final int PICK_FROM_ALBUM = 2000;
 
     private static final String TAG = "SettingViewModelImpl";
 
@@ -148,8 +163,95 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     //이미지 변경하기
     @Override
     public void editImage() {
-
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        mActivityRef.get().startActivityForResult(intent, PICK_FROM_ALBUM);
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == PICK_FROM_ALBUM) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri photoUri = data.getData();
+
+                Cursor cursor = null;
+                try {
+                    /*
+                     *  Uri 스키마를
+                     *  content:/// 에서 file:/// 로  변경한다.
+                     */
+                    String[] proj = {MediaStore.Images.Media.DATA};
+
+                    assert photoUri != null;
+                    cursor = mActivityRef.get().getContentResolver().query(photoUri, proj, null, null, null);
+
+                    assert cursor != null;
+                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+                    cursor.moveToFirst();
+
+                    File tempFile = new File(cursor.getString(column_index));
+                    Log.i(TAG, "onActivityResult: " + tempFile);
+                    MultipartBody.Part file = changeImageToMultipart(tempFile);
+                    RequestBody id = changeIntegerToRequestbody(mem_id);
+                    onRequestChangeImage(id,file);
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+    }
+
+    private MultipartBody.Part changeImageToMultipart(File file){
+        RequestBody rqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        MultipartBody.Part result = MultipartBody.Part.createFormData("image", file.getName(), rqFile); // 키값, 파일이름, 데이터
+
+        return result;
+    }
+
+    private RequestBody changeIntegerToRequestbody(int num){
+        return RequestBody.create(MediaType.parse("text/plain"), String.valueOf(num));
+    }
+
+    private void onRequestChangeImage(RequestBody id, MultipartBody.Part file){
+        APIRequest.request(RetrofitClient.getUserApiService().uploadImage(id,file), objectResponse -> {
+            Gson gson = new Gson();
+            int code = objectResponse.code();
+            String body = gson.toJson(objectResponse.body());
+
+            if (code >= 500) {
+                //서버 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_server_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 400) {
+                //클라이언트 에러
+                Toast.makeText(mActivityRef.get(), R.string.toast_404_fail_message, Toast.LENGTH_SHORT).show();
+            } else if (code >= 300) {
+
+            } else if (code >= 200) {
+                //성공
+                Type listType = new TypeToken<APIResponse<Object>>() {
+                }.getType();
+                APIResponse<Object> res = gson.fromJson(body, listType);
+                switch (res.getMessage()) {
+                    case "SUCCESS":
+                        getMemberInformation();
+                        break;
+                    case "FAIL":
+                        Toast.makeText(mActivityRef.get(), "존재하지 않는 이미지입니다.", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, throwable -> {
+            Log.e(TAG, "onRequestedSignIn: " + throwable);
+            Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
+        });
+    }
+
 
     @Override
     public void openEditPasswordDialog() {
@@ -161,7 +263,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
             newCheckPasswordLiveData.setValue("");
             mEditPasswordFragment = EditPasswordFragment.newInstance();
             mEditPasswordFragment.show(mActivityRef.get().getFragmentManager(), "EDIT_PASSWORD");
-        }else{
+        } else {
             Toast.makeText(mActivityRef.get(), R.string.fragment_setting_edit_password_cant_open_text, Toast.LENGTH_SHORT).show();
         }
     }
@@ -250,6 +352,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     public void closeEditPasswordDialog() {
         mEditPasswordFragment.dismiss();
     }
+
 
     //로그아웃
     @Override
