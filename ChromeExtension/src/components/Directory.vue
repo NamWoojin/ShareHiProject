@@ -29,6 +29,14 @@ export default {
       file : '',
       progress : false,
       percent : 0,
+      saveFile: '',
+      saveFileLengthOrigin: '',
+      saveFileLength: '',
+      blobArray: [],
+      downloadFile : {
+        name : '',
+        ext : '',
+      }
     }
   },
   watch : {
@@ -85,7 +93,36 @@ export default {
         }
       };
     })
-
+    this.$socket.on(8000, (data) => {
+      this.blobArray.push(new Blob([data]))
+      this.saveFileLength = this.saveFileLength - data.byteLength
+      console.log(data.byteLength, this.saveFileLength)
+      if (this.saveFileLength == 0) {
+        console.log('download complete')
+        const a = document.createElement('a');
+        a.download = this.downloadFile.name + this.downloadFile.ext
+        let blob = new Blob(this.blobArray)
+        a.href = URL.createObjectURL(blob)
+        a.style.display = 'none';
+        a.addEventListener('click', (e) => {
+          setTimeout(() => URL.revokeObjectURL(a.href), 30 * 1000);
+        });
+        a.click();
+        this.blobArray = [],
+        this.saveFileLength = 0
+        this.downloadFile.name = ''
+        this.downloadFile.ext = ''
+      }
+    })
+    this.$socket.on(8001, (data) => {
+      console.log('this.$socket.on(8001)')
+      console.log('8001 data')
+      console.log(JSON.parse(data))
+      this.saveFileLength = JSON.parse(data).size
+      this.saveFileLengthOrigin = JSON.parse(data).size
+      console.log(this.saveFileLength)
+      this.$socket.emit(8001)
+    })
     this.$socket.on(4000, (data) => {
       console.log('4000 Nodevice')
       data = JSON.parse(data)
@@ -273,6 +310,18 @@ export default {
       downloadMenu.innerText = '다운로드'
       downloadMenu.addEventListener('click', (e) => {
         console.log(e,target)
+        const dataPath = target.getAttribute("data-path")
+        const path = dataPath.substr(0,dataPath.lastIndexOf('\/'))
+        const name = dataPath.substr(dataPath.lastIndexOf('\/')+1).split('.')[0]
+        const ext = '.' + dataPath.substr(dataPath.lastIndexOf('\/')+1).split('.')[1]
+        console.log('this.$socket.emit(8000)')
+        this.downloadFile.name = name
+        this.downloadFile.ext = ext
+        this.$socket.emit(8000, JSON.stringify({
+          path,
+          name,
+          ext,
+        }))
         this.deleteContextMenu()
       })
       return downloadMenu
