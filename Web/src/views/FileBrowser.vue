@@ -713,6 +713,7 @@ export default {
           a.download = this.downloadFileNameCopy;
           // a.download = 'my-file.jpg';
           let blob = new Blob(this.blobArray)
+          console.log(this.blobArray.length)
           a.href = URL.createObjectURL(blob)
           a.style.display = 'none';
           a.addEventListener('click', (e) => {
@@ -720,9 +721,9 @@ export default {
   
           });
           a.click();
-          this.blobArray = [],
-          this.saveFileLength = 0
-
+          this.blobArray = [];
+          // this.saveFileLength = 0
+          
         }
       }
     })
