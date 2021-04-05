@@ -1,7 +1,7 @@
 'use strict';
 
 var mysql = require('mysql');
-var config = require('./db_config'); // ./는 현재 디렉토리를 나타냅니다
+var config = require('./db_config'); 
 var pool = mysql.createPool({
   host: config.host,
   user: config.user,
@@ -10,11 +10,3 @@ var pool = mysql.createPool({
 });
 
 module.exports = pool;
-
-// const getConn = function (callback) {
-//   pool.getConnection(function (err, connection) {
-//     callback(err, connection);
-//   });
-// };
-
-// module.exports = getConn;

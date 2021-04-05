@@ -10,7 +10,6 @@ const device = require('./device');
 const share = require('./share');
 const alert = require('./alert')
 
-// router.use('/user', auth, user);
 router.use('/member', member);
 router.use('/login', login);
 router.use('/follow', follow);

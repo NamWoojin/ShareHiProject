@@ -8,7 +8,6 @@ const getFollower = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 나를 친구추가한사람 조회');
         let memId = req.query.mem_id;
         pool.query(FollowQuery.getFollower, memId, function (err, result) {
           if (err) {
@@ -47,7 +46,6 @@ const getFollowing = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 내가친구추가한목록조회');
         let targetMemId = req.query.target_mem_id;
         pool.query(FollowQuery.getFollowing, targetMemId, function (err, result) {
           if (err) {
@@ -86,7 +84,6 @@ const insertFollowing = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 친구추가');
         let follow = req.body;
         pool.query(FollowQuery.checkFollowing, [follow.mem_id, follow.target_mem_id], function (err, result) {
           if (err) {
@@ -134,7 +131,6 @@ const deleteFollowing = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 친구삭제');
         let memId = req.query.mem_id;
         let targetMemId = req.query.target_mem_id;
         pool.query(FollowQuery.checkFollowing, [memId, targetMemId], function (err, result) {
@@ -190,7 +186,6 @@ const searchMember = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 친구검색');
         let searchWord = "%" + req.query.searchWord + "%";
         pool.query(FollowQuery.searchMember, [searchWord, searchWord], function (err, result) {
           if (err) {

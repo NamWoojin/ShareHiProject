@@ -12,7 +12,6 @@ const signup = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 비밀번호암호화');
         let member = req.body;
         bcrypt.hash(member.mem_password, 10, async function (err, hash) {
           if (err) {
@@ -24,7 +23,6 @@ const signup = async (req, res) => {
         });
       },
       function (member, callback) {
-        console.log('>>>> 이메일확인');
         pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
           if (err) {
             callback(err);
@@ -40,7 +38,6 @@ const signup = async (req, res) => {
         });
       },
       function (member, callback) {
-        console.log('>>>> 회원가입');
         pool.query(UserQuery.signup, [member.mem_name, member.mem_email, member.mem_password], function (err, result) {
           if (err) {
             callback(err);
@@ -73,7 +70,6 @@ const signout = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 회원정보가져오기');
         let memId = req.query.mem_id;
         pool.query(UserQuery.getUser, memId, async function (err, result) {
           if (err) {
@@ -90,7 +86,6 @@ const signout = async (req, res) => {
         });
       },
       function (mem_id, callback) {
-        console.log('>>>> 회원탈퇴');
         pool.query(UserQuery.signout, mem_id, function (err, result) {
           if (err) {
             callback(err);
@@ -123,7 +118,6 @@ const getUser = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 회원정보가져오기');
         let memId = req.query.mem_id;
         pool.query(UserQuery.getUser, memId, async function (err, result) {
           if (err) {
@@ -163,7 +157,6 @@ const checkEmail = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 이메일중복확인');
         let memEmail = req.query.mem_email;
         pool.query(UserQuery.checkEmail, memEmail, function (err, result) {
           if (err) {
@@ -207,8 +200,6 @@ const checkPassword = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 비밀번호확인');
-        console.log('>>>> 아이디존재유무확인');
         let member = req.body;
 
         pool.query(UserQuery.getUser, member.mem_id, async function (err, result) {
@@ -226,7 +217,6 @@ const checkPassword = async (req, res) => {
         });
       },
       function (member, callback) {
-        console.log('>>>> 비밀번호확인');
         pool.query(UserQuery.checkPassword, member.mem_id, function (err, result) {
           if (err) {
             callback(err);
@@ -271,8 +261,6 @@ const updatePassword = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 비밀번호변경');
-        console.log('>>>> 비밀번호암호화');
         let member = req.body;
         bcrypt.hash(member.mem_password, 10, async function (err, hash) {
           if (err) {
@@ -284,8 +272,6 @@ const updatePassword = async (req, res) => {
         });
       },
       function (member, callback) {
-        console.log('>>>> 비밀번호변경');
-
         pool.query(UserQuery.updatePassword, [member.mem_password, member.mem_id], function (err, result) {
           if (err) {
             callback(err);
@@ -320,7 +306,6 @@ const findPW = async (req, res) => {
   async.waterfall(
     [
       function(callback) {
-        console.log('>> 이메일존재유무확인')
         let member = req.body;
 
         pool.query(UserQuery.checkEmail, member.mem_email, function (err, result) {
@@ -338,13 +323,11 @@ const findPW = async (req, res) => {
         });
       },
       function (mem_id, mem_email, callback) {
-        console.log('>> 임시비밀번호발급')
         let authPW = Math.random().toString(36).substr(2, 11) + '!';
 
         callback(null, mem_id, mem_email, authPW);
       },
       function(mem_id, mem_email, authPW, callback) {
-        console.log('>> 임시비밀번호암호화')
 
           bcrypt.hash(authPW, 10, async function (err, hash) {
             if (err) {
@@ -408,12 +391,8 @@ const requireEmailAuth = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 이메일인증번호요청');
         let member = req.body;
-
         let authNum = Math.random().toString().substr(2, 6);
-        console.log('>>>authNum');
-        console.log(authNum);
 
         const mailOptions = {
           from: 'filedsolar@gmail.com',
@@ -459,7 +438,6 @@ const checkEmailAuth = async (req, res) => {
   async.waterfall(
     [
       function (callback) {
-        console.log('>>>> 이메일인증번호확인');
         let member = req.body;
         redis.get(member.mem_email, function (err, value) {
           if (err) {
@@ -517,8 +495,6 @@ const upload = async (req, res) => {
           });
         } else {
           let path = 'https://j4f001.p.ssafy.io/profileImg/' + image.filename;
-          console.log(image.filename);
-
           callback(null, path, mem_id);
         }
       },

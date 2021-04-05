@@ -6,7 +6,4 @@ const ShareService = require('../../services/share/share.srv')
 
 router.post('/insertShareInfo', ShareService.insertShareInfo);
 
-
-
-
 module.exports = router;
