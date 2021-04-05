@@ -2,7 +2,7 @@
   <div style="cursor: pointer;">
     <div @click="clickDevice">
       <v-img width="150px" height="150px" :src="squareUrl"></v-img>
-      <p>{{device.name}}</p>
+      <p>{{device.name.split('-')[0]}}</p>
     </div>
     
   </div>

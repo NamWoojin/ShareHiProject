@@ -11,7 +11,7 @@
               @mousedown="dragMouseDown"
               @dblclick="resize"
             >
-              <span style="font-weight: bold;">{{device.name}}</span>
+              <span style="font-weight: bold;">{{device.name.split('-')[0]}}</span>
               <div style="display: flex; justify-content: flex-end;">
                 <v-icon v-if="browsersize" style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-note-multiple-outline</v-icon>
                 <v-icon v-else style="cursor: pointer; margin: 0 10px;" @click="resize">mdi-border-all-variant</v-icon>
@@ -237,12 +237,16 @@
     >
       {{ percent }}
     </v-progress-circular>
-    <v-progress-linear
+    <!-- <v-progress-circular
       v-if="saveFileLength > 0"
-      height="25"
+      style="position: absolute; top: 50%; left: 50%; z-index: 99; transform: translate(-50%, -50%);"
+      color="teal"
+      :rotate="360"
+      :size="250"
+      :width="20"
+      :value="(100 - Math.ceil(saveFileLength*100/saveFileLengthOrigin))"
     >
-      <strong>{{ Math.ceil(saveFileLength/saveFileLengthOrigin) * 100 }}%</strong>
-    </v-progress-linear>
+    </v-progress-circular> -->
   </div>
 </template>
 
@@ -296,6 +300,8 @@ export default {
       saveFileLengthOrigin: '',
       saveFileLength: '',
       blobArray: [],
+      downloadFileNameCopy: '',
+      uploadFileNameCopy: '',
     };
   },
   methods: {
@@ -398,6 +404,10 @@ export default {
           for(let i=0; i<this.selectitem.length; i++) {
             let idx = this.node.directory.indexOf(this.selectitem[i])
             if (idx > -1) this.node.directory.splice(idx, 1)
+            this.$socket.emit(2002, JSON.stringify({
+              path: this.node.path,
+              name: this.selectitem[i].name
+            }))
           }
           this.selectitem = [];
           this.$message({
@@ -415,7 +425,7 @@ export default {
     },
     openFolder(c) {
       // this.node = c;
-      console.log('openFolder')
+      // console.log('openFolder')
       this.$socket.emit(2000, JSON.stringify({
         path: c.path
       }))
@@ -446,11 +456,14 @@ export default {
       this.node.directory.push(
         {
           name: name,
-          // path: this.node.path + '\/' + name,
-          path: this.originalpath,
+          path: this.node.path + '\/' + name,
           type: 'folder'
         }
         )
+      this.$socket.emit(2003, JSON.stringify({
+        path: this.node.path,
+        name: name
+      }))
       this.componentKey++
       this.selectitem = [];
       this.viewMenu = false;
@@ -469,11 +482,20 @@ export default {
               message: '변경된 내용이 없습니다.'
             })
           } else if (this.checkFolder(value.value)) {
-            this.selectitem[0].name = value.value;
             this.$message({
               type: 'success',
               message: '수정되었습니다.'
             });
+            // socket emit edit name
+            console.log(this.selectitem[0].name)
+            console.log(this.selectitem[0].path)
+            this.$socket.emit(2001, JSON.stringify({
+              path: this.node.path,
+              name: this.selectitem[0].name,
+              newName: value.value
+            }))
+            this.selectitem[0].path = this.node.path + '\/' + value.value;
+            this.selectitem[0].name = value.value;
           } else {
             this.$message({
               type: 'info',
@@ -490,8 +512,8 @@ export default {
       });
     },
     uploadFile() {
-      console.log(this.node)
-      console.log(this.node.path)
+      // console.log(this.node)
+      // console.log(this.node.path)
       this.viewMenu = false
       document.getElementById('fileinput').click()
     },
@@ -501,16 +523,22 @@ export default {
       document.getElementById('window').classList.toggle('max-window')
     },
     downloadFile() {
-      console.log('this is downloadFile')
+      // console.log('this is downloadFile')
       // let file = this.selectWindowFile();
+      this.downloadFileNameCopy = this.selectitem[0].name
       this.$socket.emit(8000, JSON.stringify({
-        path: './',
-        name: 'a',
-        ext: '.jpg'
+        path: this.node.path,
+        name: this.selectitem[0].name.split('.')[0],
+        ext: '.' + this.selectitem[0].name.split('.')[1]
       }))
+      // this.$socket.emit(8000, JSON.stringify({
+      //   path: '\/storage\/emulated\/0\/Download',
+      //   name: '다운로드',
+      //   ext: '.jpg'
+      // }))
     },
     selectFolder(i) {
-      console.log(i)
+      // console.log(i)
       this.$socket.emit(2000, JSON.stringify({
         path: i.path
       }))
@@ -533,7 +561,8 @@ export default {
       }))
     },
     gotoDevicePage() {
-      this.$router.replace({ name: 'Main' })
+      // this.$router.replace({ name: 'Main' })
+      this.$router.push({ name: 'Main' })
       // this.$router.go(`http://localhost:8080`)
     }
   },
@@ -548,6 +577,10 @@ export default {
   watch: {
     fileList: function () {
       if (this.fileList.size > 0) {
+        this.uploadFileNameCopy = this.fileList.name
+        console.log('watch fileList')
+        console.log(this.uploadFileNameCopy)
+        console.log(this.fileList)
         console.log(this.fileList.name)
         // console.log(this.fileList[0].size)
         const fileData = {
@@ -556,7 +589,8 @@ export default {
           'ext': this.fileList.name.substr(this.fileList.name.split('.')[0].length),
           'size': this.fileList.size,
         }
-        console.log(fileData)
+        // console.log(fileData)
+        console.log('send 7000')
         this.$socket.emit(7000, JSON.stringify(fileData));
       }
     },
@@ -584,12 +618,12 @@ export default {
   },
   created() {
     this.$socket.on(2000, (data) => {
-      console.log(2000)
-      console.log(data)
-      console.log(typeof data)
+      // console.log(2000)
+      // console.log(data)
+      // console.log(typeof data)
       data = JSON.parse(data)
-      console.log(data)
-      console.log(typeof data)
+      // console.log(data)
+      // console.log(typeof data)
       this.currentpath = JSON.parse(data.data).path
       if (this.node.path && (this.currentpath != this.node.path)) {
         this.lastpath = this.node.path
@@ -604,7 +638,7 @@ export default {
     })
 
     this.$socket.on(1070, (data) => {
-      console.log(1070)
+      // console.log(1070)
       data = JSON.parse(data)
       this.originalpath = data.path
       this.$socket.emit(2000, JSON.stringify({
@@ -613,10 +647,11 @@ export default {
     })
 
     this.$socket.on(7000, (data) => {
-      console.log('7000 on')
+      // console.log('7000 on')
+      console.log('this is 7000 : ', data)
       data = JSON.parse(data)
       // const fileData = this.fileList
-      if (this.fileList.size) {
+ 
 
         let size = this.fileList.size;
         let tmpfileSize = data.tmpfileSize;
@@ -653,22 +688,30 @@ export default {
             e.target.readAsArrayBuffer(tmp);
           }
         };
+        console.log('send', this.uploadFileNameCopy)
+        console.log(this.uploadFileNameCopy)
+        console.log(this.uploadFileNameCopy.split('.')[1])
         this.node.directory.push({
-          'name': 'my-file.mp4',
-          'path': this.node.path + '\/' + 'my-file.mp4',
-          'type': 'mp4'
+          'name': this.uploadFileNameCopy,
+          'path': this.node.path + '\/' + this.uploadFileNameCopy,
+          'type': this.uploadFileNameCopy.split('.')[1]
         })
-      }
+        // this.$socket.emit(2000, JSON.stringify({
+        //   path: this.node.path
+        // }))
+      
     })
     this.$socket.on(8000, (data) => {
-      if (data.length) {
+      if (data.byteLength) {
         this.blobArray.push(new Blob([data]))
         this.saveFileLength = this.saveFileLength - data.byteLength
-        console.log(data.byteLength, this.saveFileLength)
+        // console.log(data.byteLength, this.saveFileLength)
         if (this.saveFileLength == 0) {
-          console.log('download complete')
+          console.log(this.downloadFileNameCopy)
+          // console.log('download complete')
           const a = document.createElement('a');
-          a.download = 'my-file.jpg';
+          a.download = this.downloadFileNameCopy;
+          // a.download = 'my-file.jpg';
           let blob = new Blob(this.blobArray)
           a.href = URL.createObjectURL(blob)
           a.style.display = 'none';
@@ -686,13 +729,13 @@ export default {
     this.$socket.on(8001, (data) => {
       this.saveFileLength = JSON.parse(data).size
       this.saveFileLengthOrigin = JSON.parse(data).size
-      console.log('this is saveFileLength on 8001')
-      console.log(this.saveFileLength)
+      // console.log('this is saveFileLength on 8001')
+      // console.log(this.saveFileLength)
       this.$socket.emit(8001)
     })
     this.$socket.on(7001, (data) => {
-      console.log('this is bar: ', JSON.parse(data).percent)
-      console.log(typeof JSON.parse(data).percent)
+      // console.log('this is bar: ', JSON.parse(data).percent)
+      // console.log(typeof JSON.parse(data).percent)
       this.percent = JSON.parse(data).percent
     })
   }
