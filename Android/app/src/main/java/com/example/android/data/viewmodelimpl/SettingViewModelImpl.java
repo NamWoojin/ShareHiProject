@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -44,6 +46,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -193,7 +196,11 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                     cursor.moveToFirst();
 
                     File tempFile = new File(cursor.getString(column_index));
-                    Log.i(TAG, "onActivityResult: " + tempFile);
+//                    Log.i(TAG, "onActivityResult: " + tempFile);
+                    String filePath = getResizeFileImage(cursor.getString(column_index),4);
+                    if(filePath != null){
+                        tempFile = new File(filePath);
+                    }
                     MultipartBody.Part file = changeImageToMultipart(tempFile);
                     RequestBody id = changeIntegerToRequestbody(mem_id);
                     onRequestChangeImage(id, file);
@@ -207,14 +214,99 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         }
     }
 
-//    public static Drawable getResizeFileImage(String file_route, int size, int width, int height){
-//        BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inSampleSize = size;
-//        Bitmap src = BitmapFactory.decodeFile(file_route, options);
-//        Bitmap resized = Bitmap.createScaledBitmap(src, width, height, true);
-//        return new BitmapDrawable(resized);
-//    }
+    //이미지 용량 줄이기
+    public String getResizeFileImage(String file_route, int size){
+        Log.i(TAG, "getResizeFileImage: "+file_route);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = size;
+        Bitmap src = BitmapFactory.decodeFile(file_route, options);
+        if(src == null){
+            src = BitmapFactory.decodeFile(file_route);
+            Log.i(TAG, "getResizeFileImage: "+src);
+        }
+        int height = src.getHeight();
+        int width = src.getWidth();
+        Bitmap resized = Bitmap.createScaledBitmap(src, 256, height * 256/width, true);
+        resized = rotateBitmap(resized, bitmapOrientation(file_route));
+        return SaveBitmapToFileCache(resized);
+    }
 
+    //이미지 회전 값 구하기
+    private int bitmapOrientation(String path){
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_UNDEFINED);
+    }
+
+    //이미지 회전값에 따라 원상복구
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        }
+        catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //캐시에 용량 줄인 이미지 저장
+    private String SaveBitmapToFileCache(Bitmap bitmap){
+        String path = mActivityRef.get().getCacheDir()+"/"+new Date()+".jpg";
+        Log.i(TAG, "SaveBitmapToFileCache: "+path);
+        File fileCacheItem = new File(path);
+        try {
+            fileCacheItem.createNewFile();
+            FileOutputStream out = new FileOutputStream(fileCacheItem);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
+
+
+
+
+    //이미지 MultipartBody로 변환
     private MultipartBody.Part changeImageToMultipart(File file) {
         RequestBody rqFile = RequestBody.create(file, MediaType.parse("multipart/form-data"));
 
@@ -223,6 +315,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         return result;
     }
 
+    //int값 requestbody로 변환
     private RequestBody changeIntegerToRequestbody(int num) {
         return RequestBody.create(String.valueOf(num), MediaType.parse("text/plain"));
     }
