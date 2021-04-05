@@ -341,8 +341,11 @@ let andServer = net.createServer((socket) => {
         break;
 
       case 2150:
+        (function () {
+          setTimeout(setMyFlag, 1000);
+        })();
         console.log('2150 from android');
-        console.log('data : ' + data);
+        console.log('data : ' + data.data);
         console.log('myFlag : ' + myFlag);
         pathData += data.data;
         let pathDataChunkCount = data.pathDataChunkCount + 1;
@@ -448,9 +451,6 @@ io.on('connection', (socket) => {
    * 메시지 :{"data":"folder directory JSON object "}
    */
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
-    (function () {
-      setTimeout(setMyFlag, 1000);
-    })();
     if (myFlag == 4) return;
     myFlag = 4;
     if (!isJsonString(data)) {
