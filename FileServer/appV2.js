@@ -61,7 +61,6 @@ let andServer = net.createServer((socket) => {
    * @description 서버의 flag를 본다
    */
   if (flag === 1) {
-    console.log('flag 1');
     setFileReceiver(socket);
     let controlSocket = getControlSocket(socket);
     if (controlSocket === undefined) return;
@@ -77,7 +76,6 @@ let andServer = net.createServer((socket) => {
     setFileSender(socket);
     let controlSocket = getControlSocketDownload(socket);
     if (controlSocket === undefined) return;
-    console.log('sender socket id : ' + getId(socket));
   }
   responseOK(socket, 'android');
 
@@ -116,9 +114,8 @@ let andServer = net.createServer((socket) => {
      */
     if (isFileSender(socket)) {
       console.log(data.byteLength);
-      console.log('send 8000 to web client');
+      console.log('8000');
       let fileSender = getFileSender(socket);
-      console.log('sending');
       fileSender.emit(8000, data);
       return;
     }
@@ -134,7 +131,6 @@ let andServer = net.createServer((socket) => {
       return;
     }
     data = JSON.parse(data);
-    console.log(data);
     let id = parseInt(data.namespace);
 
     switch (id) {
@@ -146,6 +142,7 @@ let andServer = net.createServer((socket) => {
        */
       case KEY.SET_SHARE_ID:
         setShareDevice(socket);
+        setName(socket, data.adId);
         //responseOK(socket, 'android');
         /**
          * 연결 되면 모든 디바이스들한테 브로드 캐스팅
@@ -160,7 +157,6 @@ let andServer = net.createServer((socket) => {
        */
       case KEY.SET_SHARE_DATA:
         shareData = socketMap.get(socket);
-        console.log('share data : ' + shareData);
         if (idMap.get(shareDevice) === undefined) return;
         idMap.get(shareDevice).write(
           JSON.stringify({
@@ -206,11 +202,9 @@ let andServer = net.createServer((socket) => {
        * 메시지 : {"namespace":1010,"status":200,"message":"OK"}
        */
       case 1070:
+        console.log('1070 from android');
         path = data.path;
         targetId = data.targetId;
-        console.log('path : ' + path);
-        console.log('targetId : ' + targetId);
-
         getSocketByTargetId(targetId).emit(
           1070,
           JSON.stringify({
@@ -299,11 +293,10 @@ let andServer = net.createServer((socket) => {
        * @description 파일 전송 전처리 최종작업
        */
       case 7100:
-        console.log(7100);
+        console.log('7100 from android');
         setSenderTmpfileSize(socket, data.tmpfileSize, data.size);
 
         let sender = getSender(socket);
-        console.log('sender : ', sender);
         if (sender === undefined) break;
         sender.emit(
           KEY.SEND_FILE_STAT,
@@ -320,7 +313,7 @@ let andServer = net.createServer((socket) => {
        * @data {path, name, exe}
        */
       case 8100:
-        console.log(8100);
+        console.log('8100 from android');
 
         setDownloadReceiverSize(data.size, data.targetId);
         getSocketByTargetId(data.targetId).emit(
@@ -332,7 +325,7 @@ let andServer = net.createServer((socket) => {
 
         break;
       case 2100:
-        console.log('emit : ' + 2100);
+        console.log('2100 from android');
         pathData = '';
         socket.write(
           JSON.stringify({
@@ -346,12 +339,11 @@ let andServer = net.createServer((socket) => {
         break;
 
       case 2150:
+        console.log('2150 from android');
         pathData += data.data;
         let pathDataChunkCount = data.pathDataChunkCount + 1;
         if (pathDataChunkCount == data.chunkCount) {
           myFlag = 0;
-          console.log(pathData.length);
-          console.log('pathData : ' + pathData);
           getSocket(data.targetId, pathData);
         } else {
           socket.write(
@@ -369,16 +361,6 @@ let andServer = net.createServer((socket) => {
   });
 });
 
-/**
- * 안드로이드와 웹 소켓 연결을 실시한다
- */
-// server.listen(9002, () => {
-//   console.log('웹-서버 socket연결');
-// });
-// andServer.listen(9003, () => {
-//   console.log('안드-서버 socket연결');
-// });
-// server.listen(443);
 server.listen(9002);
 
 andServer.listen(9003);
@@ -462,7 +444,6 @@ io.on('connection', (socket) => {
    * 메시지 :{"data":"folder directory JSON object "}
    */
   socket.on(KEY.GET_TREE_OF_FOLDERS, (data) => {
-    console.log('myFlag : ' + myFlag);
     if (myFlag == 4) return;
     myFlag = 4;
     (function () {
@@ -495,8 +476,7 @@ io.on('connection', (socket) => {
    * 메시지 :{"namespace":2001,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
    */
   socket.on(KEY.UPDATE_NAME_OF_FOLDER, (data) => {
-    console.log(2001);
-    console.log(data);
+    console.log('2001 from web');
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -526,8 +506,7 @@ io.on('connection', (socket) => {
    * 메시지 :
    */
   socket.on(KEY.DELETE_FOLDERS, (data) => {
-    console.log(2002);
-    console.log(data);
+    console.log('2002 from web');
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -556,8 +535,7 @@ io.on('connection', (socket) => {
    * 메시지 :
    */
   socket.on(KEY.ADD_FOLDERS, (data) => {
-    console.log(2003);
-    console.log(data);
+    console.log('2003 from web');
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -587,7 +565,7 @@ io.on('connection', (socket) => {
    * @data
    */
   socket.on(KEY.SEND_FILE_STAT, (data) => {
-    console.log(7000);
+    console.log('7000 from web');
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
@@ -763,17 +741,6 @@ let checkSocket = (id) => {
   }
   return false;
 };
-let printSocket = (socket) => {
-  console.log('count : ' + sockets.length);
-  console.log('---------print--------------');
-  for (let i in sockets) {
-    for (let obj in sockets[i]) {
-      if (obj === 'socket') continue;
-      console.log(obj + ' : ' + sockets[i][obj]);
-    }
-  }
-  console.log('----------------------------');
-};
 let responseOK = (socket, type) => {
   if (type === 'android') {
     socket.write(
@@ -853,7 +820,6 @@ let connectToShareDevice = (socket, targetId) => {
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
       sockets[i]['targetId'] = targetId;
-      console.log('target id : ' + targetId);
       return;
     }
   }
@@ -1142,4 +1108,12 @@ let initAll = () => {
 
 let setMyFlag = () => {
   myFlag = 0;
+};
+
+let setName = (socket, adId) => {
+  for (let i in sockets) {
+    if (sockets[i]['socket'] === socket) {
+      sockets[i]['name'] = adId;
+    }
+  }
 };
