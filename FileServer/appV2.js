@@ -453,7 +453,7 @@ io.on('connection', (socket) => {
     if (myFlag == 4) return;
     myFlag = 4;
     (function () {
-      setTimeout(setMyFlag, 1000);
+      setTimeout(setMyFlag, 4000);
     })();
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
