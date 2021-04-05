@@ -56,7 +56,7 @@ import java.util.List;
 
 public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
-    private final int OPEN_DIRECTORY_REQUEST_CODE = 20;
+    private final int OPEN_DIRECTORY_REQUEST_CODE = 1000;
 
     private WeakReference<Activity> mActivityRef;
 
@@ -93,22 +93,21 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         mSocketRepository.setParentContext(parentContext);
         setSocketObserver();
 //        mSocketRepository.deleteFolder(mRoot,"sample.mp4");
-        createMemberList();
     }
 
-    private void createMemberList() {
-        List<Member> newList = new ArrayList<>();
-
-        Member m = new Member();
-        m.setMem_name("김싸피");
-        newList.add(m);
-        Member md = new Member();
-        md.setMem_name("박싸피");
-        newList.add(md);
-
-        selectedMemberLiveData.setValue(newList);
-        prepareMemberRecyclerAdapter.notifyDataSetChanged();
-    }
+//    private void createMemberList() {
+//        List<Member> newList = new ArrayList<>();
+//
+//        Member m = new Member();
+//        m.setMem_name("김싸피");
+//        newList.add(m);
+//        Member md = new Member();
+//        md.setMem_name("박싸피");
+//        newList.add(md);
+//
+//        selectedMemberLiveData.setValue(newList);
+//        prepareMemberRecyclerAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     public void switchPage(String page) {
