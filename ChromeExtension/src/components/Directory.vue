@@ -304,12 +304,46 @@ export default {
       })
       return uploadMenu
     },
+    setAddNewFolder(target) {
+      const addNewFolderMenu = document.createElement('div')
+      addNewFolderMenu.setAttribute('class','context-menu-content')
+      addNewFolderMenu.innerText = '폴더추가'
+      addNewFolderMenu.addEventListener('click', (e) => {
+        let folderName = '새 폴더'
+        let folderNumber = 1
+        const ul = target.nextElementSibling
+        const ChildNodes = ul.children
+        while (true) {
+          let flag = true
+          for (let i=0; i<ChildNodes.length;i++) {
+            const child = ChildNodes[i].querySelector('.dir')
+            if (child && child.innerText === folderName)  {
+              flag = false
+              folderName = '새 폴더' + ' (' + folderNumber + ')'
+              break
+            }
+            folderNumber += 1
+          }
+          if (flag) {
+            break
+          }
+        }
+        console.log('this.$socket.emit(2003)')
+        const data = {
+          path : target.getAttribute("data-path"),
+          name : folderName
+          }
+        console.log({path : target.getAttribute("data-path"),name : folderName})
+        this.$socket.emit(2003, JSON.stringify(data))
+        this.deleteContextMenu()
+      })
+      return addNewFolderMenu
+    },
     setDownloadMenu(target) {
       const downloadMenu = document.createElement('div')
       downloadMenu.setAttribute('class','context-menu-content')
       downloadMenu.innerText = '다운로드'
       downloadMenu.addEventListener('click', (e) => {
-        console.log(e,target)
         const dataPath = target.getAttribute("data-path")
         const path = dataPath.substr(0,dataPath.lastIndexOf('\/'))
         const name = dataPath.substr(dataPath.lastIndexOf('\/')+1).split('.')[0]
@@ -390,6 +424,21 @@ export default {
               return       
             }
           }
+          console.log('target')
+          console.log(target)
+          const dataPath = target.getAttribute("data-path")
+          console.log('this.$socket.emit(2001)')
+          console.log('this.$socket.emit(2001) data')
+          console.log({
+              path: dataPath.substr(0,dataPath.lastIndexOf('\/')),
+              name: dataPath.substr(dataPath.lastIndexOf('\/')+1),
+              newName: modalObj.nameInput.value
+            })
+          this.$socket.emit(2001, JSON.stringify({
+              path: dataPath.substr(0,dataPath.lastIndexOf('\/')),
+              name: dataPath.substr(dataPath.lastIndexOf('\/')+1),
+              newName: modalObj.nameInput.value
+            }))
           target.innerText = modalObj.nameInput.value
         }
 
@@ -480,6 +529,7 @@ export default {
 
       if (targetType === 'dir') {
         contextMenu.appendChild(this.setUploadMenu(target))
+        contextMenu.appendChild(this.setAddNewFolder(target))
       }
       overlay.appendChild(contextMenuOverlay)
       overlay.appendChild(contextMenu)
