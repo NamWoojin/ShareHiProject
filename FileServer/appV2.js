@@ -342,6 +342,8 @@ let andServer = net.createServer((socket) => {
 
       case 2150:
         console.log('2150 from android');
+        console.log('data : ' + data);
+        console.log('myFlag : ' + myFlag);
         pathData += data.data;
         let pathDataChunkCount = data.pathDataChunkCount + 1;
         if (pathDataChunkCount == data.chunkCount) {
