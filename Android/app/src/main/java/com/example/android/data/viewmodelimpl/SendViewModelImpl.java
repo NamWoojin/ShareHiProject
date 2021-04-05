@@ -77,6 +77,10 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
     //공유 가능 여부
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
+    private MutableLiveData<String> shareTitleLiveData = new MutableLiveData<>();
+
+    //로딩
+    private MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
     private ShareFragment shareFragment;
     private CreateFolderFragment createFolderFragment;
@@ -92,6 +96,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         mSocketRepository = repository;
         mSocketRepository.setParentContext(parentContext);
         setSocketObserver();
+        setAdIDObserver();
 //        mSocketRepository.deleteFolder(mRoot,"sample.mp4");
     }
 
@@ -166,45 +171,60 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //공유 중단
     @Override
     public void stopShare() {
+        loadingLiveData.setValue(true);
         mSocketRepository.stopSocket();
+
     }
 
     //prepare
     //공유 시작
     @Override
     public void startShare() {
+        loadingLiveData.setValue(true);
         mSocketRepository.startSocket(selectedPathLiveData.getValue());
+
+    }
+
+    private void setAdIDObserver() {
+        mSocketRepository.getAdIDLiveData().observe((BackdropActivity) mActivityRef.get(), s -> {
+            if (s.length() > 0) {
+                String[] splitID = s.split("-");
+                shareTitleLiveData.setValue("공유중입니다.\n장치 아이디: " + splitID[0]);
+            }
+        });
     }
 
     private void setSocketObserver() {
-        mSocketRepository.getIsConnecting().observe((BackdropActivity) mActivityRef.get(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                switch (s) {
-                    case "successConnect":
-                        shareFragment = ShareFragment.newInstance();
-                        shareFragment.setCancelable(false);
-                        shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
-                        break;
-                    case "failConnect":
-                        new AlertDialog.Builder(mActivityRef.get())
-                                .setTitle("통신 중지")
-                                .setMessage("소켓 연결이 끊어졌습니다.")
-                                .setPositiveButton("확인", (dialog, whichButton) -> {
-                                    if (shareFragment != null && shareFragment.isAdded()) {  //dialog fragment
-                                        shareFragment.dismiss();
-                                    }
-                                })
-                                .show();
-                        break;
-                    case "successClose":
-                        shareFragment.dismiss();
-                        Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
-                        break;
-                    case "failClose":
-                        Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
-                        break;
-                }
+        mSocketRepository.getIsConnecting().observe((BackdropActivity) mActivityRef.get(), s -> {
+            switch (s) {
+                case "successConnect":
+                    loadingLiveData.setValue(false);
+                    shareFragment = ShareFragment.newInstance();
+                    shareFragment.setCancelable(false);
+                    shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
+                    break;
+                case "failConnect":
+                    loadingLiveData.setValue(false);
+                    new AlertDialog.Builder(mActivityRef.get())
+                            .setTitle("통신 중지")
+                            .setMessage("소켓 연결이 끊어졌습니다.")
+                            .setPositiveButton("확인", (dialog, whichButton) -> {
+                                if (shareFragment != null && shareFragment.isAdded()) {  //dialog fragment
+                                    shareFragment.dismiss();
+                                }
+                            })
+                            .show();
+                    break;
+                case "successClose":
+
+                    shareFragment.dismiss();
+                    Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
+                    loadingLiveData.setValue(false);
+                    break;
+                case "failClose":
+                    Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
+                    loadingLiveData.setValue(false);
+                    break;
             }
         });
     }
@@ -391,5 +411,19 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     @Override
     public MutableLiveData<String> getNewFolderNameLiveData() {
         return newFolderNameLiveData;
+    }
+
+    @Override
+    public MutableLiveData<String> getShareTitleLiveData() {
+        return shareTitleLiveData;
+    }
+
+    @Override
+    public void setShareTitleLiveData(MutableLiveData<String> shareTitleLiveData) {
+        this.shareTitleLiveData = shareTitleLiveData;
+    }
+    @Override
+    public MutableLiveData<Boolean> getLoadingLiveData() {
+        return loadingLiveData;
     }
 }

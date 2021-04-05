@@ -32,6 +32,7 @@ public class SocketRepositoryImpl implements SocketRepository {
     private WeakReference<Activity> mActivityRef;
 
     private MutableLiveData<String> isConnecting= new MutableLiveData<>();
+    private MutableLiveData<String> AdIDLiveData = new MutableLiveData<>();
 
     private SocketInfo socketInfo;
 
@@ -70,6 +71,9 @@ public class SocketRepositoryImpl implements SocketRepository {
                 Log.i("TAG", "run: "+advertId);
                 //Socket 실행
                 socketInfo.connect(advertId);
+                mActivityRef.get().runOnUiThread(() -> {
+                    AdIDLiveData.setValue(advertId);
+                });
 
             }catch (NullPointerException e){
                 e.printStackTrace();
@@ -228,5 +232,13 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public void setIsConnecting(MutableLiveData<String> isConnecting) {
         this.isConnecting = isConnecting;
+    }
+    @Override
+    public MutableLiveData<String> getAdIDLiveData() {
+        return AdIDLiveData;
+    }
+    @Override
+    public void setAdIDLiveData(MutableLiveData<String> adIDLiveData) {
+        AdIDLiveData = adIDLiveData;
     }
 }

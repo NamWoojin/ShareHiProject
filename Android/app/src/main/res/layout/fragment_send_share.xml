@@ -25,7 +25,7 @@
                 android:layout_height="@dimen/fragment_share_connection_textView_height"
                 android:layout_marginVertical="@dimen/fragment_share_marginVertical"
                 android:gravity="center"
-                android:text="공유중입니다"
+                android:text="@{viewModel.shareTitleLiveData}"
                 android:textColor="@color/green_3"
                 android:textSize="@dimen/fragment_share_connection_textView_textSize"
                 android:textStyle="bold"
