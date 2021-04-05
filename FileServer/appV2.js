@@ -522,6 +522,8 @@ io.on('connection', (socket) => {
    * 메시지 :
    */
   socket.on(KEY.DELETE_FOLDERS, (data) => {
+    console.log(2002);
+    console.log(data);
     if (!isJsonString(data)) {
       responseBad(socket, 'web');
       return;
