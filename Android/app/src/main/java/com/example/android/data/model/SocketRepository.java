@@ -27,4 +27,6 @@ public interface SocketRepository {
     boolean createFolder(String path,String folderName);
     void setIsConnecting(MutableLiveData<String> isConnecting);
     MutableLiveData<String> getIsConnecting();
+    void setAdIDLiveData(MutableLiveData<String> adIDLiveData);
+    MutableLiveData<String> getAdIDLiveData();
 }

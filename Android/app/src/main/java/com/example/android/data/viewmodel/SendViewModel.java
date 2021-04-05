@@ -59,4 +59,7 @@ public interface SendViewModel {
     MutableLiveData<String> getSelectedPathLiveData();
     void setNewFolderNameLiveData(MutableLiveData<String> newFolderNameLiveData);
     MutableLiveData<String> getNewFolderNameLiveData();
+    void setShareTitleLiveData(MutableLiveData<String> shareTitleLiveData);
+    MutableLiveData<String> getShareTitleLiveData();
+    MutableLiveData<Boolean> getLoadingLiveData();
 }
