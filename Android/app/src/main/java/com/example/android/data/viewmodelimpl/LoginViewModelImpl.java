@@ -289,7 +289,10 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     //비밀번호 찾기로 이동
     @Override
     public void onMoveFindPassword() {
-
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri uri = Uri.parse("https://j4f001.p.ssafy.io/user/login");
+        intent.setData(uri);
+        mActivityRef.get().startActivity(intent);
     }
 
     //LiveData getter setter
