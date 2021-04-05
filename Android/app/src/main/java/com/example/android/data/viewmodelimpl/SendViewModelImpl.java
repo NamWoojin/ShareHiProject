@@ -171,16 +171,18 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //공유 중단
     @Override
     public void stopShare() {
-        mSocketRepository.stopSocket();
         loadingLiveData.setValue(true);
+        mSocketRepository.stopSocket();
+
     }
 
     //prepare
     //공유 시작
     @Override
     public void startShare() {
-        mSocketRepository.startSocket(selectedPathLiveData.getValue());
         loadingLiveData.setValue(true);
+        mSocketRepository.startSocket(selectedPathLiveData.getValue());
+
     }
 
     private void setAdIDObserver() {
@@ -214,13 +216,14 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
                             .show();
                     break;
                 case "successClose":
-                    loadingLiveData.setValue(false);
+
                     shareFragment.dismiss();
                     Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
+                    loadingLiveData.setValue(false);
                     break;
                 case "failClose":
-                    loadingLiveData.setValue(false);
                     Toast.makeText(mActivityRef.get(), R.string.toast_socket_close_fail_message, Toast.LENGTH_SHORT).show();
+                    loadingLiveData.setValue(false);
                     break;
             }
         });
