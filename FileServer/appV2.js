@@ -961,15 +961,15 @@ let setSenderTmpfileSize = (socket, tmpfileSize, size) => {
 };
 
 let getSender = (socket) => {
-  let targetId = '';
+  let fileSender = '';
   for (let i in sockets) {
     if (sockets[i]['socket'] === socket) {
-      targetId = sockets[i]['id'];
+      fileSender = sockets[i]['id'];
       break;
     }
   }
   for (let i in sockets) {
-    if (sockets[i]['targetId'] === targetId) {
+    if (sockets[i]['fileSender'] === fileSender) {
       return sockets[i]['socket'];
     }
   }
