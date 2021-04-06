@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Build;
 import android.widget.Toast;
 
+/*
+BackPressHandler : 뒤로 가기 두번 눌러 종료 구현
+ */
 public class BackPressHandler {
     // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
     private long backKeyPressedTime = 0;

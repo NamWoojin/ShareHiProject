@@ -35,7 +35,9 @@ import com.example.android.databinding.ActivityMainBackdropBinding;
 import com.example.android.ui.send.PrepareFragment;
 import com.example.android.ui.user.SettingFragment;
 
-
+/*
+BackdropActivity : 파일 전송, 계정 설정 페이지에서의 바탕. 상단 Backdrop 구현
+ */
 public class BackdropActivity extends AppCompatActivity {
 
     private static final String TAG = "BACKDROP_ACTIVITY";
@@ -74,6 +76,7 @@ public class BackdropActivity extends AppCompatActivity {
         mSendViewModel.setSocketRepository(ModelInjection.provideSocketRepository(),this);   //의존성 주입
         mSendViewModel.getLoadingLiveData().observe(this,this::doLoading);
 
+        //SettingViewModel 요청
         mSettingViewModel = new ViewModelProvider(this,new ViewModelProvider.NewInstanceFactory()).get(SettingViewModelImpl.class);
         mSettingViewModel.setParentContext(this);
         injectViewModel(mSettingViewModel);
@@ -84,14 +87,12 @@ public class BackdropActivity extends AppCompatActivity {
             backdropMenuToggle();
         });
 
-
         frameLayout = (View) findViewById(R.id.activity_backdrop_fragment);
         actionBarDetail = (View) findViewById(R.id.activity_backdrop_action_bar_detail);
         fragmentManager = getSupportFragmentManager();
         fragment = fragmentManager.findFragmentById(R.id.activity_backdrop_fragment);
 
         //backdrop 초기 값 설정
-//        frameLayout.setEnabled(false);
         loadingFragment = LoadingFragment.newInstance();
 
     }
@@ -100,8 +101,7 @@ public class BackdropActivity extends AppCompatActivity {
     private void injectViewModel(SettingViewModel viewModel) {
         viewModel.setGoogleLoginExecutor(ViewModelInjection.provideGoogleLoginExecutor(this));
     }
-
-
+    
     //fragment 페이지
     public void changePage(String page) {
         switch (page) {
@@ -153,7 +153,6 @@ public class BackdropActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
-//        Log.i(TAG, "onBackPressed: " + fm.getBackStackEntryCount());
         if (fm.getBackStackEntryCount() >= 1) {
             fm.popBackStack();
         } else {
@@ -164,11 +163,7 @@ public class BackdropActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode/1000 == 1) {
-            mSendViewModel.onActivityResult(requestCode, resultCode, data);
-        }else{
-            mSettingViewModel.onActivityResult(requestCode, resultCode, data);
-        }
+        mSettingViewModel.onActivityResult(requestCode, resultCode, data);
     }
 
     //로딩 표시

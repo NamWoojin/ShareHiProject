@@ -15,6 +15,9 @@ import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.databinding.FragmentSendPrepareBinding;
 import com.example.android.ui.main.BackdropActivity;
 
+/*
+PrepareFragment : 저장공간 공유를 준비하는 Fragment
+ */
 public class PrepareFragment extends Fragment {
 
     private FragmentSendPrepareBinding binding;

@@ -5,14 +5,15 @@ import android.app.DialogFragment;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.R;
 
+/*
+LoadingFragment : 로딩중 표시를 위한 DialogFragment
+ */
 public class LoadingFragment extends DialogFragment {
 
     private static LoadingFragment fragment;

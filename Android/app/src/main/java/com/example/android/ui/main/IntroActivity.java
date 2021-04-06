@@ -1,30 +1,22 @@
 package com.example.android.ui.main;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
-import com.example.android.data.injection.ModelInjection;
 import com.example.android.data.model.dto.Event;
-import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.IntroViewModel;
 import com.example.android.data.viewmodelimpl.IntroViewModelImpl;
 import com.example.android.ui.user.LoginActivity;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
-import java.io.IOException;
-import java.util.UUID;
-
+/*
+IntroActivity : 인트로 화면
+ */
 public class IntroActivity extends AppCompatActivity {
 
     private static final String TAG = "IntroActivity";
@@ -42,7 +34,6 @@ public class IntroActivity extends AppCompatActivity {
         mIntroViewModel.setParentContext(this);
         mIntroViewModel.getAdID();
         mIntroViewModel.getCheckAutoLoginLiveData().observe(this, this::setHandler);
-
     }
 
 

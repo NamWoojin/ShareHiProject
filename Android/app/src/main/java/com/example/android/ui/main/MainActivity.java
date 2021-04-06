@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android.R;
 
+/*
+MainActivity : 파일 전송, 계정 설정 선택하는 메인 화면
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Button sendButton;
@@ -37,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("page","user");
             startActivity(intent);
         });
-
-
     }
 
     @Override

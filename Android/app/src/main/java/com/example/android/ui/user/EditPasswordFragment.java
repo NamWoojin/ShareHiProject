@@ -6,12 +6,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +24,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+EditPasswordFragment : 비밀번호 변경을 위한 DialogFragment
+ */
 public class EditPasswordFragment extends DialogFragment {
 
     private FragmentUserEditPasswordBinding binding;
@@ -70,8 +70,6 @@ public class EditPasswordFragment extends DialogFragment {
 
         mSettingViewModel = new ViewModelProvider((BackdropActivity) getActivity()).get(SettingViewModelImpl.class);
         binding.setViewModel(mSettingViewModel);
-
-        Log.i("TAG", "onCreateView: ");
 
         mSettingViewModel.getCurrentPasswordLiveData().observe((BackdropActivity)getActivity(), s -> canChangePassword());
         mSettingViewModel.getNewPasswordLiveData().observe((BackdropActivity)getActivity(), this::checkPasswordFormat);
@@ -119,6 +117,7 @@ public class EditPasswordFragment extends DialogFragment {
         canChangePassword();
     }
 
+    //입력에 따른 버튼 상태 처리
     private void canChangePassword() {
         if (mSettingViewModel.getCurrentPasswordLiveData().getValue().length() > 0 && mSettingViewModel.getIsOKNewPassword().getValue() &&
                 mSettingViewModel.getIsOKNewCheckPassword().getValue()) {

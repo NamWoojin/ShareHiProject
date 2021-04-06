@@ -17,9 +17,11 @@ import com.example.android.data.viewmodelimpl.LoginViewModelImpl;
 import com.example.android.databinding.ActivityUserLoginBinding;
 import com.example.android.ui.main.BackPressHandler;
 import com.example.android.ui.main.LoadingFragment;
-import com.example.android.ui.main.MainActivity;
 import com.google.android.gms.common.SignInButton;
 
+/*
+LoginActivity : 로그인 Activity
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private Button loginButton;

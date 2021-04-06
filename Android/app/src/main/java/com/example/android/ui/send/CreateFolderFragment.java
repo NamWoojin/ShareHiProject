@@ -15,9 +15,11 @@ import com.example.android.R;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.databinding.FragmentSendCreateFolderBinding;
-import com.example.android.databinding.FragmentSendFolderBinding;
 import com.example.android.ui.main.BackdropActivity;
 
+/*
+CreateFolderFragment : 폴더 목록에서 새 폴더 생성을 위한 DialogFragment
+ */
 public class CreateFolderFragment extends DialogFragment {
 
     private FragmentSendCreateFolderBinding binding;

@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
@@ -19,8 +18,10 @@ import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.databinding.FragmentSendShareNameBinding;
 import com.example.android.ui.main.BackdropActivity;
-import com.google.android.material.textfield.TextInputLayout;
 
+/*
+ShareNameFragment : 저장공간 공유 전 기기 별명을 설정하는 DialogFragment
+ */
 public class ShareNameFragment extends DialogFragment {
 
     private FragmentSendShareNameBinding binding;
@@ -63,7 +64,6 @@ public class ShareNameFragment extends DialogFragment {
         binding.setViewModel(mSendViewModel);
 
         startShareButton = view.findViewById(R.id.fragment_share_name_ok_button);
-
         mSendViewModel.getShareNameLiveData().observe((BackdropActivity) getActivity(), this::canStartShareButton);
 
         return view;

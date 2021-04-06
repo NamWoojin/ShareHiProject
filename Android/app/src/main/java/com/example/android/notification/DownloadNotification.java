@@ -11,7 +11,11 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.android.R;
 
+/*
+DownloadNotification : 파일 다운로드 Notification
+ */
 public class DownloadNotification {
+    private final String TAG = "DownloadNotification";
     private static final String CHANNEL_ID = "DownloadNotification";
     private int notificationId = 0;
     private static final int PROGRESS_MAX = 100;
@@ -36,16 +40,13 @@ public class DownloadNotification {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         //Oreo 이상 버전은 notification channel 필요(Importance를 Low로 설정하면 알림 소리가 안울림)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "기본 채널", NotificationManager.IMPORTANCE_LOW));
+            notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "notification channel", NotificationManager.IMPORTANCE_LOW));
         }
-        Log.i("TAG", "makeNotification: " + notificationManager);
     }
 
     public void startNotification(int PROGRESS_CURRENT) {
-        Log.i("TAG", "startNotification: " + PROGRESS_CURRENT);
         builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
         if (PROGRESS_CURRENT == PROGRESS_MAX) {
-            Log.i("TAG", "startNotification: " + PROGRESS_CURRENT);
             builder.setContentTitle(fileName + "을(를) 다운받았습니다.")
                     .setContentText("")
                     .setStyle(new NotificationCompat.BigTextStyle()
