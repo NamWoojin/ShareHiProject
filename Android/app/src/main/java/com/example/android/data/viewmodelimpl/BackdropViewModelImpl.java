@@ -1,7 +1,6 @@
 package com.example.android.data.viewmodelimpl;
 
 import android.app.Activity;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
@@ -11,6 +10,9 @@ import com.example.android.data.viewmodel.BackdropViewModel;
 
 import java.lang.ref.WeakReference;
 
+/*
+BackdropViewModelImpl : Backdrop에서의 데이터를 관리하는 ViewModel
+ */
 public class BackdropViewModelImpl extends ViewModel implements BackdropViewModel {
 
     private static final String TAG = "BackdropViewModelImpl";
@@ -29,11 +31,13 @@ public class BackdropViewModelImpl extends ViewModel implements BackdropViewMode
         this.mActivityRef = new WeakReference<>(parentContext);
     }
 
+    //backdrop 여닫는 toggle
     @Override
     public void toggleBackdropMenu() {
         backdropMenuOpenLiveData.setValue(!backdropMenuOpenLiveData.getValue());
     }
 
+    //화면 전환
     @Override
     public void changePage(String page) {
         if(backdropMenuOpenLiveData.getValue()) {
@@ -42,6 +46,7 @@ public class BackdropViewModelImpl extends ViewModel implements BackdropViewMode
         }
     }
 
+    //LiveData getter & setter
     @Override
     public MutableLiveData<String> getPageLiveData() {
         return pageLiveData;

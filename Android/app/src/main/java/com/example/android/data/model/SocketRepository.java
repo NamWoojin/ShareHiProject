@@ -14,12 +14,13 @@ SocketRepository : 소켓통신과 요청에 따른 연산을 수행하는 Repos
 public interface SocketRepository {
     void setParentContext(Activity parentContext);
     void startSocket(String path, String name);
-    void stopSocket();
-    
+
     void successSocketConnection();
     void failSocketConnection();
     void successSocketClosed();
     void failSocketClosed();
+
+    void stopSocket();
 
     String getRootPath();
     boolean getSocketFile(FileStat fs);

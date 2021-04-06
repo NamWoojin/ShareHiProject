@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -33,9 +32,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+SendViewModelImpl : 파일 전송과 관련된 데이터를 관리하는 ViewModel
+ */
 public class SendViewModelImpl extends ViewModel implements SendViewModel {
-
-    private final int OPEN_DIRECTORY_REQUEST_CODE = 1000;
 
     private WeakReference<Activity> mActivityRef;
 
@@ -79,22 +79,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         if (page.equals("folder")) {
             getDir("Root", mRoot);
             ((BackdropActivity) mActivityRef.get()).replaceFragment(FolderFragment.newInstance(), true);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == OPEN_DIRECTORY_REQUEST_CODE) {
-
-            if (resultCode == Activity.RESULT_OK) {
-                Uri uri = data.getData();
-                Log.i("TAG", "onActivityResult: " + uri.getPath());
-                String[] pathSplit = uri.getPath().split(":");
-                selectedPathLiveData.setValue(mRoot + (pathSplit.length == 1 ? "" : pathSplit[1]));
-                Log.i("TAG", "onActivityResult: " + selectedPathLiveData.getValue());
-            } else {
-                Toast.makeText(mActivityRef.get(), "해당 폴더는 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -181,10 +165,10 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
             if (file.canRead()) {
                 getDir(file.getName(), file.getAbsolutePath());
             } else {
-                Toast.makeText(mActivityRef.get(), "이 폴더는 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivityRef.get(), R.string.toast_send_share_folder_fail_message, Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(mActivityRef.get(), "파일은 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivityRef.get(), R.string.toast_send_share_file_fail_message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -228,12 +212,12 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //폴더 경로 선택
     @Override
     public void choiceFolderPath() {
-        Log.i("TAG", "choiceFolderPath: 들어옴");
         String path = folderPathLiveData.getValue().replace("Root", mRoot);
         selectedPathLiveData.setValue(path);
         mActivityRef.get().onBackPressed();
     }
 
+    //폴더 생성 DialogFragment 열기
     @Override
     public void createFolderFragmentOpen() {
         newFolderNameLiveData = new MutableLiveData<>("");
@@ -241,6 +225,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         createFolderFragment.show(mActivityRef.get().getFragmentManager(), "CREATE_FOLDER");
     }
 
+    //폴더 생성
     @Override
     public void createFolder() {
         if (mSocketRepository.createFolder(folderPathLiveData.getValue().replace("Root", mRoot), newFolderNameLiveData.getValue())) {
@@ -252,6 +237,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         }
     }
 
+    //폴더 생성 DialogFragment 닫기
     @Override
     public void createFolderFragmentClose() {
         createFolderFragment.dismiss();
@@ -278,7 +264,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     }
 
 
-    //getter setter
+    //LiveData getter & setter
     @Override
     public void setFolderPathLiveData(MutableLiveData<String> folderPath) {
         this.folderPathLiveData = folderPath;

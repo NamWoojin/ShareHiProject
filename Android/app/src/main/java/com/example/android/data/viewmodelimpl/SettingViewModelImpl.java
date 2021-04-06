@@ -36,14 +36,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -53,6 +48,9 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
+/*
+SettingViewModelImpl : 계정 설정과 관련된 데이터를 관리하는 ViewModel
+ */
 public class SettingViewModelImpl extends ViewModel implements SettingViewModel {
 
     private static final int PICK_FROM_ALBUM = 2000;
@@ -63,9 +61,10 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     SharedPreferences memberInformation;
 
-    //LiveData
     private int mem_id;
     private String dev_id;
+
+    //LiveData
     private MutableLiveData<String> memberNameLiveData = new MutableLiveData<>();
     private MutableLiveData<String> memberImgLiveData = new MutableLiveData<>();
     private MutableLiveData<String> memberEmailLiveData = new MutableLiveData<>();
@@ -123,7 +122,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                 switch (res.getMessage()) {
                     case "SUCCESS":
                         Member member = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
                         memberNameLiveData.setValue(member.getMem_name());
                         memberEmailLiveData.setValue(member.getMem_email());
                         memberImgLiveData.setValue(member.getMem_image());
@@ -137,7 +135,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -174,7 +171,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                     cursor.moveToFirst();
 
                     File tempFile = new File(cursor.getString(column_index));
-//                    Log.i(TAG, "onActivityResult: " + tempFile);
                     String filePath = getResizeFileImage(cursor.getString(column_index),4);
                     if(filePath != null){
                         tempFile = new File(filePath);
@@ -194,13 +190,11 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
 
     //이미지 용량 줄이기
     public String getResizeFileImage(String file_route, int size){
-        Log.i(TAG, "getResizeFileImage: "+file_route);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = size;
         Bitmap src = BitmapFactory.decodeFile(file_route, options);
         if(src == null){
             src = BitmapFactory.decodeFile(file_route);
-            Log.i(TAG, "getResizeFileImage: "+src);
         }
         int height = src.getHeight();
         int width = src.getWidth();
@@ -268,7 +262,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
     //캐시에 용량 줄인 이미지 저장
     private String SaveBitmapToFileCache(Bitmap bitmap){
         String path = mActivityRef.get().getCacheDir()+"/"+new Date()+".jpg";
-        Log.i(TAG, "SaveBitmapToFileCache: "+path);
         File fileCacheItem = new File(path);
         try {
             fileCacheItem.createNewFile();
@@ -280,9 +273,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         }
         return path;
     }
-
-
-
 
     //이미지 MultipartBody로 변환
     private MultipartBody.Part changeImageToMultipart(File file) {
@@ -298,6 +288,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         return RequestBody.create(String.valueOf(num), MediaType.parse("text/plain"));
     }
 
+    //프로필 이미지 변경 요청
     private void onRequestChangeImage(RequestBody id, MultipartBody.Part file) {
         APIRequest.request(RetrofitClient.getUserApiService().uploadImage(id, file), objectResponse -> {
             Gson gson = new Gson();
@@ -322,17 +313,16 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                         getMemberInformation();
                         break;
                     case "FAIL":
-                        Toast.makeText(mActivityRef.get(), "존재하지 않는 이미지입니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivityRef.get(), R.string.toast_setting_change_image_fail_message, Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
 
-
+    //비밀번호 변경 DialogFragment 열기
     @Override
     public void openEditPasswordDialog() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
@@ -353,6 +343,7 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         checkCurrentPassword();
     }
 
+    //현재 비밀번호 맞는지 확인
     private void checkCurrentPassword() {
         MemberPassword memberPassword = new MemberPassword();
         memberPassword.setMem_id(mem_id);
@@ -385,11 +376,11 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
 
+    //새 비밀번호 변경
     private void updatePassword() {
         MemberPassword memberPassword = new MemberPassword();
         memberPassword.setMem_id(mem_id);
@@ -423,16 +414,15 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
 
+    //비밀번호 변경 DialogFragment 닫기
     @Override
     public void closeEditPasswordDialog() {
         mEditPasswordFragment.dismiss();
     }
-
 
     //로그아웃
     @Override
@@ -485,7 +475,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                             }
                         }
                     }, throwable -> {
-                        Log.e(TAG, "onRequestedSignIn: " + throwable);
                         Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
                     });
 
@@ -548,7 +537,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
                             }
                         }
                     }, throwable -> {
-                        Log.e(TAG, "onRequestedSignIn: " + throwable);
                         Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
                     });
                 })
@@ -577,14 +565,14 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         tokenEditor.apply();
     }
 
-    //로그인 액티비티로 이동
+    //로그아웃/회원탈퇴 이후 로그인 Activity로 이동
     private void goLoginActivity() {
         Intent i = new Intent(mActivityRef.get(), LoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mActivityRef.get().startActivity(i);
     }
 
-    //getter setter
+    //LiveData getter & setter
     @Override
     public MutableLiveData<String> getMemberNameLiveData() {
         return memberNameLiveData;

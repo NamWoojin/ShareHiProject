@@ -5,15 +5,15 @@ import android.content.Intent;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.android.data.model.dto.Event;
-
+/*
+SignUpViewModel : 회원가입과 관련된 데이터를 관리하는 ViewModel
+ */
 public interface SignUpViewModel{
 
     void setParentContext(Activity parentContext);
     void setGoogleLoginExecutor(GoogleLoginExecutor executor);
     void getAdID();
 
-    //Event LiveData
     MutableLiveData<Boolean> getLoadingLiveData();
     void setLoadingLiveData(MutableLiveData<Boolean> loadingLiveData);
 

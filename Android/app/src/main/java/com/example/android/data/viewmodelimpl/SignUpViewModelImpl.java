@@ -38,6 +38,9 @@ import java.lang.reflect.Type;
 
 import static android.app.Activity.RESULT_OK;
 
+/*
+SignUpViewModelImpl : 회원가입과 관련된 데이터를 관리하는 ViewModel
+ */
 public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
 
     private static final String TAG = "SignUpViewModelImpl";
@@ -77,6 +80,8 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
     public void setGoogleLoginExecutor(GoogleLoginExecutor executor) {
         mGoogleLoginExecutor = executor;
     }
+
+    //AdID조회
     @Override
     public void getAdID(){
         getadid.start();
@@ -98,13 +103,12 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
             }
             try{
                 advertId = idInfo.getId();
-                Log.i("TAG", "run: "+advertId);
+                Log.i(TAG, "getAdID: success to get AdID");
             }catch (NullPointerException e){
                 e.printStackTrace();
             }
         }
     };
-
 
     //이메일 중복 확인
     @Override
@@ -128,7 +132,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                 switch (res.getMessage()) {
                     case "SUCCESS":
                         //이메일 중복확인 성공
-                        Log.i(TAG, "checkEmailDuplicate: " + code);
                         onRenderCheckEmail();
                         break;
                     case "FAIL":
@@ -142,7 +145,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
             }
         }, throwable -> {
             loadingLiveData.setValue(false);
-            Log.e(TAG, "checkEmailDuplicate: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -170,7 +172,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                         switch (res.getMessage()) {
                             case "SUCCESS":
                                 //이메일 인증 fragment dialog 띄우기
-                                Log.i(TAG, "onRenderCheckEmail: " + code);
                                 checkEmailLiveData.setValue("");
                                 newDialogFragment = CheckEmailFragment.newInstance();
                                 newDialogFragment.show(mActivityRef.get().getFragmentManager(), "CHECK_EMAIL");
@@ -254,9 +255,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         }
 
         return result;
-//        return 0;
     }
-
 
     //로그인 시도
     @Override
@@ -288,7 +287,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                         Toast.makeText(mActivityRef.get(), R.string.toast_login_success_message, Toast.LENGTH_SHORT).show();
                         String token = res.getContent().getToken();
                         Member member = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getToken());
                         saveMemberInfo(member);
                         saveLoginToken(token);
                         saveAutoLoginInfo();
@@ -301,7 +299,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -372,7 +369,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignUp: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -385,7 +381,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
             mActivityRef.get().startActivityForResult(signInIntent, REQ_CODE_SIGN_IN);
         }
     }
-
 
     //Intent 요청에 따른 반환(mActivityRef에서 여기로 전달)
     @Override
@@ -405,7 +400,7 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                     googleLogin(name,email,image);
                 } else {
                     //로그인 실패
-                    Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivityRef.get(), R.string.toast_social_login_fail_message, Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) {
                 //로그인 취소
@@ -450,7 +445,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                         //로그인 성공
                         String token = res.getContent().getToken();
                         Member member = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
                         saveMemberInfo(member);
                         saveLoginToken(token);
                         saveGoogleLoginInfo();
@@ -463,7 +457,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -487,7 +480,6 @@ public class SignUpViewModelImpl extends ViewModel implements SignUpViewModel {
         //다시 돌아오지 않도록 끝내기
         mActivityRef.get().finish();
     }
-
 
     //LiveData Getter & Setter
     @Override

@@ -12,6 +12,9 @@ import com.example.android.ui.send.FolderRecyclerAdapter;
 
 import java.util.List;
 
+/*
+SendViewModel : 파일 전송과 관련된 데이터를 관리하는 ViewModel
+ */
 public interface SendViewModel {
     void setParentContext(Activity parentContext);
     void setSocketRepository(SocketRepository repository,Activity parentContext);
@@ -26,7 +29,6 @@ public interface SendViewModel {
     void closeShareNameDialog();
     void startShare();
     void deleteSelectedFolderPath();
-    void onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
 
     //folder
     void clickFolderList(int pos);

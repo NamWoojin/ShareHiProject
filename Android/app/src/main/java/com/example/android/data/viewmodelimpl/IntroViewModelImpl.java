@@ -41,10 +41,10 @@ import java.lang.reflect.Type;
 
 public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
+    private final String TAG = "IntroViewModelImpl";
+
     private final int PERMISSON_CODE = 1;
     private final int EXTERNAL_STORAGE_MANAGER = 2;
-
-    private static final String TAG = "IntroViewModelImpl";
 
     private String advertId = null;
 
@@ -64,6 +64,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         getAdidThread.start();
     }
 
+    //AdID 조회
     public class GetAdidThread extends Thread {
         @Override
         public void run() {
@@ -80,7 +81,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
             }
             try {
                 advertId = idInfo.getId();
-                Log.i("TAG", "run: " + advertId);
+                Log.i(TAG, "GetAdidThread: success to get AdID");
                 mActivityRef.get().runOnUiThread(() -> {    //현재 스레드가 UI스레드가 아니니 UI스레드에서 실행하도록 runOnUiThread설정
                     // TODO.
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -90,7 +91,6 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                         getPermissionAndLogin();
                     }
                 });
-
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 mActivityRef.get().runOnUiThread(() -> {
@@ -107,17 +107,27 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         }
     };
 
+    //모든 파일에 대한 접근 권한 확인
     private void getExternalStoragePermission(){
         if(Environment.isExternalStorageManager()){
             getPermissionAndLogin();
         }else{
-            Toast.makeText(mActivityRef.get(), "접근 권한을 허용해주세요", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivityRef.get(), R.string.toast_intro_getPermission, Toast.LENGTH_SHORT).show();
             Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
             mActivityRef.get().startActivityForResult(permissionIntent,EXTERNAL_STORAGE_MANAGER);
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+        if(Environment.isExternalStorageManager()){
+            getPermissionAndLogin();
+        }else{
+            exitProgram();
+        }
+    }
 
+    //파일 읽기, 쓰기 권한 확인
     private void getPermissionAndLogin() {
 
         if (ContextCompat.checkSelfPermission(mActivityRef.get(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
@@ -131,16 +141,6 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
             startIntro();
         }
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
-        if(Environment.isExternalStorageManager()){
-            getPermissionAndLogin();
-        }else{
-            exitProgram();
-        }
-    }
-
 
     //권한 승인 결과에 따라서 실행
     @Override
@@ -214,7 +214,6 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                         //로그인 성공
                         String token = res.getContent().getToken();
                         Member mem = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
                         saveMemberInfo(mem);
                         saveLoginToken(token);
                         checkAutoLoginLiveData.setValue(new Event<>(true));
@@ -227,7 +226,6 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
             checkAutoLoginLiveData.setValue(new Event<>(false));
         });
@@ -235,13 +233,11 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
 
     //구글 계정으로 사용자 정보 얻어오기
     private void googleLogin(String name, String email, String image) {
-        Log.i(TAG, "googleLogin: dddd" + advertId);
         MemberRequest member = new MemberRequest();
         member.setMem_name(name);
         member.setMem_email(email);
         member.setMem_image(image);
         member.setAd_id(advertId);
-        Log.i(TAG, "googleLogin: " + advertId);
         APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(member), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
@@ -264,7 +260,6 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                         //로그인 성공
                         String token = res.getContent().getToken();
                         Member mem = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
                         saveMemberInfo(mem);
                         saveLoginToken(token);
                         checkAutoLoginLiveData.setValue(new Event<>(true));
@@ -277,7 +272,6 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
             checkAutoLoginLiveData.setValue(new Event<>(false));
         });
@@ -315,6 +309,7 @@ public class IntroViewModelImpl extends ViewModel implements IntroViewModel {
         System.exit(0);
     }
 
+    //LiveData getter & setter
     @Override
     public MutableLiveData<Event<Boolean>> getCheckAutoLoginLiveData() {
         return checkAutoLoginLiveData;
