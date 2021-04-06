@@ -46,7 +46,7 @@
           <div>
             <h1 style="padding: 0; margin-right: 3rem;">크롬 익스텐션으로 <br />사용할 수 있습니다</h1>
             <a
-              target="_blank" href="https://drive.google.com/uc?id=1os90JXBInUEPp8phPdPOVwiqLQz8jfkq&export=download"
+              target="_blank" href="https://drive.google.com/file/d/1_XAgMlNiZVDekYre5pjozC4dzZ7fvy9j/view?usp=sharing"
               style="text-decoration: none;"
             >
               <v-btn
@@ -65,7 +65,7 @@
 
       <div class="section">
         <div style="position: relative; top: 60px !important;">
-          <h1 style="padding: 0; margin: 2rem;">Team Share Hi</h1>
+          <h1 style="padding: 0; margin: 4rem;">Team Share Hi</h1>
           <v-container style="margin: 3rem 0;">
             <v-row>
               <v-col cols="6">
@@ -75,7 +75,7 @@
                     src="@/assets/team/민진.png"
                   ></v-img>
                   <div style="margin-left: 2rem;">
-                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">Minjin Koo</p>
+                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">구민진</p>
                     <p>whxorb44@gmail.com</p>
                     <p style="font-size: 1.5rem;">Backend, Infra</p>
                   </div>
@@ -88,7 +88,7 @@
                     src="@/assets/team/세진.jpg"
                   ></v-img>
                   <div style="margin-left: 2rem;">
-                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">Sejin Kwon</p>
+                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">권세진</p>
                     <p>kwon_sejin@naver.com</p>
                     <p style="font-size: 1.5rem;">Frontend Web</p>
                   </div>
@@ -101,7 +101,7 @@
                     src="@/assets/team/우진.png"
                   ></v-img>
                   <div style="margin-left: 2rem;">
-                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">Woojin Nam</p>
+                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">남우진</p>
                     <p>nam990304@gmail.com</p>
                     <p style="font-size: 1.5rem;">Android</p>
                   </div>
@@ -114,7 +114,7 @@
                     src="@/assets/team/재혁.png"
                   ></v-img>
                   <div style="margin-left: 2rem;">
-                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">Jaehyuk Shim</p>
+                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">심재혁</p>
                     <p>jaehyukawot@gmail.com</p>
                     <p style="font-size: 1.5rem;">Backend Fileserver</p>
                   </div>
@@ -127,7 +127,7 @@
                     src="@/assets/team/병훈.png"
                   ></v-img>
                   <div style="margin-left: 2rem;">
-                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">Byunghoon Lee</p>
+                    <p style="font-weight: bold; font-size: 2rem; margin: 0;">이병훈</p>
                     <p>eric99kr@naver.com</p>
                     <p style="font-size: 1.5rem;">Chrome Extension</p>
                   </div>
