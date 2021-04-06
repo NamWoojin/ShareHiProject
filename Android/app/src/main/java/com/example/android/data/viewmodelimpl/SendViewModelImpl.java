@@ -3,53 +3,30 @@ package com.example.android.data.viewmodelimpl;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.R;
-import com.example.android.data.connection.APIRequest;
-import com.example.android.data.connection.RetrofitClient;
 import com.example.android.data.model.SocketRepository;
-import com.example.android.data.model.dto.APIResponse;
-import com.example.android.data.model.dto.Event;
 import com.example.android.data.model.dto.Folder;
-import com.example.android.data.model.dto.Member;
-import com.example.android.data.modelImpl.SocketRepositoryImpl;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.ui.main.BackdropActivity;
 import com.example.android.ui.send.CreateFolderFragment;
 import com.example.android.ui.send.FolderFragment;
 import com.example.android.ui.send.FolderRecyclerAdapter;
-import com.example.android.ui.send.PrepareMemberRecyclerAdapter;
 import com.example.android.ui.send.ShareFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,10 +47,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
 
     //새 폴더 생성
     private MutableLiveData<String> newFolderNameLiveData;
-
-    //공유 대상 선택
-    private MutableLiveData<List<Member>> selectedMemberLiveData = new MutableLiveData<>(new ArrayList<>());
-    private PrepareMemberRecyclerAdapter prepareMemberRecyclerAdapter = new PrepareMemberRecyclerAdapter(this);
 
     //공유 가능 여부
     private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
@@ -97,34 +70,11 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         mSocketRepository.setParentContext(parentContext);
         setSocketObserver();
         setAdIDObserver();
-//        mSocketRepository.deleteFolder(mRoot,"sample.mp4");
     }
-
-//    private void createMemberList() {
-//        List<Member> newList = new ArrayList<>();
-//
-//        Member m = new Member();
-//        m.setMem_name("김싸피");
-//        newList.add(m);
-//        Member md = new Member();
-//        md.setMem_name("박싸피");
-//        newList.add(md);
-//
-//        selectedMemberLiveData.setValue(newList);
-//        prepareMemberRecyclerAdapter.notifyDataSetChanged();
-//    }
 
     @Override
     public void switchPage(String page) {
         if (page.equals("folder")) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-//                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-//                mActivityRef.get().startActivityForResult(intent, OPEN_DIRECTORY_REQUEST_CODE);
-//            } else {
-//                getDir("Root", mRoot);
-//                ((BackdropActivity) mActivityRef.get()).replaceFragment(FolderFragment.newInstance(), true);
-//            }
             getDir("Root", mRoot);
             ((BackdropActivity) mActivityRef.get()).replaceFragment(FolderFragment.newInstance(), true);
         }
@@ -145,26 +95,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
             }
         }
     }
-
-//    private String getRealPathFromURI(Uri contentUri) {
-//        if (contentUri.getPath().startsWith("/storage")) {
-//            return contentUri.getPath();
-//        }
-//        String[] idSplit = DocumentsContract.getDocumentId(contentUri).split(":");
-//        String id = idSplit.length == 1? "":idSplit[1];
-//        String[] columns = {MediaStore.Files.FileColumns.DATA};
-//        String selection = MediaStore.Files.FileColumns._ID + " = " + id;
-//        Cursor cursor = mActivityRef.get().getContentResolver().query(MediaStore.Files.getContentUri("external"), columns, selection, null, null);
-//        try {
-//            int columnIndex = cursor.getColumnIndex(columns[0]);
-//            if (cursor.moveToFirst()) {
-//                return cursor.getString(columnIndex);
-//            }
-//        } finally {
-//            cursor.close();
-//        }
-//        return null;
-//    }
 
 
     //share
@@ -244,11 +174,10 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
             if (file.canRead()) {
                 getDir(file.getName(), file.getAbsolutePath());
             } else {
-                Toast.makeText(mActivityRef.get(), "No files in this folder.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivityRef.get(), "이 폴더는 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
         } else {
-//            mFileName = file.getName();
-//            Log.i("Test", "ext:" + mFileName.substring(mFileName.lastIndexOf('.') + 1, mFileName.length()));
+            Toast.makeText(mActivityRef.get(), "파일은 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -341,26 +270,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         return folderItems.get(pos).getName();
     }
 
-    @Override
-    public PrepareMemberRecyclerAdapter getPrepareMemberRecyclerAdapter() {
-        return prepareMemberRecyclerAdapter;
-    }
-
-    @Override
-    public List<Member> getMemberItems() {
-        return selectedMemberLiveData.getValue();
-    }
-
-    @Override
-    public String getMemberName(int pos) {
-        return selectedMemberLiveData.getValue().get(pos).getMem_name();
-    }
-
-    @Override
-    public String getMemberImage(int pos) {
-        return selectedMemberLiveData.getValue().get(pos).getMem_image();
-    }
-
 
     //getter setter
     @Override
@@ -422,6 +331,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     public void setShareTitleLiveData(MutableLiveData<String> shareTitleLiveData) {
         this.shareTitleLiveData = shareTitleLiveData;
     }
+
     @Override
     public MutableLiveData<Boolean> getLoadingLiveData() {
         return loadingLiveData;

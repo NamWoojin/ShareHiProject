@@ -27,26 +27,24 @@ import org.json.JSONObject;
 public class SocketInfo {
     public static final String IP = "j4f001.p.ssafy.io";
     //    public static final String IP = "10.0.2.2";
-//    public static final String IP = "192.168.35.127";
+    //    public static final String IP = "192.168.35.127";
     public static final int PORT = 9003;
 
     private FileStat fs;
 
     private SocketRepository socketRepository;
-    private Context context;
     private Socket socket;
     private String adID;
     private int CHUNK_SIZE = 1024;
     private boolean closeSocketByUser;
     private boolean threadRunning;
-    private DownloadNotification downloadNotification;
+
     BufferedReader in;
     PrintWriter out;
     Gson gson = new Gson();
 
-    public SocketInfo(SocketRepository socketRepository, Context context) {
+    public SocketInfo(SocketRepository socketRepository) {
         this.socketRepository = socketRepository;
-        this.context = context;
     }
 
     public void connect(String adID) {
@@ -101,10 +99,6 @@ public class SocketInfo {
                         throw new IOException();
 //                        continue;
                     }
-                    if(socket.isClosed()){
-                        Log.i("TAG", "run: 소켓 끝");
-                        break;
-                    }
 
                     Log.d("myTagReceive", data);
 
@@ -113,9 +107,6 @@ public class SocketInfo {
 
                     JsonObject jobj;
                     String json;
-//                    JsonParser parser = new JsonParser();
-//                    JsonElement element = parser.parse(data);
-//                    int namespace = element.getAsJsonObject().get("namespace").getAsInt();
                     switch (namespace) {
                         /**
                          * Android
@@ -257,32 +248,6 @@ public class SocketInfo {
                             String name = jsonObject.getString("name");
                             boolean result2101 = socketRepository.changeFolderName(path, name, newName);
                             Log.i("TAG", "run: 2101 return "+result2101);
-//                            returnJSONObjectString = socketRepository.getFolderDirectory(jsonObject.getString("path")).toString();
-//                            Log.i("myTag", "2100: " + returnJSONObjectString.length());
-//                            chunkCount = (returnJSONObjectString.length() / CHUNK_SIZE) + (returnJSONObjectString.length() % CHUNK_SIZE > 0 ? 1 : 0);
-//                            jobj = new JsonObject();
-//                            jobj.addProperty("namespace", "2100");
-//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-//                            jobj.addProperty("path", jsonObject.getString("path"));
-//                            jobj.addProperty("chunkCount", chunkCount);
-//                            json = gson.toJson(jobj);
-//                            write(json);
-
-
-//                            jobj = new JsonObject();
-//                            jobj.addProperty("namespace", "2101");
-//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-//                            jobj.addProperty("detail", "");
-//                            jobj.addProperty("content", "");
-//                            if (result2001) {
-//                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-//                                jobj.addProperty("message", "OK");
-//                            } else {
-//                                jobj.addProperty("status", "403");
-//                                jobj.addProperty("message", "FORBIDDEN");
-//                            }
-//                            json = gson.toJson(jobj);
-//                            write(json);
 
                             break;
 
@@ -300,21 +265,6 @@ public class SocketInfo {
 
                             boolean result2102 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
                             Log.i("TAG", "run: 2102 return "+result2102);
-//                            jobj = new JsonObject();
-//                            jobj.addProperty("namespace", "2102");
-//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-//                            jobj.addProperty("detail", "");
-//                            jobj.addProperty("content", "");
-//                            if (result2002) {
-//                                jobj.addProperty("status", "200"); // or 401 UNAUTHORIZED
-//                                jobj.addProperty("message", "OK");
-//                            } else {
-//                                jobj.addProperty("status", "401");
-//                                jobj.addProperty("message", "UNAUTHORIZED");
-//                            }
-//
-//                            json = gson.toJson(jobj);
-//                            write(json);
 
                             break;
 
@@ -332,20 +282,7 @@ public class SocketInfo {
                             ;
                             boolean result2103 = socketRepository.createFolder(jsonObject.getString("path"), jsonObject.getString("name"));
                             Log.i("TAG", "run: 2103 return "+result2103);
-//                            jobj = new JsonObject();
-//                            jobj.addProperty("namespace", "2103");
-//                            jobj.addProperty("targetId", jsonObject.getString("targetId"));
-//                            jobj.addProperty("detail", "");
-//                            jobj.addProperty("content", "");
-//                            if (result2003) {
-//                                jobj.addProperty("status", "200"); // or 403 FORBIDDEN
-//                                jobj.addProperty("message", "OK");
-//                            } else {
-//                                jobj.addProperty("status", "403");
-//                                jobj.addProperty("message", "FORBIDDEN");
-//                            }
-//                            json = gson.toJson(jobj);
-//                            write(json);
+
                             break;
 
                         case 7100: // 파일 스텟 확인
@@ -387,7 +324,6 @@ public class SocketInfo {
                                 fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
                                 // 새로운 TCP 연결 시도
                                 socketRepository.getSocketFile(fs);
-                                downloadNotification = new DownloadNotification(context,name7100,path7100);
                             }
                             break;
 
@@ -397,8 +333,7 @@ public class SocketInfo {
                              * TODO 퍼센트 로직
                              */
 
-                            int percentage = jsonObject.getInt("percent");
-                            downloadNotification.startNotification(percentage);
+//                            int percentage = jsonObject.getInt("percent");
 //                            Log.i("myTag", "percentage: " + percentage);
                             break;
 

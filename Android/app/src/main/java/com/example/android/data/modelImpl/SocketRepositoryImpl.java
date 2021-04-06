@@ -36,11 +36,17 @@ public class SocketRepositoryImpl implements SocketRepository {
 
     private SocketInfo socketInfo;
 
+
+    @Override
+    public void setParentContext(Activity parentContext) {
+        this.mActivityRef = new WeakReference<>(parentContext);
+    }
+
     //Socket 시작
     @Override
     public void startSocket(String path) {
         rootPath = path;
-        socketInfo = new SocketInfo(this,mActivityRef.get());
+        socketInfo = new SocketInfo(this);
         Log.i("TAG", "startSocket: ");
         SocketStartThread sst = new SocketStartThread();
         sst.start();
@@ -51,6 +57,7 @@ public class SocketRepositoryImpl implements SocketRepository {
         return rootPath;
     }
 
+    //AdID 발급 & 소켓 연결 시도
     class SocketStartThread extends Thread{
         @Override
         public void run() {
@@ -81,6 +88,7 @@ public class SocketRepositoryImpl implements SocketRepository {
         }
     }
 
+    //소켓 연결 결과 처리
     @Override
     public void successSocketConnection(){
         mActivityRef.get().runOnUiThread(() -> {
@@ -114,10 +122,6 @@ public class SocketRepositoryImpl implements SocketRepository {
         socketInfo.disConnect();
     }
 
-    @Override
-    public void setParentContext(Activity parentContext) {
-        this.mActivityRef = new WeakReference<>(parentContext);
-    }
 
     //폴더 디렉토리 JSONObject
     @Override
@@ -210,6 +214,7 @@ public class SocketRepositoryImpl implements SocketRepository {
         return result;
     }
 
+    //안드로이드 파일 다운로드 시작
     @Override
     public boolean getSocketFile(FileStat fs){
         boolean shouldProviceRationale =
@@ -219,7 +224,7 @@ public class SocketRepositoryImpl implements SocketRepository {
             return false;
         } else {
             SocketData sd = new SocketData(fs);
-            sd.connect();
+            sd.connect(mActivityRef.get());
             return true;
         }
     }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.data.viewmodel.SignUpViewModel" />
@@ -55,10 +56,10 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_signup_name_text_input_edit_text"
-                    android:text="@={viewModel.nameLiveData}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_signup_textInputEditText_height"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:text="@={viewModel.nameLiveData}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--이메일-->
@@ -77,10 +78,10 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_signup_email_text_input_edit_text"
-                    android:text="@={viewModel.emailLiveData}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_signup_textInputEditText_height"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:text="@={viewModel.emailLiveData}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--이메일 인증 버튼-->
@@ -91,12 +92,12 @@
                 android:layout_marginStart="@dimen/activity_signup_email_check_button_marginStart"
                 android:layout_marginEnd="@dimen/activity_signup_button_marginHorizontal"
                 android:insetBottom="0dp"
+                android:onClick="@{() -> viewModel.checkEmailDuplicate()}"
                 android:text="@string/activity_signup_email_check_button"
                 android:textSize="@dimen/activity_signup_email_check_button_textSize"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/activity_signup_email_text_input_layout"
-                app:layout_constraintTop_toTopOf="@id/activity_signup_email_text_input_layout"
-                android:onClick="@{() -> viewModel.checkEmailDuplicate()}"/>
+                app:layout_constraintTop_toTopOf="@id/activity_signup_email_text_input_layout" />
 
             <!--비밀번호-->
             <com.google.android.material.textfield.TextInputLayout
@@ -114,10 +115,10 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_signup_password_text_input_edit_text"
-                    android:text="@={viewModel.passwordLiveData}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_signup_textInputEditText_height"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:text="@={viewModel.passwordLiveData}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--비밀번호 확인-->
@@ -136,35 +137,35 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/activity_signup_password_check_text_input_edit_text"
-                    android:text="@={viewModel.checkPasswordLiveData}"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_signup_textInputEditText_height"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:text="@={viewModel.checkPasswordLiveData}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/activitiy_signup_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/activity_signup_password_check_text_input_layout"
-                app:layout_constraintBottom_toTopOf="@id/activity_signup_button"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/green_2"
-                android:gravity="center"/>
+                app:layout_constraintBottom_toTopOf="@id/activity_signup_button"
+                app:layout_constraintTop_toBottomOf="@id/activity_signup_password_check_text_input_layout" />
             <!--회원가입 버튼-->
             <Button
                 android:id="@+id/activity_signup_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_signup_button_marginHorizontal"
+                android:onClick="@{() -> viewModel.onRequestedSignUp()}"
                 android:paddingVertical="@dimen/activity_signup_button_paddingVertical"
                 android:text="@string/activity_signup_button"
                 android:textSize="@dimen/activity_signup_button_textSize"
                 app:layout_constraintBottom_toTopOf="@id/activity_signup_divider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activitiy_signup_textView"
-                android:onClick="@{() -> viewModel.onRequestedSignUp()}"/>
+                app:layout_constraintTop_toBottomOf="@id/activitiy_signup_textView" />
 
             <include
                 android:id="@+id/activity_signup_divider"

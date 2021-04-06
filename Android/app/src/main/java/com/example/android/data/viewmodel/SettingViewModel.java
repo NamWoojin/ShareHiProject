@@ -17,10 +17,6 @@ public interface SettingViewModel{
     void onRequestedRevokeAccess();
     void getMemberInformation();
 
-//    void openEditNameDialog();
-//    void editName();
-//    void closeEditNameDialog();
-
     void editImage();
     void openEditPasswordDialog();
     void editPassword();

@@ -1,11 +1,8 @@
 package com.example.android.data.connection;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -16,7 +13,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 import com.example.android.data.connection.dto.FileStat;
-import com.google.gson.Gson;
+import com.example.android.notification.DownloadNotification;
 
 
 public class SocketData {
@@ -26,7 +23,7 @@ public class SocketData {
     private File file;
 
     private Socket socket;
-
+    private DownloadNotification downloadNotification;
     FileOutputStream fileOutput = null;
     DataInputStream dataInput = null;
     byte[] buf = null;
@@ -37,7 +34,7 @@ public class SocketData {
         this.fs = fs;
     }
 
-    public void connect() {
+    public void connect(Context context) {
         try {
             file = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
             socket = new Socket();
@@ -48,6 +45,7 @@ public class SocketData {
             fileOutput = new FileOutputStream(file, true);
             dataInput = new DataInputStream(socket.getInputStream());
             bufferdInput = new BufferedInputStream(dataInput);
+            downloadNotification = new DownloadNotification(context,fs.getName(),fs.getPath());
             getIO.start();
 
         } catch (Exception e) {
@@ -69,7 +67,9 @@ public class SocketData {
                     }
                     tmp += (CHUNK_SIZE);
                     fileOutput.write(buf);
-                    System.out.println("tmp : " + tmp);
+                    Log.i("TAG", "run: "+tmp);
+                    Log.i("TAG", "run: "+(int)(((float)tmp/size)*100));
+                    downloadNotification.startNotification((int)(((float)tmp/size)*100));
                     fileOutput.flush();
                 }
                 if (size - tmp <= CHUNK_SIZE) {
@@ -79,12 +79,12 @@ public class SocketData {
                         buf[i] = (byte) bufferdInput.read();
                         i++;
                     }
+                    tmp += (size-tmp);
                     fileOutput.write(buf);
                 }
-
+                Log.i("TAG", "run: "+(int)(((float)tmp/size)*100));
+                downloadNotification.startNotification((int)(((float)tmp/size)*100));
                 fileOutput.flush();
-//                File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
-//                boolean isSuc = file.renameTo(newFile);
                 System.out.println("FILE을 모두 썼습니다.");
 //                }
             } catch (Exception e) {
