@@ -3,14 +3,39 @@
     <!-- <Advertisement /> -->
     <full-page id="fullpage" ref="fullpage" :options="options">
       <div class="section">
-        <h1>Share hi 기능 소개</h1>
+        <img src="@/assets/main_ad/2.jpg" alt="" style="height: 100%;">
       </div>
       <div class="section">
-        <h1>Android 다운 페이지 Link</h1>
+        <div
+          style="position: relative; top: 60px !important; display: flex; justify-content: center; align-items: center; height: 100%;"
+        >
+          <!-- <img src="@/assets/main_ad/and.png" style="z-index: 99"> -->
+          <div>
+            <img src="@/assets/main_ad/android.png">
+          </div>
+          <div>
+            <h1 style="padding: 0; margin-left: 3rem; margin-bottom: 2rem;">Share Hi 안드로이드 앱을 다운받아 보세요</h1>
+            <a target="_blank" href="https://drive.google.com/uc?id=1os90JXBInUEPp8phPdPOVwiqLQz8jfkq&export=download" style="text-decoration: none;">
+              <v-btn x-large>다운로드</v-btn>
+            </a>
+          </div>
+        </div>
       </div>
       <div class="section">
-        <h1>Chr extension 다운 페이지 Link</h1>
+        <div
+          style="position: relative; top: 60px !important; display: flex; justify-content: center; align-items: center; height: 100%;"
+        >
+          <!-- <img src="@/assets/main_ad/and.png" style="z-index: 99"> -->
+          <div>
+            <img src="@/assets/main_ad/chrome.png">
+          </div>
+          <div>
+            <h1 style="padding: 0; margin-left: 3rem; margin-bottom: 2rem;">크롬 익스텐션을 사용해 보세요</h1>
+            <v-btn x-large>Comming Soon</v-btn>
+          </div>
+        </div>
       </div>
+
       <div class="section">
         <Footer />
       </div>
@@ -40,7 +65,8 @@ export default {
     return {
       options: {
         afterLoad: this.afterLoad,
-        sectionsColor: ['#B39DDC', '#FDCEC6', '#FCFFE0', 'white']
+        // sectionsColor: ['#FCFFE0','#FDCEC6', '#B39DDC',  'white']
+        sectionsColor: ['white']
       }
     }
   },
