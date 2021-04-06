@@ -28,7 +28,6 @@ public class SocketDownload {
     private File file;
 
     private Socket socket;
-    Gson gson = new Gson();
 
     FileInputStream fileInput = null;
     DataInputStream dis = null;

@@ -4,29 +4,39 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:screenOrientation="portrait"
+
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
-        <activity android:name=".ui.main.BackdropActivity" />
-        <activity android:name=".ui.user.SignupActivity" />
-        <activity android:name=".ui.user.LoginActivity" />
-        <activity android:name=".ui.main.IntroActivity">
+        <activity
+            android:name=".ui.main.BackdropActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.SignupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.main.IntroActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -39,7 +39,7 @@ public class SocketInfo {
     private int CHUNK_SIZE = 1024;
     private boolean closeSocketByUser;
     private boolean threadRunning;
-    private DownloadNotification downloadNotification;
+
     BufferedReader in;
     PrintWriter out;
     Gson gson = new Gson();
@@ -387,7 +387,6 @@ public class SocketInfo {
                                 fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
                                 // 새로운 TCP 연결 시도
                                 socketRepository.getSocketFile(fs);
-                                downloadNotification = new DownloadNotification(context,name7100,path7100);
                             }
                             break;
 
@@ -398,7 +397,6 @@ public class SocketInfo {
                              */
 
                             int percentage = jsonObject.getInt("percent");
-                            downloadNotification.startNotification(percentage);
 //                            Log.i("myTag", "percentage: " + percentage);
                             break;
 

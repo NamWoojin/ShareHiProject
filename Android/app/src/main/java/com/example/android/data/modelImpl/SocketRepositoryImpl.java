@@ -219,7 +219,7 @@ public class SocketRepositoryImpl implements SocketRepository {
             return false;
         } else {
             SocketData sd = new SocketData(fs);
-            sd.connect();
+            sd.connect(mActivityRef.get());
             return true;
         }
     }
