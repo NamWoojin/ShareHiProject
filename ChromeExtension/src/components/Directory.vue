@@ -19,7 +19,6 @@ const file = {
 export default {
   name: "Directory",
   props: {
-    directoryData: Object,
     rootPath : String,
     deviceChanged : Number,
     deviceRemoved : Number,
