@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; top: 70%; width: 100%;">
+  <div style="width: 100%;">
     <el-row>
       <el-row style="width: 75%; margin: 0px auto;">
         <el-col

@@ -61,7 +61,7 @@
               <v-col cols="12">
                 <v-divider></v-divider>
               </v-col>
-              <v-col cols="12">
+              <v-col cols="12" style="display: flex; justify-content: center;">
                   <div id="google-signin-btn"></div>
               </v-col>
               <v-col>
@@ -135,12 +135,12 @@ export default {
       this.$router.push({ name: 'Main' })
     }
   },
-  // mounted() {
-  //   window.gapi.signin2.render("google-signin-btn", {
-  //     onsuccess: this.onSignIn,
-  //   });
+  mounted() {
+    window.gapi.signin2.render("google-signin-btn", {
+      onsuccess: this.onSignIn,
+    });
     
-  // },
+  },
   computed: {
     required_email() {
       return () => /.+@.+\..+/.test(this.form.mem_email) || '이메일 형식으로 입력해주세요.'

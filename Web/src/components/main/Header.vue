@@ -20,7 +20,7 @@
           </router-link>
         </div>
         <div v-else style="display: flex;">
-          <v-menu offset-y>
+          <!-- <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <div>
                 <v-icon class="mx-5 cart" style="font-size: 26px; margin-top: 8px" v-bind="attrs" v-on="on">
@@ -36,7 +36,7 @@
                 <v-list-item-title>{{ alert.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
-          </v-menu>
+          </v-menu> -->
 
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
@@ -155,7 +155,7 @@
 
         <v-list-item v-else @click="$router.push({name:'Login'})">
           <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+            <v-img src=""></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -166,17 +166,9 @@
         <v-divider></v-divider>
 
         <v-list dense>
-          <v-list-item
-            v-for="item in items"
-            :key="item.title"
-            link
-          >
-            <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-icon>
-
+          <v-list-item>
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item- @click="logout" style="cursor: pointer;">로그아웃</v-list-item->
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -195,10 +187,6 @@ export default {
     return {
       width: window.innerWidth,
       drawer: null,
-      items: [
-        { title: '설정', icon: 'mdi-view-dashboard' },
-        { title: '로그아웃', icon: 'mdi-forum' },
-      ],
       alerts: [
         { title: 'Alert1', },
         { title: 'Alert2', },
