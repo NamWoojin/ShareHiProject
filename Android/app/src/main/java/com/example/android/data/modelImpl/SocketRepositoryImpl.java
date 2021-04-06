@@ -28,11 +28,11 @@ public class SocketRepositoryImpl implements SocketRepository {
     private final int PERMISSIONS_REQUEST_CODE = 1;
 
     private String rootPath;
+    private String name;
 
     private WeakReference<Activity> mActivityRef;
 
     private MutableLiveData<String> isConnecting= new MutableLiveData<>();
-    private MutableLiveData<String> AdIDLiveData = new MutableLiveData<>();
 
     private SocketInfo socketInfo;
 
@@ -44,10 +44,10 @@ public class SocketRepositoryImpl implements SocketRepository {
 
     //Socket 시작
     @Override
-    public void startSocket(String path) {
+    public void startSocket(String path, String name) {
         rootPath = path;
+        this.name = name;
         socketInfo = new SocketInfo(this);
-        Log.i("TAG", "startSocket: ");
         SocketStartThread sst = new SocketStartThread();
         sst.start();
     }
@@ -57,34 +57,12 @@ public class SocketRepositoryImpl implements SocketRepository {
         return rootPath;
     }
 
-    //AdID 발급 & 소켓 연결 시도
+    //소켓 연결 시도
     class SocketStartThread extends Thread{
         @Override
         public void run() {
             super.run();
-            //Ad ID 발급
-            AdvertisingIdClient.Info idInfo = null;
-            try {
-                idInfo = AdvertisingIdClient.getAdvertisingIdInfo(mActivityRef.get().getApplicationContext());
-            } catch (GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
-            } catch (GooglePlayServicesRepairableException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try{
-                String advertId = idInfo.getId();
-                Log.i("TAG", "run: "+advertId);
-                //Socket 실행
-                socketInfo.connect(advertId);
-                mActivityRef.get().runOnUiThread(() -> {
-                    AdIDLiveData.setValue(advertId);
-                });
-
-            }catch (NullPointerException e){
-                e.printStackTrace();
-            }
+            socketInfo.connect(name);
         }
     }
 
@@ -237,13 +215,5 @@ public class SocketRepositoryImpl implements SocketRepository {
     @Override
     public void setIsConnecting(MutableLiveData<String> isConnecting) {
         this.isConnecting = isConnecting;
-    }
-    @Override
-    public MutableLiveData<String> getAdIDLiveData() {
-        return AdIDLiveData;
-    }
-    @Override
-    public void setAdIDLiveData(MutableLiveData<String> adIDLiveData) {
-        AdIDLiveData = adIDLiveData;
     }
 }

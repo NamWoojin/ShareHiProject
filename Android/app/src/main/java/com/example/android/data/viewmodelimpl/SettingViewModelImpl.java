@@ -142,28 +142,6 @@ public class SettingViewModelImpl extends ViewModel implements SettingViewModel 
         });
     }
 
-//    //이름 변경 dialog 열기
-//    @Override
-//    public void openEditNameDialog(){
-//        editNameLiveData.setValue(memberNameLiveData.getValue());
-//        mEditNameFragment = EditNameFragment.newInstance();
-//        mEditNameFragment.show(mActivityRef.get().getFragmentManager(), "EDIT_NAME");
-//    }
-//
-//    //이름 변경
-//    @Override
-//    public void editName(){
-//        memberNameLiveData.setValue(editNameLiveData.getValue());
-//        //이름 변경 api 추가
-//        mEditNameFragment.dismiss();
-//    }
-//
-//    //이름 변경 dialog 닫기
-//    @Override
-//    public void closeEditNameDialog(){
-//        mEditNameFragment.dismiss();
-//    }
-
     //이미지 변경하기
     @Override
     public void editImage() {

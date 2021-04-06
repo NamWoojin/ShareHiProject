@@ -1,6 +1,5 @@
 package com.example.android.data.connection;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -16,7 +15,6 @@ import java.net.SocketAddress;
 
 import com.example.android.data.connection.dto.FileStat;
 import com.example.android.data.model.SocketRepository;
-import com.example.android.notification.DownloadNotification;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -34,7 +32,7 @@ public class SocketInfo {
 
     private SocketRepository socketRepository;
     private Socket socket;
-    private String adID;
+    private String name;
     private int CHUNK_SIZE = 1024;
     private boolean closeSocketByUser;
     private boolean threadRunning;
@@ -47,9 +45,9 @@ public class SocketInfo {
         this.socketRepository = socketRepository;
     }
 
-    public void connect(String adID) {
+    public void connect(String name) {
         Log.d("myTag", "connection");
-        this.adID = adID;
+        this.name = name;
         try {
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(IP, PORT);
@@ -121,7 +119,7 @@ public class SocketInfo {
                              */
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "1020");
-                            jobj.addProperty("adId", adID);
+                            jobj.addProperty("adId", name);
                             json = gson.toJson(jobj);
                             write(json);
                             break;

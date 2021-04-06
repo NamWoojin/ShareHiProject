@@ -100,7 +100,7 @@
             android:layout_marginHorizontal="@dimen/fragment_prepare_go_share_Button_margin"
             android:layout_marginBottom="@dimen/fragment_prepare_go_share_Button_margin"
             android:enabled="@{viewModel.selectedPathLiveData.length() > 0}"
-            android:onClick="@{() -> viewModel.startShare()}"
+            android:onClick="@{() -> viewModel.openShareNameDialog()}"
             android:paddingVertical="@dimen/fragment_prepare_go_share_Button_paddingVertical"
             android:text="@string/fragment_prepare_go_share_Button_text"
             android:textSize="@dimen/fragment_prepare_go_share_Button_textSize"

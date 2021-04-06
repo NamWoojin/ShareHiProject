@@ -45,6 +45,11 @@
     <string name="fragment_folder_nothing_text">뒤로 가기</string>
     <string name="fragment_create_folder_name_hint">생성할 폴더의 이름을 입력하세요</string>
 
+    <!--share name-->
+    <string name="fragment_share_name_textView">공유할 기기의 별명을 입력해주세요</string>
+    <string name="fragment_share_name_hint">별명 입력</string>
+    <string name="fragment_share_name_cancel_button">취소</string>
+    <string name="fragment_share_name_ok_button">공유 시작</string>
 
     <!--share-->
     <string name="fragment_share_path_textView">공유중인 경로</string>

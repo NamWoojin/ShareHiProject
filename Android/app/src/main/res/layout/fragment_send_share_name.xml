@@ -16,18 +16,18 @@
         android:layout_gravity="center">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="@dimen/fragment_setting_dialog_layout_width"
-            android:layout_height="@dimen/fragment_share_name_layout_height">
+            android:layout_width="@dimen/fragment_share_name_dialog_layout_width"
+            android:layout_height="@dimen/fragment_share_name_dialog_layout_height">
 
             <TextView
-                android:id="@+id/fragment_create_folder_info_textView"
+                android:id="@+id/fragment_share_name_info_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/fragment_setting_dialog_marginHorizontal"
                 android:gravity="center"
-                android:text="@string/fragment_create_folder_name_hint"
-                android:textSize="@dimen/fragment_create_folder_info_textSize"
-                app:layout_constraintBottom_toTopOf="@id/fragment_create_folder_text_input_layout"
+                android:text="@string/fragment_share_name_textView"
+                android:textSize="@dimen/fragment_share_name_info_textSize"
+                app:layout_constraintBottom_toTopOf="@id/fragment_share_name_text_input_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -35,50 +35,52 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fragment_create_folder_text_input_layout"
+                android:id="@+id/fragment_share_name_text_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/fragment_user_check_textInputLayout_height"
+                android:layout_height="@dimen/fragment_edit_password_text_input_layout_height"
                 android:layout_marginHorizontal="@dimen/fragment_setting_dialog_marginHorizontal"
-                android:hint="@string/fragment_create_folder_name_hint"
-                app:layout_constraintBottom_toTopOf="@id/fragment_create_folder_cancel_button"
+                android:hint="@string/fragment_share_name_hint"
+                app:layout_constraintBottom_toTopOf="@id/fragment_share_name_cancel_button"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_create_folder_info_textView">
+                app:layout_constraintTop_toBottomOf="@id/fragment_share_name_info_textView"
+                app:counterEnabled="true"
+                app:counterMaxLength="20"
+                app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_share_name_text_input_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/fragment_edit_password_text_input_edit_text_height"
                     android:inputType="text"
-                    android:text="@={viewModel.newFolderNameLiveData}" />
+                    android:text="@={viewModel.shareNameLiveData}"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/fragment_create_folder_cancel_button"
+                android:id="@+id/fragment_share_name_cancel_button"
                 android:layout_width="@dimen/fragment_share_name_button_width"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/fragment_user_check_button_margin"
-                android:onClick="@{() -> viewModel.createFolderFragmentClose()}"
-                android:text="@string/cancel_button"
+                android:text="@string/fragment_share_name_cancel_button"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/fragment_create_folder_ok_button"
+                app:layout_constraintEnd_toStartOf="@id/fragment_share_name_ok_button"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_create_folder_text_input_layout" />
+                app:layout_constraintTop_toBottomOf="@id/fragment_share_name_text_input_layout"
+                android:onClick="@{() -> viewModel.closeShareNameDialog()}"/>
 
             <Button
-                android:id="@+id/fragment_create_folder_ok_button"
+                android:id="@+id/fragment_share_name_ok_button"
                 android:layout_width="@dimen/fragment_share_name_button_width"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/fragment_user_check_button_margin"
-                android:backgroundTint="@color/green_3"
-                android:onClick="@{() -> viewModel.createFolder()}"
-                android:text="@string/ok_button"
-                app:layout_constraintBottom_toBottomOf="@id/fragment_create_folder_cancel_button"
+                android:text="@string/fragment_share_name_ok_button"
+                app:layout_constraintBottom_toBottomOf="@id/fragment_share_name_cancel_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/fragment_create_folder_cancel_button"
-                app:layout_constraintTop_toTopOf="@id/fragment_create_folder_cancel_button" />
+                app:layout_constraintStart_toEndOf="@id/fragment_share_name_cancel_button"
+                app:layout_constraintTop_toTopOf="@id/fragment_share_name_cancel_button"
+                android:onClick="@{() -> viewModel.startShare()}"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

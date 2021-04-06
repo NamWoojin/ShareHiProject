@@ -22,6 +22,8 @@ public interface SendViewModel {
     void stopShare();
 
     //prepare
+    void openShareNameDialog();
+    void closeShareNameDialog();
     void startShare();
     void deleteSelectedFolderPath();
     void onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
@@ -41,15 +43,14 @@ public interface SendViewModel {
 
     void setFolderPathLiveData(MutableLiveData<String> folderPath);
     MutableLiveData<String> getFolderPathLiveData();
-    void setCanShareLiveData(MutableLiveData<Boolean> canShareLiveData);
-    MutableLiveData<Boolean> getCanShareLiveData();
     void setFolderTitleLiveData(MutableLiveData<String> folderTitleLiveData);
     MutableLiveData<String> getFolderTitleLiveData();
     void setSelectedPathLiveData(MutableLiveData<String> selectedPathLiveData);
     MutableLiveData<String> getSelectedPathLiveData();
     void setNewFolderNameLiveData(MutableLiveData<String> newFolderNameLiveData);
     MutableLiveData<String> getNewFolderNameLiveData();
-    void setShareTitleLiveData(MutableLiveData<String> shareTitleLiveData);
-    MutableLiveData<String> getShareTitleLiveData();
+    void setShareNameLiveData(MutableLiveData<String> shareNameLiveData);
+    MutableLiveData<String> getShareNameLiveData();
     MutableLiveData<Boolean> getLoadingLiveData();
+    MutableLiveData<String> getShareTitleLiveData();
 }

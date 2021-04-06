@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public interface SocketRepository {
     void setParentContext(Activity parentContext);
-    void startSocket(String path);
+    void startSocket(String path, String name);
     String getRootPath();
     void successSocketConnection();
     void failSocketConnection();
@@ -27,6 +27,4 @@ public interface SocketRepository {
     boolean createFolder(String path,String folderName);
     void setIsConnecting(MutableLiveData<String> isConnecting);
     MutableLiveData<String> getIsConnecting();
-    void setAdIDLiveData(MutableLiveData<String> adIDLiveData);
-    MutableLiveData<String> getAdIDLiveData();
 }

@@ -41,7 +41,6 @@ public class IntroActivity extends AppCompatActivity {
         mIntroViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(IntroViewModelImpl.class);
         mIntroViewModel.setParentContext(this);
         mIntroViewModel.getAdID();
-//        mIntroViewModel.getPermissionAndLogin();
         mIntroViewModel.getCheckAutoLoginLiveData().observe(this, this::setHandler);
 
     }
