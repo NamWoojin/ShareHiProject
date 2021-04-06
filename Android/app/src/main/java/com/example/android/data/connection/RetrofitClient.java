@@ -12,9 +12,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient{
-    //local
-//    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
-    //public
     private static final String BASE_URL = "https://j4f001.p.ssafy.io/api/";
 
     public static UserRepository getUserApiService(){

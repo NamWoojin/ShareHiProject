@@ -3,11 +3,8 @@ package com.example.android.data.connection;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
@@ -33,7 +30,6 @@ public class SocketDownload {
     DataInputStream dis = null;
     BufferedInputStream bis = null;
 
-    //BufferedOutputStream bos = null;
     OutputStream os = null;
 
     PrintWriter out = null;
@@ -48,7 +44,6 @@ public class SocketDownload {
     public void connect() {
         try {
             file = new File(fs.getPath() +"/"+ fs.getName() + fs.getExt());
-            Log.i("TAG", "connecttttttt: "+file);
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(SocketInfo.IP, SocketInfo.PORT);
             socket.connect(socketAddress, 8288);
@@ -59,7 +54,6 @@ public class SocketDownload {
             dis = new DataInputStream(fileInput);
             bis = new BufferedInputStream(fileInput);
 
-            //bos = new BufferedOutputStream(socket.getOutputStream());
             os = socket.getOutputStream();
 
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));

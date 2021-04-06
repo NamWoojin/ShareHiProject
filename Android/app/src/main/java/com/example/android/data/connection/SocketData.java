@@ -1,11 +1,8 @@
 package com.example.android.data.connection;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -17,7 +14,6 @@ import java.net.SocketAddress;
 
 import com.example.android.data.connection.dto.FileStat;
 import com.example.android.notification.DownloadNotification;
-import com.google.gson.Gson;
 
 
 public class SocketData {
@@ -89,8 +85,6 @@ public class SocketData {
                 Log.i("TAG", "run: "+(int)(((float)tmp/size)*100));
                 downloadNotification.startNotification((int)(((float)tmp/size)*100));
                 fileOutput.flush();
-//                File newFile = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
-//                boolean isSuc = file.renameTo(newFile);
                 System.out.println("FILE을 모두 썼습니다.");
 //                }
             } catch (Exception e) {

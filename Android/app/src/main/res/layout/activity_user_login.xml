@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.data.viewmodel.LoginViewModel" />
@@ -83,15 +84,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_login_button_marginHorizontal"
+                android:onClick="@{() -> viewModel.onRequestedSignIn()}"
                 android:paddingVertical="@dimen/activity_login_button_paddingVertical"
                 android:text="@string/activity_login_button"
                 android:textSize="@dimen/activity_login_button_textSize"
                 app:layout_constraintBottom_toTopOf="@id/activity_login_submenu_layout"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_login_password_text_input_layout"
-                android:onClick="@{() -> viewModel.onRequestedSignIn()}"
-                />
+                app:layout_constraintTop_toBottomOf="@id/activity_login_password_text_input_layout" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/activity_login_submenu_layout"
@@ -107,6 +107,7 @@
                     android:id="@+id/activity_login_signup_text_view"
                     android:layout_width="@dimen/activity_login_submenu_width"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> viewModel.onRenderSignUp()}"
                     android:text="@string/activity_login_signup"
                     android:textAlignment="center"
                     android:textSize="@dimen/activity_login_submenu_textSize"
@@ -114,21 +115,20 @@
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@id/activity_login_find_password_text_view"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:onClick="@{() -> viewModel.onRenderSignUp()}"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/activity_login_find_password_text_view"
                     android:layout_width="@dimen/activity_login_submenu_width"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> viewModel.onMoveFindPassword()}"
                     android:text="@string/activity_login_find_password"
                     android:textAlignment="center"
                     android:textSize="@dimen/activity_login_submenu_textSize"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toRightOf="@id/activity_login_signup_text_view"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:onClick="@{() -> viewModel.onMoveFindPassword()}"/>
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <include
@@ -150,7 +150,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_login_divider"/>
+                app:layout_constraintTop_toBottomOf="@id/activity_login_divider" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

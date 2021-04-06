@@ -20,8 +20,6 @@ public class PrepareFragment extends Fragment {
     private FragmentSendPrepareBinding binding;
     private SendViewModel mSendViewModel;
 
-    private static PrepareMemberRecyclerAdapter adapter;
-
     public PrepareFragment() {
         // Required empty public constructor
     }
@@ -47,8 +45,6 @@ public class PrepareFragment extends Fragment {
         mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
         binding.setViewModel(mSendViewModel);
         binding.setLifecycleOwner(this);
-
-
 
         // Inflate the layout for this fragment
         return view;

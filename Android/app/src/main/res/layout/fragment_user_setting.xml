@@ -2,6 +2,7 @@
 <layout>
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.data.viewmodel.SettingViewModel" />
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/backdrop_framelayout_radius">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragment_setting_info_layout"
             android:layout_width="match_parent"
@@ -26,6 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed">
+
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/fragment_setting_image_imageView"
                 android:layout_width="@dimen/fragment_setting_imageView_height"
@@ -75,22 +78,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fragment_setting_info_layout">
 
-<!--            <Button-->
-<!--                android:id="@+id/fragment_setting_edit_name_button"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="@dimen/fragment_setting_button_height"-->
-<!--                android:backgroundTint="@color/white"-->
-<!--                android:drawableLeft="@drawable/ic_drive_file_rename_outline_black_24dp"-->
-<!--                android:gravity="center_vertical|start"-->
-<!--                android:stateListAnimator="@null"-->
-<!--                android:text="@string/fragment_setting_edit_name_button_text"-->
-<!--                android:textColor="@color/textBlack"-->
-<!--                android:textSize="@dimen/fragment_setting_button_textSize"-->
-<!--                android:onClick="@{() -> viewModel.openEditNameDialog()}"-->
-<!--                app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_image_button"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent" />-->
+            <!--            <Button-->
+            <!--                android:id="@+id/fragment_setting_edit_name_button"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="@dimen/fragment_setting_button_height"-->
+            <!--                android:backgroundTint="@color/white"-->
+            <!--                android:drawableLeft="@drawable/ic_drive_file_rename_outline_black_24dp"-->
+            <!--                android:gravity="center_vertical|start"-->
+            <!--                android:stateListAnimator="@null"-->
+            <!--                android:text="@string/fragment_setting_edit_name_button_text"-->
+            <!--                android:textColor="@color/textBlack"-->
+            <!--                android:textSize="@dimen/fragment_setting_button_textSize"-->
+            <!--                android:onClick="@{() -> viewModel.openEditNameDialog()}"-->
+            <!--                app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_image_button"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <Button
                 android:id="@+id/fragment_setting_edit_image_button"
@@ -99,11 +102,11 @@
                 android:backgroundTint="@color/white"
                 android:drawableLeft="@drawable/ic_account_circle_black_24dp"
                 android:gravity="center_vertical|start"
+                android:onClick="@{() -> viewModel.editImage()}"
                 android:stateListAnimator="@null"
                 android:text="@string/fragment_setting_edit_image_button_text"
                 android:textColor="@color/textBlack"
                 android:textSize="@dimen/fragment_setting_button_textSize"
-                android:onClick="@{() -> viewModel.editImage()}"
                 app:layout_constraintBottom_toTopOf="@id/fragment_setting_edit_password_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -116,11 +119,11 @@
                 android:backgroundTint="@color/white"
                 android:drawableLeft="@drawable/ic_password_black_24dp"
                 android:gravity="center_vertical|start"
+                android:onClick="@{() -> viewModel.openEditPasswordDialog()}"
                 android:stateListAnimator="@null"
                 android:text="@string/fragment_setting_edit_password_button_text"
                 android:textColor="@color/textBlack"
                 android:textSize="@dimen/fragment_setting_button_textSize"
-                android:onClick="@{() -> viewModel.openEditPasswordDialog()}"
                 app:layout_constraintBottom_toTopOf="@id/fragment_setting_sign_out_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -133,6 +136,7 @@
                 android:backgroundTint="@color/white"
                 android:drawableLeft="@drawable/ic_logout_black_24dp"
                 android:gravity="center_vertical|start"
+                android:onClick="@{() -> viewModel.onRequestedSignOut()}"
                 android:stateListAnimator="@null"
                 android:text="@string/fragment_setting_sign_out_button_text"
                 android:textColor="@color/textBlack"
@@ -140,8 +144,7 @@
                 app:layout_constraintBottom_toTopOf="@id/fragment_setting_user_delete_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_password_button"
-                android:onClick="@{() -> viewModel.onRequestedSignOut()}"/>
+                app:layout_constraintTop_toBottomOf="@id/fragment_setting_edit_password_button" />
 
             <Button
                 android:id="@+id/fragment_setting_user_delete_button"
@@ -150,6 +153,7 @@
                 android:backgroundTint="@color/white"
                 android:drawableLeft="@drawable/ic_remove_circle_outline_black_24dp"
                 android:gravity="center_vertical|start"
+                android:onClick="@{() -> viewModel.onRequestedRevokeAccess()}"
                 android:stateListAnimator="@null"
                 android:text="@string/fragment_setting_user_delete_button_text"
                 android:textColor="@color/textBlack"
@@ -157,8 +161,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fragment_setting_sign_out_button"
-                android:onClick="@{() -> viewModel.onRequestedRevokeAccess()}"/>
+                app:layout_constraintTop_toBottomOf="@id/fragment_setting_sign_out_button" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
