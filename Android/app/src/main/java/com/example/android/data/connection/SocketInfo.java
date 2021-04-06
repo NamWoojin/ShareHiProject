@@ -33,7 +33,6 @@ public class SocketInfo {
     private FileStat fs;
 
     private SocketRepository socketRepository;
-    private Context context;
     private Socket socket;
     private String adID;
     private int CHUNK_SIZE = 1024;
@@ -44,9 +43,8 @@ public class SocketInfo {
     PrintWriter out;
     Gson gson = new Gson();
 
-    public SocketInfo(SocketRepository socketRepository, Context context) {
+    public SocketInfo(SocketRepository socketRepository) {
         this.socketRepository = socketRepository;
-        this.context = context;
     }
 
     public void connect(String adID) {
