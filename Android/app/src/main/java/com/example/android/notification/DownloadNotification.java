@@ -19,41 +19,39 @@ public class DownloadNotification {
     private NotificationCompat.Builder builder;
     NotificationManagerCompat notificationManager;
 
-    public DownloadNotification(Context context,String fileName, String path){
+    public DownloadNotification(Context context, String fileName, String path) {
         notificationId = NotificationID.getID();
         this.fileName = fileName;
         this.path = path;
         notificationManager = NotificationManagerCompat.from(context);
-        builder = new NotificationCompat.Builder(context,CHANNEL_ID)
+        builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_file_download_black_24dp)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(path+"에 "+fileName+"을(를) 받는 중입니다."))
+                        .bigText(path + "에 " + fileName + "을(를) 받는 중입니다."))
                 .setContentTitle(fileName + "을(를) 다운받는 중입니다.")
-                .setProgress(0,0, true);
+                .setProgress(0, 0, true);
         notificationManager.notify(notificationId, builder.build());
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        //Oreo 이상 버전은 notification channel 필요
+        //Oreo 이상 버전은 notification channel 필요(Importance를 Low로 설정하면 알림 소리가 안울림)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "기본 채널", NotificationManager.IMPORTANCE_DEFAULT));
+            notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "기본 채널", NotificationManager.IMPORTANCE_LOW));
         }
-        Log.i("TAG", "makeNotification: "+notificationManager);
+        Log.i("TAG", "makeNotification: " + notificationManager);
     }
 
-    public void startNotification(int PROGRESS_CURRENT){
-        Log.i("TAG", "startNotification: "+PROGRESS_CURRENT);
+    public void startNotification(int PROGRESS_CURRENT) {
+        Log.i("TAG", "startNotification: " + PROGRESS_CURRENT);
         builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-        if(PROGRESS_CURRENT == PROGRESS_MAX){
-            Log.i("TAG", "startNotification: "+PROGRESS_CURRENT);
-            builder .setContentTitle(fileName + "을(를) 다운받았습니다.")
+        if (PROGRESS_CURRENT == PROGRESS_MAX) {
+            Log.i("TAG", "startNotification: " + PROGRESS_CURRENT);
+            builder.setContentTitle(fileName + "을(를) 다운받았습니다.")
                     .setContentText("")
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(path+"에 "+fileName+"이(가) 저장되었습니다."));
-        }else{
-            builder
-                    .setContentText(PROGRESS_CURRENT+"/"+PROGRESS_MAX);
-
+                            .bigText(path + "에 " + fileName + "이(가) 저장되었습니다."));
+        } else {
+            builder.setContentText(PROGRESS_CURRENT + "/" + PROGRESS_MAX);
         }
         notificationManager.notify(notificationId, builder.build());
     }
