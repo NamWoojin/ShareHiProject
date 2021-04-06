@@ -306,7 +306,7 @@ style.textContent = `
   right: 0;
   display: flex;
   justify-content: center;
-  align-itmes : center;
+  align-items : center;
   background-color: rgba(0,0,0,0.1);
 }
 .progress-filename {  

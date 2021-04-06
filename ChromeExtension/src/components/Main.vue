@@ -3,37 +3,26 @@
     <nav class="nav">
       <input type="text" @keyup="searchInputChanged" @keydown="searchInputChanged" :class="[searchFlag ? 'show search-input' : 'hidden']">
       <div class="nav-item" >
-        <button class="nav-item-btn">알림</button>
-        <div v-if="true" class="nav-item-content">
-          <a href="#">Alert item1</a>
-          <a href="#">Alert item2</a>
-          <a href="#">Alert item3</a>
-          <a href="#">Alert item4</a>
-        </div>
-        <div v-else>
-          알림이 없습니다
-        </div>
-      </div>
-      <div class="nav-item" >
         <button class="nav-item-btn" id="device-click" @click="onClickDevice">디바이스({{deviceCnt}})</button>
         <div v-if="devices" class="nav-item-device">
         </div >
       </div>
       <div class="nav-item" >
-        <button class="nav-item-btn" @click="onClickSearch">🔍</button>
+        <button class="nav-item-btn" @click="onClickOpen">폴더 열기</button>
+      </div>
+      <div class="nav-item" >
+        <button class="nav-item-btn" @click="onClickClose">폴더 닫기</button>
       </div>
       <div class="nav-item" >
         <button class="nav-item-btn">더 보기</button>
         <div class="nav-item-content nav-item-last">
-          <a href="#" @click="onClickOpen">모든 폴더 열기</a>
-          <a href="#" @click="onClickClose">모든 폴더 닫기</a>
-          <a href="#">계정설정</a>
+          <a href="#" @click="onClickSetting">계정설정</a>
           <a href="#" @click="onClickLogout">로그아웃</a>
         </div>
       </div>
     </nav>
     <SearchResult :directoryData="directoryData" v-if="searchFlag" />
-    <Directory :directoryData="directoryData" :deviceChanged="deviceChanged" :deviceRemoved="deviceRemoved" :rootPath="rootPath" ref="directory" v-else />
+    <Directory :deviceChanged="deviceChanged" :deviceRemoved="deviceRemoved" :rootPath="rootPath" ref="directory" v-else />
   </div>
 </template>
 
@@ -55,62 +44,6 @@ export default {
       deviceChanged : 0,
       deviceRemoved  :0,
       currentDeviceId : '',
-      directoryData : {
-        "name":"0",
-        "path":"\/storage\/emulated\/0",
-        "directory":[
-          {
-            "name":"Music",
-            "path":"\/storage\/emulated\/0\/Music",
-            "type":"folder"
-          },
-          {
-            "name":"Podcasts",
-            "path":"\/storage\/emulated\/0\/Podcasts",
-            "type":"folder"
-          },
-          {
-          "name":"Ringtones",
-          "path":"\/storage\/emulated\/0\/Ringtones",
-          "type":"folder"
-          },
-          {
-          "name":"Alarms",
-          "path":"\/storage\/emulated\/0\/Alarms",
-          "type":"folder"
-          },
-          {
-          "name":"Notifications",
-          "path":"\/storage\/emulated\/0\/Notifications",
-          "type":"folder"
-          },
-          {
-          "name":"Pictures",
-          "path":"\/storage\/emulated\/0\/Pictures",
-          "type":"folder"
-          },
-          {
-          "name":"Movies",
-          "path":"\/storage\/emulated\/0\/Movies",
-          "type":"folder"
-          },
-          {
-          "name":"Download",
-          "path":"\/storage\/emulated\/0\/Download",
-          "type":"folder"
-          },
-          {
-          "name":"DCIM",
-          "path":"\/storage\/emulated\/0\/DCIM",
-          "type":"folder"
-          },
-          {
-          "name":"Android",
-          "path":"\/storage\/emulated\/0\/Android",
-          "type":"folder"
-          }
-        ]
-      } 
     }
   },
   mounted(){
@@ -155,7 +88,9 @@ export default {
     this.$socket.emit(1050)
   },
   methods : {
-
+    onClickSetting() {
+      window.open('https://j4f001.p.ssafy.io/profile/follower', '_blank')
+    },
     onClickDevice() {
       console.log('-------------this.$socket.emit(1050)-------------')
       const deviceBtn = document.querySelector('#shadowElement').shadowRoot.querySelector('#device-click')
@@ -196,7 +131,7 @@ export default {
       for (let i=0;i<devices.length;i++) {
         const device = devices[i]
         const contentDiv = document.createElement('div')
-        contentDiv.innerText=device.id
+        contentDiv.innerText=device.name.split('-')[0]
         const data = {id : device.id}
         contentDiv.addEventListener('click',()=>{
           console.log('-------------this.$socket.emit(1070, JSON.stringify(data))-------------')
