@@ -3,6 +3,9 @@ package com.example.android.data.model.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/*
+LoginContent : 회원가입 Api와 관련된 내용을 담는 DTO
+ */
 public class MemberRequest {
     @Expose
     @SerializedName("mem_name")

@@ -1,5 +1,8 @@
 package com.example.android.data.model.dto;
 
+/*
+Folder : 공유할 파일을 지정할 때 recyclerView에 담기는 내용을 담는 DTO
+ */
 public class Folder implements Comparable<Folder>{
     //0 : parent, 1:folder, 2:file
     int type;

@@ -1,63 +1,55 @@
 package com.example.android.data.connection;
 
+import android.content.Context;
 import android.util.Log;
 
+
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
 import com.example.android.data.connection.dto.FileStat;
-import com.google.gson.Gson;
+import com.example.android.notification.DownloadNotification;
 
-
-
+/*
+SocketDownload : 웹 -> 서버 -> 안드로이드의 파일 전송
+ */
 public class SocketDownload {
+
+    private final String TAG = "SocketDownload";
+
     private static final int CHUNK_SIZE = 16 * 1024 * 1024;
     private FileStat fs;
     private File file;
 
     private Socket socket;
-
-    FileInputStream fileInput = null;
-    DataInputStream dis = null;
-    BufferedInputStream bis = null;
-
-    OutputStream os = null;
-
-    PrintWriter out = null;
-
+    private DownloadNotification downloadNotification;
+    FileOutputStream fileOutput = null;
+    DataInputStream dataInput = null;
     byte[] buf = null;
+    BufferedInputStream bufferdInput = null;
 
     public SocketDownload(FileStat fs) {
         super();
         this.fs = fs;
     }
 
-    public void connect() {
+    public void connect(Context context) {
         try {
-            file = new File(fs.getPath() +"/"+ fs.getName() + fs.getExt());
+            file = new File(fs.getPath() + "/" + fs.getName() + fs.getExt());
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(SocketInfo.IP, SocketInfo.PORT);
             socket.connect(socketAddress, 8288);
             socket.setSoTimeout(10000);
-
             buf = new byte[CHUNK_SIZE];
-            fileInput = new FileInputStream(file);
-            dis = new DataInputStream(fileInput);
-            bis = new BufferedInputStream(fileInput);
-
-            os = socket.getOutputStream();
-
-            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
-
+            fileOutput = new FileOutputStream(file, true);
+            dataInput = new DataInputStream(socket.getInputStream());
+            bufferdInput = new BufferedInputStream(dataInput);
+            downloadNotification = new DownloadNotification(context,fs.getName(),fs.getPath());
             getIO.start();
 
         } catch (Exception e) {
@@ -69,39 +61,42 @@ public class SocketDownload {
         @Override
         public void run() {
             try {
-                int size = (int) fs.getSize();
-                System.out.println("size : " + size);
-                int tmp = 0;
-
+                long size = fs.getSize();
+                long tmp = fs.getTmpfileSize();
                 while (size - tmp > CHUNK_SIZE) {
-                    dis.read(buf);
-                    os.write(buf);
-                    tmp += CHUNK_SIZE;
-                    System.out.println("tmp : " + tmp);
-                    os.flush();
+                    int i = 0;
+                    while (i < CHUNK_SIZE) {
+                        buf[i] = (byte) bufferdInput.read();
+                        i++;
+                    }
+                    tmp += (CHUNK_SIZE);
+                    fileOutput.write(buf);
+                    downloadNotification.startNotification((int)(((float)tmp/size)*100));
+                    fileOutput.flush();
                 }
                 if (size - tmp <= CHUNK_SIZE) {
+                    int i = 0;
                     buf = new byte[(int) (size - tmp)];
-                    dis.read(buf);
-                    os.write(buf);
-                    tmp += (size - tmp);
-                    System.out.println("tmp : " + tmp);
-                    os.flush();
+                    while (i < size - tmp) {
+                        buf[i] = (byte) bufferdInput.read();
+                        i++;
+                    }
+                    tmp += (size-tmp);
+                    fileOutput.write(buf);
                 }
-                Thread.sleep(10000);
-                System.out.println("FILE을 모두 전송했습니다..");
+                downloadNotification.startNotification((int)(((float)tmp/size)*100));
+                fileOutput.flush();
+                Log.i(TAG, "run: finish download file");
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 try {
-                    if (os != null)
-                        os.close();
-                    if (bis != null)
-                        bis.close();
-                    if (fileInput != null)
-                        fileInput.close();
-                    if (dis != null)
-                        dis.close();
+                    if (bufferdInput != null)
+                        bufferdInput.close();
+                    if (dataInput != null)
+                        dataInput.close();
+                    if (fileOutput != null)
+                        fileOutput.close();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -109,6 +104,4 @@ public class SocketDownload {
             }
         }
     };
-
-
 }

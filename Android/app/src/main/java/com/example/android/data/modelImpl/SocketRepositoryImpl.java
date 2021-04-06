@@ -7,20 +7,16 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.android.data.connection.SocketData;
+import com.example.android.data.connection.SocketDownload;
 import com.example.android.data.connection.SocketInfo;
 import com.example.android.data.connection.dto.FileStat;
 import com.example.android.data.model.SocketRepository;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class SocketRepositoryImpl implements SocketRepository {
@@ -201,7 +197,7 @@ public class SocketRepositoryImpl implements SocketRepository {
         if (shouldProviceRationale) {
             return false;
         } else {
-            SocketData sd = new SocketData(fs);
+            SocketDownload sd = new SocketDownload(fs);
             sd.connect(mActivityRef.get());
             return true;
         }

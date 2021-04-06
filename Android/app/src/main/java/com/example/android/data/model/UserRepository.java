@@ -1,13 +1,8 @@
 package com.example.android.data.model;
 
 import com.example.android.data.model.dto.EmailAuth;
-import com.example.android.data.model.dto.Member;
 import com.example.android.data.model.dto.MemberPassword;
 import com.example.android.data.model.dto.MemberRequest;
-
-import org.json.JSONObject;
-
-import java.io.File;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -21,6 +16,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
 
+/*
+UserRepository : 회원가입과 관련된 Repository
+ */
 public interface UserRepository {
     //회원가입
     @POST("member/signup")

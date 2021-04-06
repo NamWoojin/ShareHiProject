@@ -1,10 +1,8 @@
 package com.example.android.data.model.dto;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import org.json.JSONObject;
-
+/*
+APIResponse : Api 요청에 대한 응답을 담을 DTO
+ */
 public class APIResponse<T> {
     private String message;
     private String detail;

@@ -1,6 +1,8 @@
 package com.example.android.data.model.dto;
 
-//
+/*
+Event : LiveData 상태를 나타내기 위한 DTO
+ */
 public class Event<T> {
     private boolean hasBeenHandled = false;
     private T content;
