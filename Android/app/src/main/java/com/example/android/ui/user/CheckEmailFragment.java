@@ -1,20 +1,14 @@
 package com.example.android.ui.user;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +19,10 @@ import com.example.android.R;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
 import com.example.android.databinding.FragmentUserCheckEmailBinding;
-import com.example.android.ui.main.BackdropActivity;
-import com.example.android.ui.main.LoadingFragment;
-import com.example.android.ui.send.PrepareFragment;
 
-
+/*
+CheckEmailFragment : 이메일 인증번호를 입력받는 DialogFragment
+ */
 public class CheckEmailFragment extends DialogFragment {
 
     private FragmentUserCheckEmailBinding binding;
@@ -72,6 +65,7 @@ public class CheckEmailFragment extends DialogFragment {
         canOK();
 
         infoTextView.setText(mSignUpViewModel.getEmailLiveData().getValue()+"으로\n인증번호가 발송되었습니다.");
+
         //남은 시간
         CountDownTimer countDownTimer = new CountDownTimer(180000,1000) {
             @Override
@@ -90,7 +84,7 @@ public class CheckEmailFragment extends DialogFragment {
         return view;
     }
 
-        //확인 버튼 누를 수 있는지 확인
+    //확인 버튼 누를 수 있는지 확인
     private void canOK(){
         String text = mSignUpViewModel.getCheckEmailLiveData().getValue();
         if (text != null  && text.length() > 0) {

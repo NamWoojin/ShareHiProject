@@ -3,6 +3,9 @@ package com.example.android.data.model.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/*
+EmailAuth : 이메일 인증 Api와 관련된 내용을 담는 DTO
+ */
 public class EmailAuth {
     @Expose
     @SerializedName("mem_email") private String mem_email;

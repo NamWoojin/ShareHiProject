@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -13,14 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.R;
-import com.example.android.data.connection.SocketInfo;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.data.viewmodelimpl.SendViewModelImpl;
-import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
 import com.example.android.databinding.FragmentSendShareBinding;
 import com.example.android.ui.main.BackdropActivity;
-import com.example.android.ui.user.SignupActivity;
 
+/*
+ShareFragment : 저장공간 공유 중임을 나타내는 Fragment
+ */
 public class ShareFragment extends DialogFragment {
 
     private FragmentSendShareBinding binding;
@@ -59,7 +58,6 @@ public class ShareFragment extends DialogFragment {
         mSendViewModel = new ViewModelProvider((BackdropActivity)getActivity()).get(SendViewModelImpl.class);
         binding.setViewModel(mSendViewModel);
 
-        
         return view;
     }
 }

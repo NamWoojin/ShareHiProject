@@ -2,7 +2,6 @@ package com.example.android.ui.send;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.android.data.viewmodel.SendViewModel;
 import com.example.android.databinding.RecyclerSendFolderItemBinding;
 
+/*
+FolderRecyclerAdapter : 폴더 목록을 보여주기 위한 RecyclerAdapter
+ */
 public class FolderRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private SendViewModel viewModel;

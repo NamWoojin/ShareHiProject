@@ -4,6 +4,9 @@ import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+/*
+AdapterUtil : folder recycler view 구현을 위한 커스텀 Adapter
+ */
 public class AdapterUtil {
 
     @BindingAdapter("bindAdapter")

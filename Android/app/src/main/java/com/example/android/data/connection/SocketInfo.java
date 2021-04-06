@@ -1,6 +1,5 @@
 package com.example.android.data.connection;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -16,7 +15,6 @@ import java.net.SocketAddress;
 
 import com.example.android.data.connection.dto.FileStat;
 import com.example.android.data.model.SocketRepository;
-import com.example.android.notification.DownloadNotification;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -25,16 +23,16 @@ import org.json.JSONObject;
 
 
 public class SocketInfo {
+    private final String TAG = "SocketInfo";
+
     public static final String IP = "j4f001.p.ssafy.io";
-    //    public static final String IP = "10.0.2.2";
-    //    public static final String IP = "192.168.35.127";
     public static final int PORT = 9003;
 
     private FileStat fs;
 
     private SocketRepository socketRepository;
     private Socket socket;
-    private String adID;
+    private String name;
     private int CHUNK_SIZE = 1024;
     private boolean closeSocketByUser;
     private boolean threadRunning;
@@ -47,15 +45,13 @@ public class SocketInfo {
         this.socketRepository = socketRepository;
     }
 
-    public void connect(String adID) {
-        Log.d("myTag", "connection");
-        this.adID = adID;
+    public void connect(String name) {
+        this.name = name;
         try {
             socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(IP, PORT);
             socket.connect(socketAddress, 8288);
-            Log.d("myTag", "connection success");
-
+            Log.i(TAG, "connect: success");
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             threadRunning = true;
@@ -69,13 +65,13 @@ public class SocketInfo {
     }
 
     public void disConnect() {
-        //중지 요청 보내기
-        //getIO스레드에서 중지 요청 승인하면 답장
+        //소켓 통신 중지하기
         try {
             closeSocketByUser = true;
             socket.close();
             threadRunning = false;
             socketRepository.successSocketClosed();
+            Log.i(TAG, "run: stop socket");
         } catch (IOException e) {
             e.printStackTrace();
             socketRepository.failSocketClosed();
@@ -83,6 +79,7 @@ public class SocketInfo {
     }
 
     public void write(String data) {
+        //data를 Stream에 입력
         out.println(data);
         out.flush();
     }
@@ -95,12 +92,11 @@ public class SocketInfo {
                     String data = in.readLine();
 
                     if (data == null) {
-                        Log.i("TAG", "run: null");
+                        Log.i(TAG, "run: null");
                         throw new IOException();
-//                        continue;
                     }
 
-                    Log.d("myTagReceive", data);
+                    Log.i(TAG, "run: data - "+data);
 
                     JSONObject jsonObject = new JSONObject(data);
                     int namespace = jsonObject.getInt("namespace");
@@ -114,39 +110,12 @@ public class SocketInfo {
                          * 응답에 성공했을 때 수행되는 코드 설명 : 서버와 성공적으로 응답한 경우 수행된다
                          * data : {"namespace":1010,"status":200,"message":"OK"}
                          */
-
                         case 1010:
-                            /**
-                             * LOGIC
-                             */
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "1020");
-                            jobj.addProperty("adId", adID);
+                            jobj.addProperty("adId", name);
                             json = gson.toJson(jobj);
                             write(json);
-                            break;
-                        /**
-                         * Android
-                         * 1050
-                         * 설명 : 내 디바이스를 제외한 현재 공유 중인 모든 디바이스의 정보를 클라이언트에게 제공한다
-                         * 메시지 :{"devices":[{"id":"c69ad27e-48ff-4849-b9ed-568a6935e794","name":"c69ad27e-48ff-4849-b9ed-568a6935e794"}]}
-                         */
-                        case 1050:
-                            /**
-                             * LOGIC
-                             */
-                            break;
-
-                        /**
-                         * Android
-                         * 1060
-                         * 설명 : 내 디바이스를 제외한 현재 공유 중이 '아닌' 모든 디바이스의 정보를 클라이언트에게 제공한다
-                         * 메시지 :{"namespace":1060,"devices":[{"id":"c45f6a42-259c-4f48-a469-18f26d89a561","name":"c45f6a42-259c-4f48-a469-18f26d89a561"}]}
-                         */
-                        case 1060:
-                            /**
-                             * LOGIC
-                             */
                             break;
 
                         /**
@@ -156,9 +125,6 @@ public class SocketInfo {
                          * 메시지 :{"namespace":1010,"path":path value}
                          */
                         case 1070:
-                            /**
-                             * LOGIC
-                             */
                             String rootPath = socketRepository.getRootPath();
 
                             jobj = new JsonObject();
@@ -166,19 +132,7 @@ public class SocketInfo {
                             jobj.addProperty("targetId", jsonObject.getString("targetId"));
                             jobj.addProperty("path", rootPath);
                             json = gson.toJson(jobj);
-                            Log.i("myTag", "1070: " + json);
                             write(json);
-                            break;
-                        /**
-                         * Android
-                         * 4001
-                         * 설명 : JSON 파싱이 실패할 경우 부른다
-                         * 메시지 :{"namespace":4001,"status":400,"message":"BAD REQUEST"}
-                         */
-                        case 4001:
-                            /**
-                             * LOGIC
-                             */
                             break;
 
                         /**
@@ -188,12 +142,10 @@ public class SocketInfo {
                          * 메시지 : {"namespace":2100,"targetId":"9ebe9cf8-61aa-43ee-bcfc-66005e81f287","path":"./"}
                          */
                         case 2100:
-                            /**
-                             * TODO 폴더 이름 제공 로직!
-                             */
                             String returnJSONObjectString = socketRepository.getFolderDirectory(jsonObject.getString("path")).toString();
                             Log.i("myTag", "2100: " + returnJSONObjectString.length());
                             int chunkCount = (returnJSONObjectString.length() / CHUNK_SIZE) + (returnJSONObjectString.length() % CHUNK_SIZE > 0 ? 1 : 0);
+
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "2100");
                             jobj.addProperty("targetId", jsonObject.getString("targetId"));
@@ -201,13 +153,11 @@ public class SocketInfo {
                             jobj.addProperty("chunkCount", chunkCount);
                             json = gson.toJson(jobj);
                             write(json);
-
-                            Log.i("myTagSend", "2100: " + json);
                             break;
 
                         case 2150:
-                            //chunkCount 보내야 할 개수
-                            // pathDataChunkCount
+                            //chunkCount : 보내야 할 Json 청크 개수
+                            // pathDataChunkCount : 지금까지 보낸 Json 청크 개수
                             String path = jsonObject.getString("path");
                             String targetId = jsonObject.getString("targetId");
                             chunkCount = jsonObject.getInt("chunkCount");
@@ -219,7 +169,7 @@ public class SocketInfo {
                             int length = returnJSONObjectString.length();
                             int start = num * CHUNK_SIZE;
                             int next = Math.min(length, CHUNK_SIZE * (num + 1));
-                            Log.i("TAG", "run: " + returnJSONObjectString.length() + " " + start + " " + next);
+
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "2150");
                             jobj.addProperty("targetId", targetId);
@@ -228,44 +178,32 @@ public class SocketInfo {
                             jobj.addProperty("pathDataChunkCount", num);
                             jobj.addProperty("data", returnJSONObjectString.substring(start, next));
                             json = gson.toJson(jobj);
-
-                            Log.i("myTag", "2150: " + json);
                             write(json);
-
                             break;
+
                         /**
                          * Android
                          * 2101
-                         * 설명 : 폴더를 수정한다
+                         * 설명 : 폴더(파일) 이름을 수정한다
                          * 메시지 :
                          */
                         case 2101:
-                            /**
-                             * TODO 폴더 이름 수정 로직!
-                             */
                             String newName = jsonObject.getString("newName");
                             path = jsonObject.getString("path");
                             String name = jsonObject.getString("name");
                             boolean result2101 = socketRepository.changeFolderName(path, name, newName);
-                            Log.i("TAG", "run: 2101 return "+result2101);
-
+                            Log.i(TAG, "run: 2101 - "+result2101);
                             break;
 
                         /**
                          * Android
                          * 2102
-                         * 설명 : 폴더를 삭제한다
+                         * 설명 : 폴더(파일)를 삭제한다
                          * 메시지 :
                          */
                         case 2102:
-
-                            /**
-                             * TODO 폴더 삭제 로직! (여러 개의 폴더, 파일 삭제가 요청을 올 수도 있음)
-                             */
-
                             boolean result2102 = socketRepository.deleteFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-                            Log.i("TAG", "run: 2102 return "+result2102);
-
+                            Log.i(TAG, "run: 2102 - "+result2102);
                             break;
 
                         /**
@@ -275,22 +213,12 @@ public class SocketInfo {
                          * 메시지 :
                          */
                         case 2103:
-
-                            /**
-                             * TODO 폴더 추가 로직!
-                             */
-                            ;
                             boolean result2103 = socketRepository.createFolder(jsonObject.getString("path"), jsonObject.getString("name"));
-                            Log.i("TAG", "run: 2103 return "+result2103);
+                            Log.i(TAG, "run: 2103 - "+result2103);
 
                             break;
 
                         case 7100: // 파일 스텟 확인
-
-                            /**
-                             * TODO 파일 스텟 로직
-                             */
-
                             int size = jsonObject.getInt("size");
                             String ext = jsonObject.getString("ext");
                             String path7100 = jsonObject.getString("path");
@@ -298,9 +226,9 @@ public class SocketInfo {
 
                             File file = new File(path7100 + "/" + name7100 + ext);
 
-                            // 1. 파일이 이미 있는지 확인한다
+                            // 파일이 이미 있는지 확인
                             if (file.length() == size) {
-                                System.out.println("이미 파일이 있습니다.");
+                                Log.i(TAG, "run: file is already exist");
                                 fs = new FileStat(name7100, path7100, ext, 0, 0);
                                 jobj = new JsonObject();
                                 jobj.addProperty("namespace", "7004");
@@ -316,9 +244,9 @@ public class SocketInfo {
 
                                 long tmpfileSize = 0;
                                 if (file.exists()) {
-                                    System.out.println("이어받기 로직을 수행합니다.");
+                                    Log.i(TAG, "run: continue to download file");
                                     tmpfileSize = file.length();
-                                    System.out.println("현재 청크 사이즈 : " + tmpfileSize);
+                                    Log.i(TAG, "run: current file size - " + tmpfileSize);
                                 }
 
                                 fs = new FileStat(name7100, path7100, ext, size, tmpfileSize);
@@ -327,19 +255,25 @@ public class SocketInfo {
                             }
                             break;
 
-                        case 7001: // 파일 전송
-
-                            /**
-                             * TODO 퍼센트 로직
-                             */
-
-//                            int percentage = jsonObject.getInt("percent");
-//                            Log.i("myTag", "percentage: " + percentage);
+                        /**
+                         * Android
+                         * 7001
+                         * 설명 : 파일이 전송된 비율을 받는다
+                         * 메시지 :
+                         */
+                        case 7001:
+                            int percentage = jsonObject.getInt("percent");
+                            Log.i(TAG, "run: percent - "+ percentage);
                             break;
 
-
-                        case 7200: // 파일 전송을 위한 TCP 연결이 완료되었다.
-                            System.out.println("fs size : " + fs.getSize());
+                        /**
+                         * Android
+                         * 7200
+                         * 설명 : 파일 전송을 위한 TCP 연결이 완료되었다.
+                         * 메시지 :
+                         */
+                        case 7200:
+                            Log.i(TAG, "run: file size - "+fs.getSize());
                             if (fs.getSize() == 0) break;
                             jobj = new JsonObject();
                             jobj.addProperty("namespace", "7100");
@@ -348,10 +282,11 @@ public class SocketInfo {
                             json = gson.toJson(jobj);
                             write(json);
                             break;
+
                         /**
                          * Android
                          * 8100
-                         * 설명 : 안드로이드가 파일을 업로드한다.
+                         * 설명 : 안드로이드가 업로드할 파일의 정보를 전달한다.
                          * 메시지 :
                          */
                         case 8100:
@@ -369,9 +304,16 @@ public class SocketInfo {
                             json = gson.toJson(jobj);
                             write(json);
                             break;
+
+                        /**
+                         * Android
+                         * 8200
+                         * 설명 : 안드로이드가 파일 업로드를 시작한다.
+                         * 메시지 :
+                         */
                         case 8200:
-                            SocketDownload sdown = new SocketDownload(fs);
-                            sdown.connect();
+                            SocketUpload socketUpload = new SocketUpload(fs);
+                            socketUpload.connect();
                             break;
                     }
 
@@ -382,11 +324,8 @@ public class SocketInfo {
                 //사용자의 의도에 의한 종료가 아닐 경우
                 if (!closeSocketByUser)
                     socketRepository.failSocketConnection();
-
-                Log.i("TAG", "run: socketStop");
+                Log.i(TAG, "run: stop socket exception");
             }
-
         }
     };
-
 }

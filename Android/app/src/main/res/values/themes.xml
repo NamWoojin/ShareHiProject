@@ -25,4 +25,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="ButtonRipple">
+        <item name="colorControlHighlight">@color/rippleColor</item>
+    </style>
 </resources>

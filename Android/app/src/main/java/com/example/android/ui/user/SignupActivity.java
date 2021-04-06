@@ -3,7 +3,6 @@ package com.example.android.ui.user;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -14,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.R;
 import com.example.android.data.injection.ViewModelInjection;
-import com.example.android.data.model.dto.Event;
 import com.example.android.data.viewmodel.SignUpViewModel;
 import com.example.android.data.viewmodelimpl.SignUpViewModelImpl;
 import com.example.android.databinding.ActivityUserSignupBinding;
@@ -25,6 +23,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+SignupActivity : 회원가입 Activity
+ */
 public class SignupActivity extends AppCompatActivity {
 
     private TextInputLayout nameTextInputLayout;

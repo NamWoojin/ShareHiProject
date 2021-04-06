@@ -35,10 +35,12 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 
+/*
+LoginViewModelImpl : 로그인과 관련된 데이터를 관리하는 ViewModel
+ */
 public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
 
     private static final String TAG = "LoginViewModelImpl";
-    private static final int REQ_CODE_SIGN_IN = 1;
     private static final int REQ_CODE_GOOGLE_SIGN_IN = 2;
 
     private WeakReference<Activity> mActivityRef;
@@ -48,7 +50,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     //LiveData
     private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
     private MutableLiveData<String> passwordLiveData = new MutableLiveData<>();
-
 
     private MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
@@ -63,11 +64,12 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     }
 
     @Override
-    public void getAdID(){
+    public void getAdID() {
         getadid.start();
     }
 
-    private Thread getadid = new Thread(){
+    //AdID조회
+    private Thread getadid = new Thread() {
         @Override
         public void run() {
             super.run();
@@ -81,10 +83,10 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try{
+            try {
                 advertId = idInfo.getId();
-                Log.i("TAG", "run: "+advertId);
-            }catch (NullPointerException e){
+                Log.i(TAG, "getAdID: success to get AdID");
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         }
@@ -101,7 +103,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     @Override
     public void onRequestedSignIn() {
         loadingLiveData.setValue(true);
-        MemberRequest member  =new MemberRequest();
+        MemberRequest member = new MemberRequest();
         member.setMem_email(emailLiveData.getValue());
         member.setMem_password(passwordLiveData.getValue());
         member.setAd_id(advertId);
@@ -129,7 +131,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                         Toast.makeText(mActivityRef.get(), R.string.toast_login_success_message, Toast.LENGTH_SHORT).show();
                         String token = res.getContent().getToken();
                         Member mem = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getToken());
                         saveMemberInfo(mem);
                         saveLoginToken(token);
                         saveAutoLoginInfo();
@@ -143,7 +144,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
             }
         }, throwable -> {
             loadingLiveData.setValue(false);
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -153,7 +153,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         SharedPreferences tokenInformation = mActivityRef.get().getSharedPreferences("member", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = tokenInformation.edit();
         editor.putInt("mem_id", member.getMem_id());
-        editor.putString("dev_id",member.getDev_id());
+        editor.putString("dev_id", member.getDev_id());
         editor.apply();
     }
 
@@ -169,7 +169,7 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
     private void saveAutoLoginInfo() {
         SharedPreferences loginInformation = mActivityRef.get().getSharedPreferences("login", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = loginInformation.edit();
-        editor.putString("login","basic");
+        editor.putString("login", "basic");
         editor.putString("email", emailLiveData.getValue());
         editor.putString("password", passwordLiveData.getValue());
         editor.apply();
@@ -199,26 +199,24 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                     String email = account.getEmail();
                     Uri imageUri = account.getPhotoUrl();
                     String image = imageUri != null ? imageUri.toString() : null;
-                    googleLogin(name,email,image);
+                    googleLogin(name, email, image);
                 } else {
                     //로그인 실패
-                    Toast.makeText(mActivityRef.get(), "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivityRef.get(), R.string.toast_social_login_fail_message, Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) {
-                //로그인 취소
-//                Toast.makeText(mActivityRef.get(), "로그인을 취소했습니다.", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         }
     }
 
     //구글 로그인 정보로 사용자 정보 조회
-    private void googleLogin(String name, String email, String image){
+    private void googleLogin(String name, String email, String image) {
         MemberRequest mem = new MemberRequest();
         mem.setMem_name(name);
         mem.setMem_email(email);
         mem.setMem_image(image);
         mem.setAd_id(advertId);
-        Log.i(TAG, "googleLogin: "+mem);
         APIRequest.request(RetrofitClient.getLoginApiService().SocialLogin(mem), objectResponse -> {
             Gson gson = new Gson();
             int code = objectResponse.code();
@@ -240,7 +238,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                         //로그인 성공
                         String token = res.getContent().getToken();
                         Member member = res.getContent().getMember();
-                        Log.i(TAG, "onRequestedSignIn: " + res.getContent().getMember().toString());
                         saveMemberInfo(member);
                         saveLoginToken(token);
                         saveGoogleLoginInfo();
@@ -253,7 +250,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
                 }
             }
         }, throwable -> {
-            Log.e(TAG, "onRequestedSignIn: " + throwable);
             Toast.makeText(mActivityRef.get(), R.string.toast_connect_fail_message, Toast.LENGTH_SHORT).show();
         });
     }
@@ -266,7 +262,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         editor.apply();
     }
 
-
     //화면 전환
     private void updateUI() { //update ui code here
         Intent intent = new Intent(mActivityRef.get(), MainActivity.class);
@@ -277,7 +272,6 @@ public class LoginViewModelImpl extends ViewModel implements LoginViewModel {
         //다시 돌아오지 않도록 끝내기
         mActivityRef.get().finish();
     }
-
 
     //회원가입으로 이동
     @Override

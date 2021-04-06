@@ -1,25 +1,13 @@
 package com.example.android.ui.send;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.R;
 import com.example.android.data.viewmodel.SendViewModel;
@@ -27,10 +15,9 @@ import com.example.android.data.viewmodelimpl.SendViewModelImpl;
 import com.example.android.databinding.FragmentSendFolderBinding;
 import com.example.android.ui.main.BackdropActivity;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+/*
+FolderFragment : 폴더 목록을 보여주는 Fragment
+ */
 public class FolderFragment extends Fragment {
 
     private FragmentSendFolderBinding binding;

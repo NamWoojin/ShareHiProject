@@ -12,6 +12,9 @@ import com.example.android.ui.send.FolderRecyclerAdapter;
 
 import java.util.List;
 
+/*
+SendViewModel : 파일 전송과 관련된 데이터를 관리하는 ViewModel
+ */
 public interface SendViewModel {
     void setParentContext(Activity parentContext);
     void setSocketRepository(SocketRepository repository,Activity parentContext);
@@ -22,9 +25,10 @@ public interface SendViewModel {
     void stopShare();
 
     //prepare
+    void openShareNameDialog();
+    void closeShareNameDialog();
     void startShare();
     void deleteSelectedFolderPath();
-    void onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
 
     //folder
     void clickFolderList(int pos);
@@ -41,15 +45,14 @@ public interface SendViewModel {
 
     void setFolderPathLiveData(MutableLiveData<String> folderPath);
     MutableLiveData<String> getFolderPathLiveData();
-    void setCanShareLiveData(MutableLiveData<Boolean> canShareLiveData);
-    MutableLiveData<Boolean> getCanShareLiveData();
     void setFolderTitleLiveData(MutableLiveData<String> folderTitleLiveData);
     MutableLiveData<String> getFolderTitleLiveData();
     void setSelectedPathLiveData(MutableLiveData<String> selectedPathLiveData);
     MutableLiveData<String> getSelectedPathLiveData();
     void setNewFolderNameLiveData(MutableLiveData<String> newFolderNameLiveData);
     MutableLiveData<String> getNewFolderNameLiveData();
-    void setShareTitleLiveData(MutableLiveData<String> shareTitleLiveData);
-    MutableLiveData<String> getShareTitleLiveData();
+    void setShareNameLiveData(MutableLiveData<String> shareNameLiveData);
+    MutableLiveData<String> getShareNameLiveData();
     MutableLiveData<Boolean> getLoadingLiveData();
+    MutableLiveData<String> getShareTitleLiveData();
 }

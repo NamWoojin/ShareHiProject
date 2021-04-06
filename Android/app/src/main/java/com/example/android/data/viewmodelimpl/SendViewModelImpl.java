@@ -24,6 +24,7 @@ import com.example.android.ui.send.CreateFolderFragment;
 import com.example.android.ui.send.FolderFragment;
 import com.example.android.ui.send.FolderRecyclerAdapter;
 import com.example.android.ui.send.ShareFragment;
+import com.example.android.ui.send.ShareNameFragment;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -31,9 +32,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+SendViewModelImpl : 파일 전송과 관련된 데이터를 관리하는 ViewModel
+ */
 public class SendViewModelImpl extends ViewModel implements SendViewModel {
-
-    private final int OPEN_DIRECTORY_REQUEST_CODE = 1000;
 
     private WeakReference<Activity> mActivityRef;
 
@@ -48,13 +50,14 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //새 폴더 생성
     private MutableLiveData<String> newFolderNameLiveData;
 
-    //공유 가능 여부
-    private MutableLiveData<Boolean> canShareLiveData = new MutableLiveData<>(false);
-    private MutableLiveData<String> shareTitleLiveData = new MutableLiveData<>();
+    //공유 정보
+    private MutableLiveData<String> shareNameLiveData = new MutableLiveData<>("");
+    private MutableLiveData<String> shareTitleLiveData = new MutableLiveData<>("");
 
     //로딩
     private MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
+    private ShareNameFragment shareNameFragment;
     private ShareFragment shareFragment;
     private CreateFolderFragment createFolderFragment;
     private SocketRepository mSocketRepository;
@@ -69,7 +72,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         mSocketRepository = repository;
         mSocketRepository.setParentContext(parentContext);
         setSocketObserver();
-        setAdIDObserver();
     }
 
     @Override
@@ -77,22 +79,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         if (page.equals("folder")) {
             getDir("Root", mRoot);
             ((BackdropActivity) mActivityRef.get()).replaceFragment(FolderFragment.newInstance(), true);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == OPEN_DIRECTORY_REQUEST_CODE) {
-
-            if (resultCode == Activity.RESULT_OK) {
-                Uri uri = data.getData();
-                Log.i("TAG", "onActivityResult: " + uri.getPath());
-                String[] pathSplit = uri.getPath().split(":");
-                selectedPathLiveData.setValue(mRoot + (pathSplit.length == 1 ? "" : pathSplit[1]));
-                Log.i("TAG", "onActivityResult: " + selectedPathLiveData.getValue());
-            } else {
-                Toast.makeText(mActivityRef.get(), "해당 폴더는 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -107,28 +93,34 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     }
 
     //prepare
+    //별명 지정 dialog 열기
+    @Override
+    public void openShareNameDialog(){
+        shareNameFragment = ShareNameFragment.newInstance();
+        shareNameFragment.show(mActivityRef.get().getFragmentManager(), "SET_SHARE_NAME");
+    }
+
+    //별명 지정 dialog 닫기
+    @Override
+    public void closeShareNameDialog(){
+        shareNameFragment.dismiss();
+    }
+
     //공유 시작
     @Override
     public void startShare() {
         loadingLiveData.setValue(true);
-        mSocketRepository.startSocket(selectedPathLiveData.getValue());
-
+        mSocketRepository.startSocket(selectedPathLiveData.getValue(),shareNameLiveData.getValue());
     }
-
-    private void setAdIDObserver() {
-        mSocketRepository.getAdIDLiveData().observe((BackdropActivity) mActivityRef.get(), s -> {
-            if (s.length() > 0) {
-                String[] splitID = s.split("-");
-                shareTitleLiveData.setValue("공유중입니다.\n장치 아이디: " + splitID[0]);
-            }
-        });
-    }
-
+    
+    //소켓 연결 결과에 따른 화면 처리
     private void setSocketObserver() {
         mSocketRepository.getIsConnecting().observe((BackdropActivity) mActivityRef.get(), s -> {
             switch (s) {
                 case "successConnect":
+                    shareNameFragment.dismiss();
                     loadingLiveData.setValue(false);
+                    shareTitleLiveData.setValue("공유중입니다.\n장치 별명: " + shareNameLiveData.getValue());
                     shareFragment = ShareFragment.newInstance();
                     shareFragment.setCancelable(false);
                     shareFragment.show(mActivityRef.get().getFragmentManager(), "START_SHARE");
@@ -146,7 +138,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
                             .show();
                     break;
                 case "successClose":
-
                     shareFragment.dismiss();
                     Toast.makeText(mActivityRef.get(), R.string.toast_socket_stop_message, Toast.LENGTH_SHORT).show();
                     loadingLiveData.setValue(false);
@@ -174,10 +165,10 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
             if (file.canRead()) {
                 getDir(file.getName(), file.getAbsolutePath());
             } else {
-                Toast.makeText(mActivityRef.get(), "이 폴더는 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivityRef.get(), R.string.toast_send_share_folder_fail_message, Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(mActivityRef.get(), "파일은 공유할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivityRef.get(), R.string.toast_send_share_file_fail_message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -221,12 +212,12 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     //폴더 경로 선택
     @Override
     public void choiceFolderPath() {
-        Log.i("TAG", "choiceFolderPath: 들어옴");
         String path = folderPathLiveData.getValue().replace("Root", mRoot);
         selectedPathLiveData.setValue(path);
         mActivityRef.get().onBackPressed();
     }
 
+    //폴더 생성 DialogFragment 열기
     @Override
     public void createFolderFragmentOpen() {
         newFolderNameLiveData = new MutableLiveData<>("");
@@ -234,6 +225,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         createFolderFragment.show(mActivityRef.get().getFragmentManager(), "CREATE_FOLDER");
     }
 
+    //폴더 생성
     @Override
     public void createFolder() {
         if (mSocketRepository.createFolder(folderPathLiveData.getValue().replace("Root", mRoot), newFolderNameLiveData.getValue())) {
@@ -245,6 +237,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
         }
     }
 
+    //폴더 생성 DialogFragment 닫기
     @Override
     public void createFolderFragmentClose() {
         createFolderFragment.dismiss();
@@ -271,7 +264,7 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     }
 
 
-    //getter setter
+    //LiveData getter & setter
     @Override
     public void setFolderPathLiveData(MutableLiveData<String> folderPath) {
         this.folderPathLiveData = folderPath;
@@ -280,16 +273,6 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     @Override
     public MutableLiveData<String> getFolderPathLiveData() {
         return folderPathLiveData;
-    }
-
-    @Override
-    public MutableLiveData<Boolean> getCanShareLiveData() {
-        return canShareLiveData;
-    }
-
-    @Override
-    public void setCanShareLiveData(MutableLiveData<Boolean> canShareLiveData) {
-        this.canShareLiveData = canShareLiveData;
     }
 
     @Override
@@ -323,17 +306,22 @@ public class SendViewModelImpl extends ViewModel implements SendViewModel {
     }
 
     @Override
-    public MutableLiveData<String> getShareTitleLiveData() {
-        return shareTitleLiveData;
+    public MutableLiveData<String> getShareNameLiveData() {
+        return shareNameLiveData;
     }
 
     @Override
-    public void setShareTitleLiveData(MutableLiveData<String> shareTitleLiveData) {
-        this.shareTitleLiveData = shareTitleLiveData;
+    public void setShareNameLiveData(MutableLiveData<String> shareNameLiveData) {
+        this.shareNameLiveData = shareNameLiveData;
     }
 
     @Override
     public MutableLiveData<Boolean> getLoadingLiveData() {
         return loadingLiveData;
+    }
+
+    @Override
+    public MutableLiveData<String> getShareTitleLiveData() {
+        return shareTitleLiveData;
     }
 }

@@ -29,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_backdrop_menu_icon_marginStart"
                 android:layout_marginTop="@dimen/activity_backdrop_menu_icon_marginTop"
+                android:background="@drawable/ripple_unbounded"
                 android:onClick="@{() -> viewModel.toggleBackdropMenu()}"
                 android:src="@{viewModel.backdropMenuOpenLiveData ? @drawable/ic_close_white_24dp : @drawable/ic_menu_white_24dp}"
                 app:layout_constraintStart_toStartOf="parent"

@@ -44,6 +44,7 @@
                 android:layout_marginEnd="@dimen/fragment_folder_header_title_textView_marginStart"
                 android:contentDescription="@string/imageView_description"
                 android:onClick="@{() -> viewModel.createFolderFragmentOpen()}"
+                android:background="@drawable/ripple_unbounded"
                 android:src="@drawable/ic_create_new_folder_black_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

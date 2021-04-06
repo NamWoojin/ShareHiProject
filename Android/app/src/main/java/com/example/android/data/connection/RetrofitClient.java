@@ -1,6 +1,5 @@
 package com.example.android.data.connection;
 
-
 import com.example.android.data.model.LoginRepository;
 import com.example.android.data.model.UserRepository;
 import com.google.gson.Gson;
@@ -11,6 +10,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/*
+RetrofitClient : Retrofit 라이브러리 설정
+ */
 public class RetrofitClient{
     private static final String BASE_URL = "https://j4f001.p.ssafy.io/api/";
 
@@ -21,7 +23,6 @@ public class RetrofitClient{
     public static LoginRepository getLoginApiService(){
         return getInstance().create(LoginRepository.class);
     }
-
 
     private static Retrofit retrofit = null;
 
