@@ -36,13 +36,17 @@
                   </div>
                 </v-btn>
               </div>
-              <div style="width: 50%; border: 1px solid; padding: 0.4rem; text-align: left;">
+              <div style="position: relative; width: 50%; border: 1px solid; padding: 0.4rem; text-align: left;">
                 <!-- <span style="font-size: 1.5rem;">{{customPath}}</span> -->
-                  <v-icon>mdi-folder</v-icon>
+                  <v-icon style="margin-right: 1rem;">mdi-folder</v-icon>
                   <span v-for="(link, idx) in customPath" :key="idx">
                     <v-icon v-if="(idx != 0)">mdi-menu-right</v-icon>
                     <span class="link" style="cursor: pointer" @click="gotoSelectpath(idx)">{{link}}</span>
                   </span>
+                  <v-icon
+                    style="position: absolute; right: 15px; cursor: pointer"
+                    @click="reloadThispath"
+                  >mdi-reload</v-icon>
               </div>
               <div>
                 <v-btn elevation="2" class="navicon" @click="createNewFolder">
@@ -235,18 +239,15 @@
       :value="percent"
       color="teal"
     >
-      {{ percent }}
+      {{ percent }}%
     </v-progress-circular>
-    <!-- <v-progress-circular
+    <v-progress-circular
       v-if="saveFileLength > 0"
       style="position: absolute; top: 50%; left: 50%; z-index: 99; transform: translate(-50%, -50%);"
       color="teal"
-      :rotate="360"
-      :size="250"
-      :width="20"
-      :value="(100 - Math.ceil(saveFileLength*100/saveFileLengthOrigin))"
+      indeterminate
     >
-    </v-progress-circular> -->
+    </v-progress-circular>
   </div>
 </template>
 
@@ -302,6 +303,7 @@ export default {
       blobArray: [],
       downloadFileNameCopy: '',
       uploadFileNameCopy: '',
+      devices: [],
     };
   },
   methods: {
@@ -564,6 +566,11 @@ export default {
       // this.$router.replace({ name: 'Main' })
       this.$router.push({ name: 'Main' })
       // this.$router.go(`http://localhost:8080`)
+    },
+    reloadThispath() {
+      this.$socket.emit(2000, JSON.stringify({
+        path: this.node.path
+      }))
     }
   },
   mounted() {
@@ -573,6 +580,7 @@ export default {
     this.$socket.emit(1070, JSON.stringify(data))
 
     // this.node = this.data[0];
+    this.devices.push(this.device)
   },
   watch: {
     fileList: function () {
@@ -617,19 +625,24 @@ export default {
     }
   },
   created() {
+    // this.$socket.on(1050, (data) => {
+    //   data = JSON.parse(data);
+    //   this.devices = data.devices;
+    //   if (this.devices.indexOf(this.device) == -1) {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '안드로이드와 연결이 중지되었습니다.'
+    //     })
+    //       // this.$router.go({ name: 'Main' })
+    //   }
+    // })
+    
     this.$socket.on(2000, (data) => {
-      // console.log(2000)
-      // console.log(data)
-      // console.log(typeof data)
       data = JSON.parse(data)
-      // console.log(data)
-      // console.log(typeof data)
       this.currentpath = JSON.parse(data.data).path
       if (this.node.path && (this.currentpath != this.node.path)) {
         this.lastpath = this.node.path
       }
-      // console.log(JSON.parse(data.data))
-      // console.log(typeof JSON.parse(data.data))
       this.data[0] = JSON.parse(data.data)
       this.data[0].type = 'folder'
       this.data[0].id = 0

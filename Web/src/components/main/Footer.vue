@@ -37,8 +37,10 @@
         </el-col>
         <el-col :md="{span: 12, offset: 6}" :sm="24" >
           <el-row>
-            <el-col :span="12">App Link</el-col>
-            <el-col :span="12">Chr Link</el-col>
+            <el-col :span="12">
+              <a target="_blank" href="https://drive.google.com/uc?id=1os90JXBInUEPp8phPdPOVwiqLQz8jfkq&export=download" style="text-decoration: none; color: black">앱 다운로드</a>
+            </el-col>
+            <el-col :span="12">크롬 다운로드</el-col>
           </el-row>
         </el-col>
         
