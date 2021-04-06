@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative; top: 70%; width: 100%;">
+  <div style="width: 100%;">
     <el-row>
       <el-row style="width: 75%; margin: 0px auto;">
         <el-col
@@ -27,9 +27,7 @@
         
         <el-col :md="6" :sm="24">
           <div style="text-align: left;">
-            <span>whxorb44@gmail.com</span>
-            <br>
-            <span>© Share Hi</span>
+            <p style="font-size: 1.2rem;">© Share Hi</p>
           </div>
         </el-col>
         <el-col :md="0" :sm="24">
@@ -38,9 +36,11 @@
         <el-col :md="{span: 12, offset: 6}" :sm="24" >
           <el-row>
             <el-col :span="12">
-              <a target="_blank" href="https://drive.google.com/uc?id=1os90JXBInUEPp8phPdPOVwiqLQz8jfkq&export=download" style="text-decoration: none; color: black">앱 다운로드</a>
+              <a target="_blank" href="https://drive.google.com/uc?id=1IrZOS8B2Na7JfQyArTdD8rLcShfYN3LU&export=download" style="text-decoration: none; color: black">앱 다운로드</a>
             </el-col>
-            <el-col :span="12">크롬 다운로드</el-col>
+            <el-col :span="12">
+              <a target="_blank" href="https://drive.google.com/file/d/1_XAgMlNiZVDekYre5pjozC4dzZ7fvy9j/view?usp=sharing" style="text-decoration: none; color: black">크롬 다운로드</a>
+            </el-col>
           </el-row>
         </el-col>
         

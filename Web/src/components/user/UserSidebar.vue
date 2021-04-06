@@ -7,19 +7,39 @@
       <v-carousel
         cycle
         hide-delimiter-background
-        style="width: 400px;"
+        style="width: 400px; margin-top: 5rem;"
         :show-arrows="false"
         hide-delimiters
       >
         <v-carousel-item
-          v-for="(slide, i) in slides"
-          :key="i"
-          style="font-size: 2rem;"
+          style="font-size: 1.5rem;"
         >
-          <div style="display: flex; justify-content: center; align-items: center;">
-            <span style="color: black; font-weight: bold; margin-top: 200px;">{{slide}}</span>
+          <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <strong>쉽고 빠른 파일공유 서비스</strong>
+            <v-img src="https://cdn1.iconfinder.com/data/icons/pixel-perfect-1/512/36-mobile-pc-devices-device-connection-connect-512.png"
+            ></v-img>
+            <strong>언제 어디서든 파일을 공유해보세요</strong>
           </div>
         </v-carousel-item>
+
+        <v-carousel-item
+          style="font-size: 1.5rem;"
+        >
+          <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <a
+              target="_blank" href="https://drive.google.com/uc?id=1os90JXBInUEPp8phPdPOVwiqLQz8jfkq&export=download"
+            >
+              <v-img
+                src="@/assets/main_ad/and.png"
+                style="max-height: 550px; max-width: 150px; width: auto; height: auto;"
+              ></v-img>
+            </a>
+            <p style="margin: 2rem; font-weight: bold;">모바일 앱을 만나보세요!</p>
+          </div>
+        </v-carousel-item>
+
+
+
       </v-carousel>
     </div>
   </div>
@@ -30,11 +50,7 @@ export default {
   name: 'UserSidebar',
   data() {
     return {
-      slides: [
-        'Application store Link',
-        'Chrome Extension Link',
-        'Share Hi Advertisement'
-      ]
+
     }
   }
 }
