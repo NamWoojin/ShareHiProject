@@ -31,6 +31,8 @@ public class IntroActivity extends AppCompatActivity {
 
     private IntroViewModel mIntroViewModel;
 
+    private BackPressHandler  backPressHandler = new BackPressHandler(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,5 +81,11 @@ public class IntroActivity extends AppCompatActivity {
             //인트로로 다시 돌아오지 못하도록 끝내기
             finish();
         }, 2000);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        backPressHandler.onBackPressed();
     }
 }

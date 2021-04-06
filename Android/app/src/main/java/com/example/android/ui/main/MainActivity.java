@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private Button sendButton;
     private Button userButton;
 
+    private BackPressHandler  backPressHandler = new BackPressHandler(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,17 +32,18 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         
-        //공유받기
-//        final Button receiveButton = findViewById(R.id.activity_main_go_receive_button);
-//        receiveButton.setOnClickListener(v -> {
-//            intent.putExtra("page","receive");
-//            startActivity(intent);
-//        });
-        
         //계정 설정
         userButton.setOnClickListener(v -> {
             intent.putExtra("page","user");
             startActivity(intent);
         });
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        backPressHandler.onBackPressed();
     }
 }

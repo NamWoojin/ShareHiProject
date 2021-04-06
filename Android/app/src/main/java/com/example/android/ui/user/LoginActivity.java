@@ -15,6 +15,7 @@ import com.example.android.data.injection.ViewModelInjection;
 import com.example.android.data.viewmodel.LoginViewModel;
 import com.example.android.data.viewmodelimpl.LoginViewModelImpl;
 import com.example.android.databinding.ActivityUserLoginBinding;
+import com.example.android.ui.main.BackPressHandler;
 import com.example.android.ui.main.LoadingFragment;
 import com.example.android.ui.main.MainActivity;
 import com.google.android.gms.common.SignInButton;
@@ -27,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     private ActivityUserLoginBinding binding;
     private LoginViewModel mLoginViewModel;
     private LoadingFragment loadingFragment;
+
+    private BackPressHandler backPressHandler = new BackPressHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,4 +108,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        backPressHandler.onBackPressed();
+    }
 }
