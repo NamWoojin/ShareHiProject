@@ -33,6 +33,7 @@ export default {
       saveFileLengthOrigin: '',
       saveFileLength: '',
       blobArray: [],
+      downloadPercentage : 0,
       downloadFile : {
         name : '',
         ext : '',
@@ -94,10 +95,13 @@ export default {
       };
     })
     this.$socket.on(8000, (data) => {
+      const progressFileName = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-filename")
+      const progressPercent = document.querySelector('#shadowElement').shadowRoot.querySelector(".progress-percent")
       this.blobArray.push(new Blob([data]))
       this.saveFileLength = this.saveFileLength - data.byteLength
-      console.log(data.byteLength, this.saveFileLength)
+      this.downloadPercentage = Math.floor(((this.saveFileLengthOrigin - this.saveFileLength)/this.saveFileLengthOrigin)*100)
       if (this.saveFileLength == 0) {
+        this.downloadPercentage = 100
         console.log('download complete')
         const a = document.createElement('a');
         a.download = this.downloadFile.name + this.downloadFile.ext
@@ -113,6 +117,15 @@ export default {
         this.downloadFile.name = ''
         this.downloadFile.ext = ''
       }
+      if (this.downloadPercentage === 100) {
+        this.progress = false
+        progressPercent.innerText = this.downloadPercentage + '%' 
+      }
+      else {
+        this.progress = true
+        progressFileName.innerText = this.downloadFile.name + this.downloadFile.ext + ' : '
+        progressPercent.innerText = this.downloadPercentage + '%'
+      }
     })
     this.$socket.on(8001, (data) => {
       console.log('this.$socket.on(8001)')
@@ -120,7 +133,6 @@ export default {
       console.log(JSON.parse(data))
       this.saveFileLength = JSON.parse(data).size
       this.saveFileLengthOrigin = JSON.parse(data).size
-      console.log(this.saveFileLength)
       this.$socket.emit(8001)
     })
     this.$socket.on(4000, (data) => {
@@ -221,11 +233,16 @@ export default {
       let curUl
       if (isRoot) {
         curDiv = this.elementSetting('div','dir')
+        curDiv.setAttribute('data-path', data.path)
         curDiv.innerText = data.name
         curUl = this.elementSetting('ul')
         curDiv.addEventListener('click', () => {
             curUl.classList.toggle('closed')
-          })
+        })
+        curDiv.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          this.createContextMenu(e.clientX,e.clientY,e.target,'dir');
+        })
       }
       else {
         curDiv = directory

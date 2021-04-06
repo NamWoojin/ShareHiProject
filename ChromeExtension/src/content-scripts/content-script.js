@@ -296,16 +296,18 @@ style.textContent = `
   box-shadow: 0px 0px 0px 0.5px rgb(0 0 0 / 20%);
 }
 .progress {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    background-color: rgba(0,0,0,0.1);
+  width: 100%;
+  height : 30px;
+  position: absolute;
+  bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-itmes : center;
+  background-color: rgba(0,0,0,0.1);
 }
 .progress-filename {  
   white-space: nowrap;
