@@ -46,7 +46,7 @@
           <div>
             <h1 style="padding: 0; margin-right: 3rem;">크롬 익스텐션으로 <br />사용할 수 있습니다</h1>
             <a
-              target="_blank" href="https://drive.google.com/file/d/1_XAgMlNiZVDekYre5pjozC4dzZ7fvy9j/view?usp=sharing"
+              target="_blank" href="https://drive.google.com/file/d/1fRJoArnhsh5aCmYHiVt4DCvMegjcQxdY/view?usp=sharing"
               style="text-decoration: none;"
             >
               <v-btn
