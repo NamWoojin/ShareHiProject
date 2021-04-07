@@ -1,8 +1,8 @@
 <template>
-  <div style="cursor: pointer;">
+  <div style="cursor: pointer; margin-left: 3rem;">
     <div @click="clickDevice">
-      <v-img style="width: auto; height: auto;" max-width="150px" :src="squareUrl"></v-img>
-      <h2>{{device.name.split('-')[0]}}</h2>
+      <v-img style="width: auto; height: auto; margin: 0;" max-width="150px" :src="squareUrl"></v-img>
+      <h2 style="text-align: center;">{{device.name.split('-')[0]}}</h2>
     </div>
     
   </div>
