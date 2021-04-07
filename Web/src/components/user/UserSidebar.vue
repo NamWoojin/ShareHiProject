@@ -27,7 +27,7 @@
         >
           <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <a
-              target="_blank" href="https://drive.google.com/uc?id=1os90JXBInUEPp8phPdPOVwiqLQz8jfkq&export=download"
+              target="_blank" href="https://drive.google.com/uc?id=1IrZOS8B2Na7JfQyArTdD8rLcShfYN3LU&export=download"
             >
               <v-img
                 src="@/assets/main_ad/and.png"
