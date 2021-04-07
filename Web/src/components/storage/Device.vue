@@ -1,8 +1,8 @@
 <template>
   <div style="cursor: pointer;">
     <div @click="clickDevice">
-      <v-img width="150px" height="150px" :src="squareUrl"></v-img>
-      <p>{{device.name.split('-')[0]}}</p>
+      <v-img style="width: auto; height: auto;" max-width="150px" :src="squareUrl"></v-img>
+      <h2>{{device.name.split('-')[0]}}</h2>
     </div>
     
   </div>
@@ -16,7 +16,7 @@ export default {
   },
   data () {
     return {
-      squareUrl: "https://logodix.com/logo/14982.png",
+      squareUrl: "https://images.samsung.com/sec/smartphones/galaxy-s21-ultra-5g/models/images/galaxy-s21-plus-5g_models_colors_phantom-violet.png",
     }
   },
 
