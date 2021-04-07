@@ -2,7 +2,6 @@
 
 ## 📃프로젝트 개요
 
----
 
 - **개발 기간** : 2021.02.22 ~ 2021.04.09 (총 7주)
 - **프로젝트 이름** : Share Hi
@@ -10,7 +9,6 @@
 
 ## 🛠개발 환경설정
 
----
 
 ### API Server
 
@@ -57,8 +55,6 @@ npm run build
 
 ## 📚기술스택
 
----
-
 ### OS
 
 - Ubuntu : 20.04
@@ -89,7 +85,6 @@ npm run build
 
 ## 📌주요기능
 
----
 
  **SHARE HI**는 휴대 단말의 저장공간을 웹과 Chrome 확장 프로그램에 공유하는 서비스입니다. 
 
@@ -107,192 +102,230 @@ npm run build
 
 ## 😎 페이지소개
 
----
 
 ### Web
 
-- **메인화면**
 
-    ![Images/ReadMe/Web/Web_Main_1.png](Images/ReadMe/Web/Web_Main_1.png)
+<details>
+    <summary><strong>메인화면</strong></summary>
 
-    ![Images/ReadMe/Web/Web_Main_2.png](Images/ReadMe/Web/Web_Main_2.png)
+![Images/ReadMe/Web/Web_Main_1.png](Images/ReadMe/Web/Web_Main_1.png)
 
-    ![Images/ReadMe/Web/Web_Main_3.png](Images/ReadMe/Web/Web_Main_3.png)
+![Images/ReadMe/Web/Web_Main_2.png](Images/ReadMe/Web/Web_Main_2.png)
 
-    ![Images/ReadMe/Web/Web_Main_4.png](Images/ReadMe/Web/Web_Main_4.png)
+![Images/ReadMe/Web/Web_Main_3.png](Images/ReadMe/Web/Web_Main_3.png)
 
-- **로그인**
+![Images/ReadMe/Web/Web_Main_4.png](Images/ReadMe/Web/Web_Main_4.png)
+</details>
 
-    ![Images/ReadMe/Web/Web_Login.png](Images/ReadMe/Web/Web_Login.png)
 
-    **비밀번호 찾기**
+<details>
+    <summary><strong>로그인</strong></summary>
+    
+![Images/ReadMe/Web/Web_Login.png](Images/ReadMe/Web/Web_Login.png)
 
-    ![Images/ReadMe/Web/Web_FindPassword.png](Images/ReadMe/Web/Web_FindPassword.png)
+**비밀번호 찾기**
 
-- **회원가입**
+![Images/ReadMe/Web/Web_FindPassword.png](Images/ReadMe/Web/Web_FindPassword.png)
+</details>
 
-    ![Images/ReadMe/j4f001.p.ssafy.io_user_login.png](Images/ReadMe/j4f001.p.ssafy.io_user_login.png)
 
-    **이메일 인증**
+<details>
+    <summary><strong>회원가입</strong></summary>
+    
+![Images/ReadMe/Web/Web_SignUp.png](Images/ReadMe/Web/Web_SignUp.png)
 
-    ![Images/ReadMe/Web/Web_SignUp_CheckEmail.png](Images/ReadMe/Web/Web_SignUp_CheckEmail.png)
+**이메일 인증**
 
-- **내 저장소**
+![Images/ReadMe/Web/Web_SignUp_CheckEmail.png](Images/ReadMe/Web/Web_SignUp_CheckEmail.png)
+</details>
 
-    ![Images/ReadMe/Web/Web_MyDevice.png](Images/ReadMe/Web/Web_MyDevice.png)
 
-    **저장소 조회**
+<details>
+    <summary><strong>내 저장소</strong></summary>
+    
+![Images/ReadMe/Web/Web_MyDevice.png](Images/ReadMe/Web/Web_MyDevice.png)
 
-    ![Images/ReadMe/Web/Web_MyDevice_2.png](Images/ReadMe/Web/Web_MyDevice_2.png)
+**저장소 조회**
 
-    ![Images/ReadMe/j4f001.p.ssafy.io_user_login_(9).png](Images/ReadMe/j4f001.p.ssafy.io_user_login_(9).png)
+![Images/ReadMe/Web/Web_MyDevice_2.png](Images/ReadMe/Web/Web_MyDevice_2.png)
 
-    **파일 및 폴더 이름 변경**
+![Images/ReadMe/Web/Web_MyDevice_3.png](Images/ReadMe/Web/Web_MyDevice_3.png)
 
-    ![Images/ReadMe/Web/Web_MyDevice_ChangeName.png](Images/ReadMe/Web/Web_MyDevice_ChangeName.png)
+**파일 및 폴더 이름 변경**
 
-    **파일 및 폴더 삭제**
+![Images/ReadMe/Web/Web_MyDevice_ChangeName.png](Images/ReadMe/Web/Web_MyDevice_ChangeName.png)
 
-    ![Images/ReadMe/Web/Web_MyDevice_Delete.png](Images/ReadMe/Web/Web_MyDevice_Delete.png)
+**파일 및 폴더 삭제**
 
-    **파일 업로드**
+![Images/ReadMe/Web/Web_MyDevice_Delete.png](Images/ReadMe/Web/Web_MyDevice_Delete.png)
 
-    ![Images/ReadMe/Web/Web_MyDevice_Upload.png](Images/ReadMe/Web/Web_MyDevice_Upload.png)
+**파일 업로드**
 
-- **계정 설정**
+![Images/ReadMe/Web/Web_MyDevice_Upload.png](Images/ReadMe/Web/Web_MyDevice_Upload.png)
+</details>
 
-    ![Images/ReadMe/Web/Web_Setting_Profile.png](Images/ReadMe/Web/Web_Setting_Profile.png)
 
-    **비밀번호 변경**
+<details>
+    <summary><strong>계정 설정</strong></summary>
+    
+![Images/ReadMe/Web/Web_Setting_Profile.png](Images/ReadMe/Web/Web_Setting_Profile.png)
 
-    ![Images/ReadMe/Web/Web_Setting_ChangePassword.png](Images/ReadMe/Web/Web_Setting_ChangePassword.png)
+**비밀번호 변경**
 
-    **회원 탈퇴**
+![Images/ReadMe/Web/Web_Setting_ChangePassword.png](Images/ReadMe/Web/Web_Setting_ChangePassword.png)
 
-    ![Images/ReadMe/Web/Web_Setting_Out.png](Images/ReadMe/Web/Web_Setting_Out.png)
+**회원 탈퇴**
 
-    **팔로워 관리**
+![Images/ReadMe/Web/Web_Setting_Out.png](Images/ReadMe/Web/Web_Setting_Out.png)
 
-    ![Images/ReadMe/Web/Web_Setting_Follower.png](Images/ReadMe/Web/Web_Setting_Follower.png)
+**팔로워 관리**
+
+![Images/ReadMe/Web/Web_Setting_Follower.png](Images/ReadMe/Web/Web_Setting_Follower.png)
+</details>
+   
 
 ### Chrome Extension
 
-- **로그인**
 
-    ![Images/ReadMe/ChromeExtension/Extension_FullScreen.png](Images/ReadMe/ChromeExtension/Extension_FullScreen.png)
+<details>
+    <summary><strong>로그인</strong></summary>
+    
+![Images/ReadMe/ChromeExtension/Extension_Login.png](Images/ReadMe/ChromeExtension/Extension_Login.png)
+</details>
 
-- **내 저장소**
 
-    ![Images/ReadMe/ChromeExtension/Extension_MyDevice.png](Images/ReadMe/ChromeExtension/Extension_MyDevice.png)
+<details>
+    <summary><strong>내 저장소</strong></summary>
+    
+![Images/ReadMe/ChromeExtension/Extension_MyDevice.png](Images/ReadMe/ChromeExtension/Extension_MyDevice.png)
 
-    **저장소 조회**
+**저장소 조회**
 
-    ![Images/ReadMe/ChromeExtension/Extension_MyDevice_FileList.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_FileList.png)
+![Images/ReadMe/ChromeExtension/Extension_MyDevice_FileList.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_FileList.png)
 
-    **동작 옵션(우측 마우스 클릭)**
+**동작 옵션(우측 마우스 클릭)**
 
-    ![Images/ReadMe/ChromeExtension/Extension_MyDevice_FileOption.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_FileOption.png)
+![Images/ReadMe/ChromeExtension/Extension_MyDevice_FileOption.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_FileOption.png)
 
-    **계정 옵션**
+**계정 옵션**
 
-    ![Images/ReadMe/ChromeExtension/Extension_Option.png](Images/ReadMe/ChromeExtension/Extension_Option.png)
+![Images/ReadMe/ChromeExtension/Extension_Option.png](Images/ReadMe/ChromeExtension/Extension_Option.png)
 
-    **파일 및 폴더 이름 변경**
+**파일 및 폴더 이름 변경**
 
-    ![Images/ReadMe/ChromeExtension/Extension_MyDevice_ChangeName.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_ChangeName.png)
+![Images/ReadMe/ChromeExtension/Extension_MyDevice_ChangeName.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_ChangeName.png)
 
-    **파일 및 폴더 삭제**
+**파일 및 폴더 삭제**
 
-    ![Images/ReadMe/ChromeExtension/Extension_MyDevice_Delete.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_Delete.png)
+![Images/ReadMe/ChromeExtension/Extension_MyDevice_Delete.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_Delete.png)
 
-    **파일 업로드**
+**파일 업로드**
 
-    ![Images/ReadMe/ChromeExtension/Extension_MyDevice_Upload.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_Upload.png)
+![Images/ReadMe/ChromeExtension/Extension_MyDevice_Upload.png](Images/ReadMe/ChromeExtension/Extension_MyDevice_Upload.png)
+</details>
+
+    
 
 ### Android
 
-- **인트로**
+<details>
+    <summary><strong>인트로</strong></summary>
+    
+![Images/ReadMe/Android/Android_Intro.jpg](Images/ReadMe/Android/Android_Intro.jpg)
+</details>
 
-    ![Images/ReadMe/Android/Android_Intro.jpg](Images/ReadMe/Android/Android_Intro.jpg)
 
-- **로그인**
+<details>
+    <summary><strong>로그인</strong></summary>
+    
+![Images/ReadMe/Android/Android_Login.jpg](Images/ReadMe/Android/Android_Login.jpg)
+</details>
 
-    ![Images/ReadMe/Android/Android_Login.jpg](Images/ReadMe/Android/Android_Login.jpg)
 
-- **회원가입**
+<details>
+    <summary><strong>회원가입</strong></summary>
+    
+![Images/ReadMe/Android/Android_SignUp.jpg](Images/ReadMe/Android/Android_SignUp.jpg)
 
-    ![Images/ReadMe/Android/Android_SignUp.jpg](Images/ReadMe/Android/Android_SignUp.jpg)
+**이메일 인증**
 
-    **이메일 인증**
+![Images/ReadMe/Android/Android_SignUp_CheckEmail.jpg](Images/ReadMe/Android/Android_SignUp_CheckEmail.jpg)
+</details>
 
-    ![Images/ReadMe/Android/Android_SignUp_CheckEmail.jpg](Images/ReadMe/Android/Android_SignUp_CheckEmail.jpg)
 
-- **메인화면**
+<details>
+    <summary><strong>메인화면</strong></summary>
+    
+![Images/ReadMe/Android/Android_Main.jpg](Images/ReadMe/Android/Android_Main.jpg)
+</details>
 
-    ![Images/ReadMe/Android/Android_Main.jpg](Images/ReadMe/Android/Android_Main.jpg)
 
-- **공유하기**
+<details>
+    <summary><strong>공유하기</strong></summary>
+    
+![Images/ReadMe/Android/Android_Send.jpg](Images/ReadMe/Android/Android_Send.jpg)
 
-    ![Images/ReadMe/Android/Android_Send.jpg](Images/ReadMe/Android/Android_Send.jpg)
+**폴더 리스트 조회**
 
-    **폴더 리스트 조회**
+![Images/ReadMe/Android/Android_Send_FileList.jpg](Images/ReadMe/Android/Android_Send_FileList.jpg)
 
-    ![Images/ReadMe/Android/Android_Send_FileList.jpg](Images/ReadMe/Android/Android_Send_FileList.jpg)
+**새 폴더 생성**
 
-    **새 폴더 생성**
+![Images/ReadMe/Android/Android_Send_NewFolder.jpg](Images/ReadMe/Android/Android_Send_NewFolder.jpg)
 
-    ![Images/ReadMe/Android/Android_Send_NewFolder.jpg](Images/ReadMe/Android/Android_Send_NewFolder.jpg)
+**공유할 폴더 선택 결과**
 
-    **공유할 폴더 선택 결과**
+![Images/ReadMe/Android/Android_Send_ChoicedFolder.jpg](Images/ReadMe/Android/Android_Send_ChoicedFolder.jpg)
 
-    ![Images/ReadMe/Android/Android_Send_ChoicedFolder.jpg](Images/ReadMe/Android/Android_Send_ChoicedFolder.jpg)
+**공유 전 기기 별명 지정**
 
-    **공유 전 기기 별명 지정**
+![Images/ReadMe/Android/Android_Send_Name.jpg](Images/ReadMe/Android/Android_Send_Name.jpg)
 
-    ![Images/ReadMe/Android/Android_Send_Name.jpg](Images/ReadMe/Android/Android_Send_Name.jpg)
+**공유 중 화면**
 
-    **공유 중 화면**
+![Images/ReadMe/Android/Android_Send_Share.jpg](Images/ReadMe/Android/Android_Send_Share.jpg)
 
-    ![Images/ReadMe/Android/Android_Send_Share.jpg](Images/ReadMe/Android/Android_Send_Share.jpg)
+**서버와 연결이 끊겼을 때 알림**
 
-    **서버와 연결이 끊겼을 때 알림**
+![Images/ReadMe/Android/Android_Send_Fail.jpg](Images/ReadMe/Android/Android_Send_Fail.jpg)
 
-    ![Images/ReadMe/Android/Android_Send_Fail.jpg](Images/ReadMe/Android/Android_Send_Fail.jpg)
+**파일 받을 때 Notification**
 
-    **파일 받을 때 Notification**
+![Images/ReadMe/Android/Android_Send_Notification.jpg](Images/ReadMe/Android/Android_Send_Notification.jpg)
+</details>
 
-    ![Images/ReadMe/Android/Android_Send_Notification.jpg](Images/ReadMe/Android/Android_Send_Notification.jpg)
+<details>
+    <summary><strong>계정설정</strong></summary>
+    
+![Images/ReadMe/Android/Android_Setting.jpg](Images/ReadMe/Android/Android_Setting.jpg)
 
-- **계정설정**
+**이미지 변경**
 
-    ![Images/ReadMe/Android/Android_Setting.jpg](Images/ReadMe/Android/Android_Setting.jpg)
+![Images/ReadMe/Android/Android_Setting_Image.jpg](Images/ReadMe/Android/Android_Setting_Image.jpg)
 
-    **이미지 변경**
+**비밀번호 변경**
 
-    ![Images/ReadMe/Android/Android_Setting_Image.jpg](Images/ReadMe/Android/Android_Setting_Image.jpg)
+![Images/ReadMe/Android/Android_Setting_ChangePassword.jpg](Images/ReadMe/Android/Android_Setting_ChangePassword.jpg)
 
-    **비밀번호 변경**
+**로그아웃 알림**
 
-    ![Images/ReadMe/KakaoTalk_20210407_152846768_02.jpg](Images/ReadMe/KakaoTalk_20210407_152846768_02.jpg)
+![Images/ReadMe/Android/Android_Setting_SignOut.jpg](Images/ReadMe/Android/Android_Setting_SignOut.jpg)
 
-    **로그아웃 알림**
+**회원탈퇴 알림**
 
-    ![Images/ReadMe/Android/Android_Setting_SignOut.jpg](Images/ReadMe/Android/Android_Setting_SignOut.jpg)
-
-    **회원탈퇴 알림**
-
-    ![Images/ReadMe/Android/Android_Setting_Out.jpg](Images/ReadMe/Android/Android_Setting_Out.jpg)
+![Images/ReadMe/Android/Android_Setting_Out.jpg](Images/ReadMe/Android/Android_Setting_Out.jpg)
+</details>
+    
 
 ## 🏆 최종산출물
 
----
 
 - 최종발표 PPT
 - UCC
 
 ## 💡Team 태양광전구
 
----
 
 - **구민진(팀장)**
     - [whxorb44@gmail.com](mailto:whxorb44@gmail.com)
