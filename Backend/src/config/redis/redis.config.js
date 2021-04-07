@@ -1,7 +1,7 @@
 'use strict';
 
 var config = {
-  host: 'j4f001.p.ssafy.io',
+  host: 'redis_email_auth',
   emailAuthPort: '6379',
   emailAuthPass: 'solar123@',
 };
