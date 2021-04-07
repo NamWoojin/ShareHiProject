@@ -9,7 +9,7 @@
     <button class="login-btn" @click="onClickLogin">로그인</button>
     <div class="login-btn-box">
       <span class="new-tab-link" @click="onClickSignup('https://j4f001.p.ssafy.io/user/signup/')">회원가입</span>
-      <span class="new-tab-link" @click="onClickFindPassword('https://www.google.com/')">비밀번호 찾기</span>
+      <span class="new-tab-link" @click="onClickFindPassword('https://j4f001.p.ssafy.io/user/login/')">비밀번호 찾기</span>
     </div>
   </div>
 </template>
