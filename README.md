@@ -25,6 +25,16 @@ make install
 npm test
 ```
 
+### Android
+1. Android Studio를 설치합니다.
+
+[https://developer.android.com/studio?hl=ko#/](https://developer.android.com/studio?hl=ko#/)
+
+2. File → Open 에서 Android 폴더를 열어주세요.
+
+3. Emulator 또는 단말기로 프로그램을 실행합니다.
+    - Android Lollipop(21)버전부터 Android 11(30)버전까지 지원합니다.
+
 ## 배포 히스토리
 
 - 0.0.1
