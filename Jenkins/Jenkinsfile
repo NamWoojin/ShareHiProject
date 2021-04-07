@@ -6,7 +6,7 @@ pipeline {
       agent any
       steps {
         sh 'docker build -t field-pjt-back:latest ./Backend'
-        sh 'docker build -t field-pjt-front:latest ./Web'
+        // sh 'docker build -t field-pjt-front:latest ./Web'
         sh 'docker build -t field-pjt-fileserver:latest ./FileServer'
       }
     }
@@ -17,8 +17,8 @@ pipeline {
         sh 'docker ps -f name=field-pjt-back -q | xargs --no-run-if-empty docker container stop'
         sh 'docker container ls -a -name=field-pjt-back -q | xargs -r docker container rm'
 
-        sh 'docker ps -f name=field-pjt-front -q | xargs --no-run-if-empty docker container stop'
-        sh 'docker container ls -a -name=field-pjt-front -q | xargs -r docker container rm'
+        // sh 'docker ps -f name=field-pjt-front -q | xargs --no-run-if-empty docker container stop'
+        // sh 'docker container ls -a -name=field-pjt-front -q | xargs -r docker container rm'
 
         sh 'docker ps -f name=field-pjt-fileserver -q | xargs --no-run-if-empty docker container stop'
         sh 'docker container ls -a -name=field-pjt-fileserver -q | xargs -r docker container rm'
@@ -31,10 +31,10 @@ pipeline {
     stage('Docker run') {
       agent any
       steps {
-        sh 'docker run -d --name field-pjt-back \
-            -v /volumes/back_home/profile:/volumes/profile \
-            --network field-network \
-            field-pjt-back:latest' 
+        // sh 'docker run -d --name field-pjt-back \
+        //     -v /volumes/back_home/profile:/volumes/profile \
+        //     --network field-network \
+        //     field-pjt-back:latest' 
         sh 'docker run -d --name field-pjt-fileserver \
             -p 8002:9002 \
             -p 8003:9003 \
