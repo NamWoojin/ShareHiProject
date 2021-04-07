@@ -131,7 +131,7 @@ export default {
       for (let i=0;i<devices.length;i++) {
         const device = devices[i]
         const contentDiv = document.createElement('div')
-        contentDiv.innerText=device.name.split('-')[0]
+        contentDiv.innerText=device.name
         const data = {id : device.id}
         contentDiv.addEventListener('click',()=>{
           console.log('-------------this.$socket.emit(1070, JSON.stringify(data))-------------')
