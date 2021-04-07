@@ -26,7 +26,7 @@ public class SocketInfo {
     private final String TAG = "SocketInfo";
 
     public static final String IP = "j4f001.p.ssafy.io";
-    public static final int PORT = 9003;
+    public static final int PORT = 8003;
 
     private FileStat fs;
 
