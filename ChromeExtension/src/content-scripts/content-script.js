@@ -321,7 +321,7 @@ style.textContent = `
 }
 `;
 //const socket = io.connect('https://j4f001.p.ssafy.io/file/web/', { transports: ['websocket'] })
-const socket = io.connect('https://j4f001.p.ssafy.io:9002', { transports: ['websocket'] });
+const socket = io.connect('https://j4f001.p.ssafy.io:8002', { transports: ['websocket'] });
 Vue.prototype.$socket = socket;
 
 shadowElement.shadowRoot.appendChild(style);
