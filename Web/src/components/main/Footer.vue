@@ -36,7 +36,7 @@
         <el-col :md="{span: 12, offset: 6}" :sm="24" >
           <el-row>
             <el-col :span="12">
-              <a target="_blank" href="https://drive.google.com/uc?id=1IrZOS8B2Na7JfQyArTdD8rLcShfYN3LU&export=download" style="text-decoration: none; color: black">앱 다운로드</a>
+              <a target="_blank" href="https://drive.google.com/u/0/uc?id=1stiFhOzO3pIH5AvKF15PaevcXbGQNGo5&export=download" style="text-decoration: none; color: black">앱 다운로드</a>
             </el-col>
             <el-col :span="12">
               <a target="_blank" href="https://drive.google.com/file/d/1_XAgMlNiZVDekYre5pjozC4dzZ7fvy9j/view?usp=sharing" style="text-decoration: none; color: black">크롬 다운로드</a>

@@ -7,8 +7,8 @@
           <img src="@/assets/main_ad/2.jpg" alt="" style="max-height: 100%; max-width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.25;">
         </div>
         <div style="max-height: 100%; max-width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-          <p style="font-size: 3rem; color: black; font-weight: bold; white-space: nowrap">언제 어디서든 손쉽게 파일을 공유해 보세요!</p>
-          <p style="font-size: 1.2rem; color: black;">파일 크기나 확장자에 관계없이 모든 파일을 디바이스와 공유할 수 있습니다. <br></p>
+          <p style="font-size: 2rem; color: black; font-weight: bold; white-space: nowrap">언제 어디서든 손쉽게 파일을 공유해 보세요!</p>
+          <p style="font-size: 1.1rem; color: black;">파일 크기나 확장자에 관계없이 모든 파일을 디바이스와 공유할 수 있습니다. <br></p>
         </div>
       </div>
       <div class="section">
@@ -17,7 +17,7 @@
         >
           <div>
             <a
-              target="_blank" href="https://drive.google.com/uc?id=1IrZOS8B2Na7JfQyArTdD8rLcShfYN3LU&export=download"
+              target="_blank" href="https://drive.google.com/u/0/uc?id=1stiFhOzO3pIH5AvKF15PaevcXbGQNGo5&export=download"
             >
               <img src="@/assets/main_ad/android.png">
             </a>
@@ -26,7 +26,7 @@
             <h2>모바일 안드로이드 앱</h2>
             <h3>이동단말기에 설치해보세요!</h3>
             <a
-              target="_blank" href="https://drive.google.com/uc?id=1IrZOS8B2Na7JfQyArTdD8rLcShfYN3LU&export=download"
+              target="_blank" href="https://drive.google.com/u/0/uc?id=1stiFhOzO3pIH5AvKF15PaevcXbGQNGo5&export=download"
               style="text-decoration: none;"
             >
               <v-btn
@@ -66,7 +66,7 @@
       <div class="section">
         <div style="position: relative; top: 60px !important;">
           <h1 style="padding: 0; margin: 4rem;">Team Share Hi</h1>
-          <v-container style="margin: 3rem 0;">
+          <v-container style="margin: 2rem 0;">
             <v-row>
               <v-col cols="6">
                 <div style="display: flex; align-items: center; text-align: left;">
