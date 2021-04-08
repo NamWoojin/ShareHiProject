@@ -14,23 +14,29 @@
 
 - 환경 : Node.js, Express.js
 
-    ```bash
-    cd .\Backend\
-    npm install
-    npm startcd .\FileServer\
-    ```
+```bash
+cd .\Backend\
+npm install
+npm startcd .\FileServer\
+```
 
 ### File Server
 
 - 환경 : Node.js, Express.js
 
-    ```bash
-    cd .\FileServer\
-    npm install
-    npm start
-    ```
+```bash
+cd .\FileServer\
+npm install
+npm start
+```
 
 ### Web
+
+```bash
+cd .\Web\
+npm install
+npm run serve
+```
 
 ### Chrome Extension
 
